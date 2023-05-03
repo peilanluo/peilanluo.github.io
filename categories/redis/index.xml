@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Redis on 默默的心路</title>
+    <link>https://www.ceevee.cn/categories/redis/</link>
+    <description>Recent content in Redis on 默默的心路</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 12 Sep 2022 16:44:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://www.ceevee.cn/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Redis--Redis的主从和集群</title>
+      <link>https://www.ceevee.cn/post/redis/redis_copy/</link>
+      <pubDate>Mon, 12 Sep 2022 16:44:20 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/redis/redis_copy/</guid>
+      <description>1 Redis的复制 在Redis中，用户可以通过执行SLAVEOF命令或设置slaveof选项，让一个服务器去复制另一个服务器，被复制的服务器</description>
+    </item>
+    
+    <item>
+      <title>Redis--Redis的数据结构</title>
+      <link>https://www.ceevee.cn/post/redis/redis_basic/</link>
+      <pubDate>Sun, 11 Sep 2022 16:07:20 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/redis/redis_basic/</guid>
+      <description>参考书目：《Redis设计与实现》 1. 简单动态字符串 Redis没有直接使用C语言传统的字符串表示，而是构建了一种名为简单动态字符串（SDS）的</description>
+    </item>
+    
+    <item>
+      <title>Redis--数据的持久化方式</title>
+      <link>https://www.ceevee.cn/post/redis/redis_persistence/</link>
+      <pubDate>Tue, 31 May 2022 15:20:20 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/redis/redis_persistence/</guid>
+      <description>参考书目：《Redis设计与实现》 1 RDB持久化 RDB持久化既可以手动执行，也可以根据服务器配置选项定期执行。 1.1 RDB文件的创建与载入 有两个</description>
+    </item>
+    
+    <item>
+      <title>Redis--分布式锁</title>
+      <link>https://www.ceevee.cn/post/redis/redis_lock/</link>
+      <pubDate>Sun, 13 Dec 2020 21:42:20 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/redis/redis_lock/</guid>
+      <description>redis使用WATCH命令来代替对数据进行加锁，因为WATCH只会在数据被其他客户端抢先修改了的情况下通知执行了这个命令的客户端，而不会阻</description>
+    </item>
+    
+  </channel>
+</rss>

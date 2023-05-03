@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>docker on 默默的心路</title>
+    <link>https://www.ceevee.cn/categories/docker/</link>
+    <description>Recent content in docker on 默默的心路</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 28 Mar 2021 18:50:53 +0800</lastBuildDate>
+    
+	<atom:link href="https://www.ceevee.cn/categories/docker/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Docker--Dockerfile的使用</title>
+      <link>https://www.ceevee.cn/post/docker/docker_dockerfile/</link>
+      <pubDate>Sun, 28 Mar 2021 18:50:53 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/docker/docker_dockerfile/</guid>
+      <description>使用Dockerfile创建镜像 Dockerfile是一个文本格式的配置文件，用户可以使用Dockerfile来快速创建自定义的镜像。 基本结</description>
+    </item>
+    
+    <item>
+      <title>Docker--一些基础知识</title>
+      <link>https://www.ceevee.cn/post/docker/docker_concept/</link>
+      <pubDate>Sun, 28 Mar 2021 18:49:53 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/docker/docker_concept/</guid>
+      <description>搭建本地私有仓库 安装Docker后，可以通过官方提供的registry镜像来搭建本地私有仓库： docker run -d -p 5000:5000 registry:2 // 指定镜像文件存放在本地的指定路径</description>
+    </item>
+    
+  </channel>
+</rss>

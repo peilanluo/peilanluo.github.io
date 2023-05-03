@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>MongoDB--索引 - 默默的心路</title>
+    <meta property="og:title" content="MongoDB--索引 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2020-12-07T20:46:20&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2020-12-07T20:46:20&#43;08:00">
+        
+    <meta name="description" content="MongoDB--索引">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/mongodb/mongodb_index/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">MongoDB--索引</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2020年12月7日
+                            20:46
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/mongodb">MongoDB</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#mongodb中的索引">MongoDB中的索引</a>
+      <ul>
+        <li><a href="#使用复合索引">使用复合索引</a>
+          <ul>
+            <li><a href="#选择键的方向">选择键的方向</a></li>
+            <li><a href="#使用覆盖索引">使用覆盖索引</a></li>
+            <li><a href="#操作符如何使用索引">$操作符如何使用索引</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#使用explain和hint">使用explain()和hint()</a></li>
+    <li><a href="#索引类型">索引类型</a>
+      <ul>
+        <li><a href="#唯一索引">唯一索引</a></li>
+        <li><a href="#稀疏索引">稀疏索引</a></li>
+        <li><a href="#ttl索引">TTL索引</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <h1 id="mongodb中的索引">MongoDB中的索引</h1>
+<p>MongoDB中的索引一部分用法和MySQL中是很相似的，但有些部分也存在差异。</p>
+<h2 id="使用复合索引">使用复合索引</h2>
+<p>复合索引相对于单键索引要复杂一些，但是也更加强大。MongoDB中的键也遵循最左前缀原则。</p>
+<h3 id="选择键的方向">选择键的方向</h3>
+<p>只有基于多个条件进行排序时，索引方向才是比较重要的，如果只是基于单一建进行排序，MongoDB可以简单地从相反方向读取索引。</p>
+<h3 id="使用覆盖索引">使用覆盖索引</h3>
+<p>当一个索引包含了用户请求的所有字段，可以认为这个索引覆盖了本次查询。在实际中，应当优先使用覆盖索引，而不是去获取实际的文档。</p>
+<p>为了确保查询只使用索引就可以完成，应该使用投射来指定不要返回&rsquo;_id&rsquo;字段（除非它是索引的一部分）。</p>
+<p>使用覆盖索引后，在语句上使用explain()，<code>indexOnly</code>字段的值要为true。</p>
+<p>如果在一个含有数组的字段上做索引，这个索引永远也无法覆盖查询，即使将数组字段从需要返回的字段中剔除，这样的索引仍然无法覆盖。</p>
+<h3 id="操作符如何使用索引">$操作符如何使用索引</h3>
+<p>一些查询完全无法使用索引，也有一些查询能够比其他查询更高效的使用索引。</p>
+<h4 id="低效率的操作符">低效率的操作符</h4>
+<p>有一些查询完全无法使用索引，比如<code>$where</code>查询和检索一个键是否存在的查询<code>$exists</code>。</p>
+<p>通常来说，取反的效率是比较低的。<code>$ne</code>查询可以使用索引，但并不是很有效。因为必须要查看所有的索引条目，而不是<code>$ne</code>指定的条目，不得不扫描索引。</p>
+<p><code>$not</code>有时能够使用索引，但是通常它不知道要如何使用索引。它能够对基本的范围（比如将{&lsquo;key&rsquo;: {&lsquo;$lt&rsquo;: 7}}变成{&lsquo;key&rsquo;: {&lsquo;$gte&rsquo;: 7}}）和正则表达式进行反转。然而，大多数使用<code>$not</code>的查询都会退化为进行全表扫描。</p>
+<p><code>$nin</code>就总是进行全表扫描。</p>
+<h4 id="范围">范围</h4>
+<p>设计复合索引时，应当将会用于精确匹配的字段放在索引前面，将用于范围匹配的的字段放在索引后面。反之，扫描的索引条目数量可能是前一个查询的数倍以上。</p>
+<h4 id="or查询">OR查询</h4>
+<p>MongoDB在一次查询中只能使用一个索引（存疑，新版本尚未可知）。如果在{&lsquo;x&rsquo;: 1}上有一个索引，在{&lsquo;y&rsquo;: 1}上也有一个索引，在{&lsquo;x&rsquo;: 123, &lsquo;y&rsquo;: 456}上进行查询时，MongoDB会使用其中一个索引，而不是两个一起使用。&lsquo;$or&rsquo;是一个例外，&lsquo;$or&rsquo;可以对每个子句都使用索引，因为'$or&rsquo;实际上是执行两次查询然后将结果集合并。通常来说，执行两次查询再将结果集合并的效率不如单次查询高，因此，应尽可能使用'$in&rsquo;而不是'$or&rsquo;</p>
+<p>要注意的是，使用'$or&rsquo;后MongoDB需要检查每次查询的结果集并从中移除重复的文档，在使用'$in&rsquo;查询时无法控制返回文档的顺序。</p>
+<h4 id="索引对象和数组">索引对象和数组</h4>
+<p>MongoDB允许深入文档内部，对嵌套字段和数组建立索引。嵌套对象和数组字段可以与复合索引中的顶级字段一起使用。</p>
+<h5 id="索引嵌套文档">索引嵌套文档</h5>
+<p>对嵌套文档本身建立索引，与对嵌套文档的某个字段建立索引时不同的。对整个文档建立索引，只会提高整个文档的查询速度。</p>
+<h5 id="索引数组">索引数组</h5>
+<p>对数组建立索引，实际上是对数组的每一个元素建立一个索引条目，因此数组索引的代价比单值索引高：对于单次插入、更新或者删除，每一个数组条目可能都需要更新。
+与对象不同，无法将整个数组作为一个实体建立索引：对数组建立索引，实际上是对数组中的每个元素建立索引，而不是对数组本身建立索引。</p>
+<h5 id="多键索引">多键索引</h5>
+<p>对于某个索引的键，如果这个键在某个文档中时一个数组，那么这个索引就会被标记为多键索引。可以从explain()的输出中看到一个索引是否为多键索引：如果使用了多键索引，&lsquo;isMultikey&rsquo;字段的值会是true。索引只要被标记为多键索引，就无法再变成非多键索引了，即使这个字段为数组的所有文档都从集合中删除。要将多键索引回复为非多键索引，唯一的办法就是删除在重建这个索引。</p>
+<p>多键索引可能会比非多键索引慢一些。可能会有多个索引条目指向同一个文档，因此MongoDB在返回结果集时必须要先去除重复的内容。</p>
+<h1 id="使用explain和hint">使用explain()和hint()</h1>
+<p>对于任意查询都可以在最后添加一个explain()调用来查看查询的相关信息。下面是explain()后会出现的字段：</p>
+<ul>
+<li>cursor: BtreeCursor表示本次查询使用了索引，索引名称是age_1_username_1。如果查询要对结果进行逆序便利，或者是使用了多键索引，就可以在这个字段中看到&quot;reverse&quot;和&quot;multi&quot;这样的值。</li>
+<li>isMultiKey: 用于说明本次查询是否使用了多键索引。</li>
+<li>n: 本次查询返回的文档数量。</li>
+<li>nscannedObjects: 这是MongoDB按照索引指针去磁盘上查找实际文档的次数。</li>
+<li>nscanned: 如果有使用索引，那么这个数字就是查找过的索引条目数量。如果本次查询是一次全表扫描，那么这个数字就表示检查过的文档数量。</li>
+<li>scanAndOrder: MongoDB是否在内存中对结果集进行了排序。</li>
+<li>indexOnly: 是否使用覆盖索引。</li>
+<li>nYields: 为了能让写入请求能够顺利执行，本次查询暂停的次数。</li>
+<li>millis: 执行本次查询所耗费的毫秒数。</li>
+<li>indexBounds: 这个字段描述了索引的使用情况，给出了索引的便利范围。</li>
+</ul>
+<p>如果发现MongoDB使用的索引与自己希望它使用的索引不一致，可以使用hint()强制MongoDB使用特定的索引。</p>
+<p>MongoDB的查询优化器与其他数据库稍有不同。如果一个索引能够精确匹配一个查询，那么查询优化器就会使用这个索引。如果有几个索引都适合你的查询，MongoDB会从这些可能的索引子集中为每次查询计划选择一个，这些查询计划是并行执行的，最早返回100个结果的就是胜者，其他的查询计划就会被终止。</p>
+<p>这个查询计划会被缓存，接下来都会使用它，知道几何数据发生了比较大的变动。</p>
+<p>explain()输出信息里的&rsquo;allPlans&rsquo;字段显示了本次查询尝试过的每个查询计划。</p>
+<h1 id="索引类型">索引类型</h1>
+<p>创建索引时可以指定一些选项，使用不同选项建立的索引会有不同的行为。</p>
+<h2 id="唯一索引">唯一索引</h2>
+<p>在已有的集合上创建唯一索引可能会失败，因为集合中可能已经存在重复值了，通常需要先对已有的数据进行处理，找出重复的数据，想办法处理，极少数情况下，可能希望直接删除重复的值，可以在创建索引时这样处理</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">people</span><span class="p">.</span><span class="nx">ensureIndex</span><span class="p">({</span><span class="s1">&#39;usernanme&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;unique&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="s1">&#39;dropDups&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这样如果遇到重复的值，第一个会被保留，之后的重复文档都会被删除。</p>
+<h2 id="稀疏索引">稀疏索引</h2>
+<p>唯一索引会把null看做值，所以无法将多个缺少唯一索引中的键的文档插入到集合中，在有些情况下，你可能希望有一个可能存在也可能不存在的字段，它在存在时是唯一的，可以将unique和sparse选项组合在一起使用。</p>
+<p>使用sparse选项就可以创建稀疏索引，示例如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">createIndex</span><span class="p">({</span><span class="s2">&#34;email&#34;</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&#34;unique&#34;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="s2">&#34;sparse&#34;</span><span class="o">:</span> <span class="kc">true</span><span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="ttl索引">TTL索引</h2>
+<p>在createIndex中指定expireAfterSecs选项就可以创建一个TTL索引，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">foo</span><span class="p">.</span><span class="nx">createIndex</span><span class="p">({</span><span class="s1">&#39;created_at&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;expireAfterSecs&#39;</span><span class="o">:</span> <span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">24</span><span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这样就在created_at字段上建立了一个TTL索引，如果这个created_at字段存在且它的值是日期类型，当服务器时间比文档的updated_at字段的时间晚expireAfterSecs秒时，文档就会被删除。</p>
+<blockquote>
+<p>参考书目：《MongoDB权威指南（第2版）》</p>
+</blockquote>
+
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/mongodb">MongoDB</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

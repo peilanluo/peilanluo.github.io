@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>golang--排序算法Golang实现 - 默默的心路</title>
+    <meta property="og:title" content="golang--排序算法Golang实现 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2020-11-03T23:21:34&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2020-11-03T23:21:34&#43;08:00">
+        
+    <meta name="description" content="golang--排序算法Golang实现">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/golang/sort/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">golang--排序算法Golang实现</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2020年11月3日
+                            23:21
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/golang">golang</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#冒泡排序">冒泡排序</a></li>
+    <li><a href="#选择排序">选择排序</a></li>
+    <li><a href="#插入排序">插入排序</a></li>
+    <li><a href="#快速排序">快速排序</a></li>
+    <li><a href="#归并排序">归并排序</a></li>
+    <li><a href="#堆排序">堆排序</a></li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <h1 id="冒泡排序">冒泡排序</h1>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 简单冒泡排序，效率极差
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">SimpleBubbleSort</span><span class="p">(</span><span class="nx">arr</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">[]</span><span class="kt">int</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">arr</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">j</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">arr</span><span class="p">);</span> <span class="nx">j</span> <span class="o">++</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">&gt;</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">{</span>
+                <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span> 
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">arr</span>
+<span class="p">}</span>
+
+<span class="c1">// 一般冒泡排序
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">NormalBubbleSort</span><span class="p">(</span><span class="nx">arr</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">[]</span><span class="kt">int</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">arr</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">j</span> <span class="p">&gt;</span> <span class="nx">i</span><span class="p">;</span> <span class="nx">j</span><span class="o">--</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">{</span>
+                <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 优化冒泡排序
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">OptimizingBubbleSort</span><span class="p">(</span><span class="nx">arr</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">[]</span><span class="kt">int</span> <span class="p">{</span>
+    <span class="nx">status</span> <span class="o">:=</span> <span class="kc">true</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">arr</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">status</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="nx">status</span> <span class="p">=</span> <span class="kc">false</span>
+        <span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&gt;=</span> <span class="nx">i</span><span class="p">;</span> <span class="nx">j</span><span class="o">--</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">{</span>
+                <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span>
+                <span class="nx">status</span> <span class="p">=</span> <span class="kc">true</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">arr</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="选择排序">选择排序</h1>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 选择排序
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">SelectionSort</span><span class="p">(</span><span class="nx">arr</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">[]</span><span class="kt">int</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">arr</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="nx">min</span> <span class="o">:=</span> <span class="nx">i</span>
+        <span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">j</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">arr</span><span class="p">);</span> <span class="nx">j</span><span class="o">++</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">{</span>
+                <span class="nx">min</span> <span class="p">=</span> <span class="nx">j</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="nx">min</span> <span class="o">!=</span> <span class="nx">i</span> <span class="p">{</span>
+            <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">min</span><span class="p">]</span> <span class="p">=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">min</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="插入排序">插入排序</h1>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 插入排序
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">InsertionSort</span><span class="p">(</span><span class="nx">arr</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">[]</span><span class="kt">int</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">arr</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="nx">i</span><span class="p">;</span> <span class="nx">j</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span> <span class="nx">j</span><span class="o">--</span> <span class="p">{</span>
+            <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">arr</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="快速排序">快速排序</h1>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// QuickSort 快速排序
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">QuickSort</span><span class="p">(</span><span class="nx">arr</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">end</span> <span class="kt">int</span><span class="p">)</span> <span class="p">[]</span><span class="kt">int</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">start</span> <span class="p">&lt;</span> <span class="nx">end</span> <span class="p">{</span>
+        <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="o">:=</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">end</span>
+        <span class="nx">key</span> <span class="o">:=</span> <span class="nx">arr</span><span class="p">[(</span><span class="nx">start</span> <span class="o">+</span> <span class="nx">end</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">for</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">j</span> <span class="p">{</span>
+            <span class="c1">// 如果左侧数据比中间数小，则跳过
+</span><span class="c1"></span>            <span class="k">for</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">key</span> <span class="p">{</span>
+                <span class="nx">i</span><span class="o">++</span>
+            <span class="p">}</span>
+
+            <span class="c1">// 如果右侧数据比中间数大，则跳过
+</span><span class="c1"></span>            <span class="k">for</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">&gt;</span> <span class="nx">key</span> <span class="p">{</span>
+                <span class="nx">j</span><span class="o">--</span>
+            <span class="p">}</span>
+
+            <span class="c1">// 如果左边的key仍小于右边的key，说明左边的数比中间大，而右边数比左边小，需要交换
+</span><span class="c1"></span>            <span class="k">if</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">j</span> <span class="p">{</span>
+                <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+                <span class="nx">i</span><span class="o">++</span>
+                <span class="nx">j</span><span class="o">--</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="nx">start</span> <span class="p">&lt;</span> <span class="nx">j</span> <span class="p">{</span>
+            <span class="nf">QuickSort</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">j</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="nx">end</span> <span class="p">&gt;</span> <span class="nx">i</span> <span class="p">{</span>
+            <span class="nf">QuickSort</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">end</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">arr</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="归并排序">归并排序</h1>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// MergeSort 归并排序
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">MergeSort</span><span class="p">(</span><span class="nx">arr</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">end</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">start</span> <span class="o">&gt;=</span> <span class="nx">end</span> <span class="p">{</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="nx">mid</span> <span class="o">:=</span> <span class="p">(</span><span class="nx">start</span> <span class="o">+</span> <span class="nx">end</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+	<span class="nf">MergeSort</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">mid</span><span class="p">)</span>
+	<span class="nf">MergeSort</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nx">end</span><span class="p">)</span>
+	<span class="nf">merge</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">mid</span><span class="p">,</span> <span class="nx">end</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// merge ...
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">merge</span><span class="p">(</span><span class="nx">arr</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">mid</span><span class="p">,</span> <span class="nx">end</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">tmp</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{}</span>
+	<span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span> <span class="o">:=</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">mid</span><span class="o">+</span><span class="mi">1</span>
+	<span class="k">for</span> <span class="nx">s1</span> <span class="o">&lt;=</span> <span class="nx">mid</span> <span class="o">&amp;&amp;</span> <span class="nx">s2</span> <span class="o">&lt;=</span> <span class="nx">end</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">s1</span><span class="p">]</span> <span class="p">&gt;</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">s2</span><span class="p">]</span> <span class="p">{</span>
+			<span class="nx">tmp</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">tmp</span><span class="p">,</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">s2</span><span class="p">])</span>
+			<span class="nx">s2</span><span class="o">++</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="nx">tmp</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">tmp</span><span class="p">,</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">s1</span><span class="p">])</span>
+			<span class="nx">s1</span><span class="o">++</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="nx">s1</span> <span class="o">&lt;=</span> <span class="nx">mid</span> <span class="p">{</span>
+		<span class="nx">tmp</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">tmp</span><span class="p">,</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">s1</span><span class="p">:</span><span class="nx">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">...</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="nx">s2</span> <span class="o">&lt;=</span> <span class="nx">mid</span> <span class="p">{</span>
+		<span class="nx">tmp</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">tmp</span><span class="p">,</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">s2</span><span class="p">:</span><span class="nx">end</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">...</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">val</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">tmp</span> <span class="p">{</span>
+		<span class="nx">arr</span><span class="p">[</span><span class="nx">start</span><span class="o">+</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nx">val</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="堆排序">堆排序</h1>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">HeapSort</span><span class="p">(</span><span class="nx">arr</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">max</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">arr</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">arr</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span> <span class="p">{</span>
+        <span class="nf">sink</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">max</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">max</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span> <span class="p">{</span>
+        <span class="nf">swap</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+        <span class="nf">sink</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// sink 构建大顶堆
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">sink</span><span class="p">(</span><span class="nx">arr</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">max</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="nx">j</span> <span class="o">:=</span> <span class="mi">2</span><span class="o">*</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="nx">j</span> <span class="o">&gt;=</span> <span class="nx">max</span> <span class="p">{</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="nx">j</span><span class="o">+</span><span class="mi">1</span> <span class="p">&lt;</span> <span class="nx">max</span> <span class="o">&amp;&amp;</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="p">&gt;</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">{</span>
+            <span class="nx">j</span> <span class="o">++</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">{</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+
+        <span class="nf">swap</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">)</span>
+        <span class="nx">i</span> <span class="p">=</span> <span class="nx">j</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">swap</span><span class="p">(</span><span class="nx">arr</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/golang">golang</a></li>
+                                
+                                <li><a href="/tags/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95">排序算法</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

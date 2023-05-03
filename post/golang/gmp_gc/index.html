@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>golang--GMP模型和垃圾回收机制 - 默默的心路</title>
+    <meta property="og:title" content="golang--GMP模型和垃圾回收机制 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2022-01-31T18:12:53&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2022-01-31T18:12:53&#43;08:00">
+        
+    <meta name="description" content="golang--GMP模型和垃圾回收机制">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/golang/gmp_gc/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">golang--GMP模型和垃圾回收机制</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2022年1月31日
+                            18:12
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/golang">golang</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#golang的gmp模型">golang的GMP模型</a>
+      <ul>
+        <li><a href="#g">G</a></li>
+        <li><a href="#m">M</a></li>
+        <li><a href="#p">P</a>
+          <ul>
+            <li><a href="#p的引入背景">P的引入背景</a></li>
+            <li><a href="#p带来的改变">P带来的改变</a></li>
+            <li><a href="#为什么要使用p">为什么要使用P</a></li>
+          </ul>
+        </li>
+        <li><a href="#gmp模型的一些机制">GMP模型的一些机制</a>
+          <ul>
+            <li></li>
+          </ul>
+        </li>
+        <li><a href="#调度过程">调度过程</a>
+          <ul>
+            <li><a href="#特殊的m0和g0">特殊的M0和G0</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#go的垃圾回收机制">Go的垃圾回收机制</a>
+      <ul>
+        <li><a href="#程序的垃圾是怎么产生的">程序的垃圾是怎么产生的</a></li>
+        <li><a href="#go的垃圾回收机制-1">go的垃圾回收机制</a>
+          <ul>
+            <li><a href="#go-13-标记清除法">Go 1.3 标记清除法</a></li>
+            <li><a href="#go-15-三色标记法">Go 1.5 三色标记法</a></li>
+            <li><a href="#go-18-三色标记法混合写屏障">Go 1.8 三色标记法+混合写屏障</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <h1 id="golang的gmp模型">golang的GMP模型</h1>
+<h2 id="g">G</h2>
+<p>G是<code>Goroutine</code>的缩写。Goroutine是一个由Go运行时管理的轻量级线程，一般称之为协程。协程是用户态的，是由软件本身进行调度和运行的。</p>
+<h2 id="m">M</h2>
+<p>M就是系统线程，M是与P严格绑定的，M会不断的轮训寻找可运行的G来执行相应的任务。</p>
+<h2 id="p">P</h2>
+<p>P（处理器，Processer），这里的P是一个抽象的概念，不是物理上的CPU。一般P的数量就是处理器的核数。</p>
+<p>P决定了同时执行的任务的数量，<code>GOMAXPROCS</code>限制系统线程执行用户层面的任务的数量。</p>
+<h3 id="p的引入背景">P的引入背景</h3>
+<p>在Go 1.1版本之前，调度模型中是没有P的，调度器会不断的运行调度流程，一个<code>Goroutine</code>完成之后会立刻寻找另一个。早期GM模型的缺陷在于：</p>
+<ul>
+<li>使用单一的全局锁来管理所有的Goroutine，由此造成锁竞争严重，影响性能。</li>
+<li>Goroutine和M之间频繁的交换会导致延迟增加和额外的开销。</li>
+<li>每个M都需要做内存缓存，导致资源消耗过大，数据的局部性差。</li>
+<li>在存在syscalls（系统、网络调用时，G会停滞，M会被重新放到内核中，等待新一轮唤醒）的情况下，线程经常被阻塞和解阻塞，增加了许多性能开销。</li>
+</ul>
+<h3 id="p带来的改变">P带来的改变</h3>
+<p>每个P都有自己的本地队列，大幅减轻了对全局队列的直接依赖，从而使锁竞争减少。</p>
+<p>在每个P相对均衡的分配之余，还实现了Work Stealing算法，如果P的本地队列为空，则会从全局队列或其他P的本地队列中窃取可运行的G来运行，提高了资源利用率。</p>
+<h3 id="为什么要使用p">为什么要使用P</h3>
+<p>M也可以实现Work Stealing算法，为什么还要引入P呢，结合M的定位来看，有以下问题：</p>
+<ul>
+<li>一般来讲，M的数量会远多于P，如果存在系统阻塞调用，阻塞了M使得M不够用的话，M会不断增加，进而会造成本地队列的数量也会随之增加，因此本地队列的管理会不断的变得复杂，使得Work Stealing的性能大幅下降。</li>
+<li>M被系统调用阻塞后，我们期望的是能够把他既有而未执行的任务分配给其他继续运行的，而不是一阻塞就停止。</li>
+</ul>
+<h2 id="gmp模型的一些机制">GMP模型的一些机制</h2>
+<h4 id="work-stealing机制">work stealing机制</h4>
+<p>当P的本地队列中无可运行的G时，会尝试从其他线程的P偷取G，而不是销毁线程。</p>
+<p>虽然在新的调度器中依然有全局队列，但功能已经被弱化了，当M从其他P偷不到G时，它可以从全局队列获取G。</p>
+<h4 id="hand-off机制">hand off机制</h4>
+<p>当M因为G进行系统调用而阻塞时，M释放绑定的P，把P转移给其他空闲的M执行。</p>
+<p>在Go中，执行的是<code>抢占模式</code>，一个Goroutine最多占用CPU 10ms，防止其他goroutine被堵死</p>
+<h2 id="调度过程">调度过程</h2>
+<p>首先可以通过<code>go func()</code>来创建一个G。</p>
+<p>有两个存储G的队列，一个是P的本地队列，一个是全局G队列。新创建的G会保存在P的本地队列中，如果P的本地队列已满就会保存在全局队列中。</p>
+<p>G只能运行在M中，一个M必须有一个P。M会从P的本地队列中弹出一个可执行状态的G来执行，如果P的本地队列为空，就会从其他的MP组合偷取一个可执行的G来执行。</p>
+<p>当M执行某一个G时如果发生了syscall或者其余阻塞操作，M会阻塞，如果当前有一些G在执行，runtime会把这个M从P中摘除，然后再创建一个新的M来服务于这个P。</p>
+<p>当M系统调用结束时，这个G会尝试获取一个空闲的P执行。如果获取不到P，那么这个线程M会变成休眠状态，将入到空闲线程中，然后这个G会被放入全局队列中。</p>
+<h3 id="特殊的m0和g0">特殊的M0和G0</h3>
+<p><code>M0</code>是启动程序后编号为0的主线程，这个M对应的实例会在全局变量runtime.m0中，不需要在heap上分配，M0负责执行初始化操作和启动第一个G，在之后M0就和其他M一样了。</p>
+<p><code>G0</code>是每次启动一个M都会第一个创建的Goutine，G0仅用于调度G，G0不指向任何可执行函数，每个M都会有一个自己的G0。在调度或系统调用时会使用G0的栈空间，全局变量G0是M0的G0.</p>
+<h1 id="go的垃圾回收机制">Go的垃圾回收机制</h1>
+<h2 id="程序的垃圾是怎么产生的">程序的垃圾是怎么产生的</h2>
+<p>程序在内存上被分为堆区、栈区、全局数据区、代码段、数据区五个部分。在Go中栈上的垃圾由编译器负责管理回收，而堆上的内存由编译器和垃圾收集器负责管理回收。</p>
+<p>垃圾是指程序由堆栈申请的内存空间，随着程序的运行已经不再使用这些内存空间，这时如果不释放他们就会造成垃圾也就是内存泄露。</p>
+<h2 id="go的垃圾回收机制-1">go的垃圾回收机制</h2>
+<p>go的垃圾回收机制经历了几个阶段的修改，最终形成了现在的样子，具体来说包括下面几个阶段。</p>
+<h3 id="go-13-标记清除法">Go 1.3 标记清除法</h3>
+<p>首先会暂停程序业务逻辑的运行（STW: stop the world），然后从main函数开始找到不可达的内存占用和可达的内存占用。然后，找到可达内存占用并标记，标记结束清除未标记的内存占用，最后结束STW，让程序继续运行。</p>
+<h3 id="go-15-三色标记法">Go 1.5 三色标记法</h3>
+<p>三色标记法会把程序中的对象分为白色、黑色和灰色三类。</p>
+<ul>
+<li>白色：未搜索的对象，在回收周期开始时所有对象都是白色的，在回收周期结束后仍然是白色的对象会被GC回收。</li>
+<li>灰色：正在搜索的对象，对象上还有一个或多个引用未被扫描。</li>
+<li>黑色：已搜索完的对象。</li>
+</ul>
+<p>具体的实现方法是：</p>
+<ol>
+<li>
+<p>进入GC阶段后，所有的对象都是白色对象。</p>
+</li>
+<li>
+<p>从root对象出发，扫描所有可达对象并标记为灰色，放入待处理队列。</p>
+</li>
+<li>
+<p>从队列中取出一个灰色对象并标记为黑色，将其引用对象标记为灰色放入队列。</p>
+</li>
+<li>
+<p>重复上一步骤直到灰色对象队列为空。</p>
+</li>
+<li>
+<p>清理所有的白色对象。</p>
+</li>
+</ol>
+<h3 id="go-18-三色标记法混合写屏障">Go 1.8 三色标记法+混合写屏障</h3>
+<p>三色标记法的引入使得程序不需要停止就能进行GC，但是也存在一个问题，在并发条件下，如果在标记过程中，一个即将被回收的白色对象被一个黑色对象引用了，那么就会导致后续的访问出错（这种没有指向合法地址的指针一般被称为野指针）。</p>
+<p>为了解决上面的问题，引入了<code>读写屏障技术</code>。</p>
+<h4 id="读写屏障技术">读写屏障技术</h4>
+<blockquote>
+<p>屏障技术是指给代码操作内存的顺序添加一些限制，即在内存屏障前执行的动作必须先于在内存屏障后执行的动作。</p>
+</blockquote>
+<p>使用屏障技术可以使用户程序和三色标记法并发执行，只需要达到下面两个条件之一：</p>
+<ul>
+<li>强三色不变性：黑色对象不能引用白色对象。</li>
+<li>弱三色不变性：黑色对象可以引用白色对象，但必须包含至少一条由灰色对象经过白色对象的可达路径。</li>
+</ul>
+<p>屏障机制分为插入屏障和删除屏障，插入屏障实现的是强三色不变性，删除屏障则实现了弱三色不变性（屏障只对堆上对象启用，因为栈的空间容量小且要求的响应速度高所以栈上的对象会在GC结束后启用STW重新扫描）。</p>
+<h4 id="dijkstra插入写屏障">Dijkstra插入写屏障</h4>
+<p>执行插入写屏障的过程如下：</p>
+<ul>
+<li>垃圾回收之前将所有对象标记为白色。</li>
+<li>从GC Root开始遍历，将所有可达对象标记为灰色。</li>
+<li>遍历灰色对象列表，将灰色对象引用的白色对象标记为灰色，并将其标记为黑色。</li>
+<li>在三色标记过程中，用户程序令一个堆区对象a指向一个白色对象b，会触发插入写屏障，将b标记为灰色。</li>
+<li>由于栈区对象没有启用插入写屏障，因此栈上可能存在白色对象被引用的情况，因为在回收白色对象前在STW保护下重新扫描一次栈空间。</li>
+<li>在STW保护下对栈空间一次性进行三色标记，直到灰色对象队列为空。</li>
+<li>最后将栈空间和堆空间的白色垃圾对象回收。</li>
+</ul>
+<h4 id="yuasa删除写屏障">Yuasa删除写屏障</h4>
+<p>如果用户程序令灰色对象a删除了对白色对象b的引用，那么会先将对象b标记为灰色，然后在循环执行三色标记流程。</p>
+<h4 id="混合写屏障">混合写屏障</h4>
+<p>上述两种屏障配合虽然可以解决问题，但是仍然有以下的缺陷：</p>
+<ul>
+<li>Dijkstra插入写屏障在每轮标记结束后都需要STW重新扫描栈上的对象。</li>
+<li>Yuasa删除写屏障的回收精度较低。</li>
+</ul>
+<p>由此又引出了混合写屏障，混合写屏障的逻辑如下：</p>
+<ul>
+<li>在GC开始时将栈上的所有对象标记为黑色，无须STW。</li>
+<li>GC期间在栈上创建的新对象均标记为黑色。</li>
+<li>将被删除的下游对象标记为灰色。</li>
+<li>将被添加的下游对象标记为灰色。</li>
+</ul>
+<p>具体的实现场景是：</p>
+<ul>
+<li>当某个对象从堆对象的下游变成栈对象的下游，这种情况下会标记该对象为灰色，从而使该对象不会被错误的回收。</li>
+<li>当某个对象从一个栈对象的下游变成另一个对象的下游时，这种情况下由于对象全部在栈对象的可达对象中，所以不会对这些对象着色。</li>
+<li>当某个对象从一个堆对象的下游变成另一个堆对象的下游，这种情况下会将其标记为灰色。</li>
+<li>当某个对象从一个栈对象的下游变成堆对象的下游，其替代的下游堆对象会被着色为灰色。</li>
+</ul>
+<blockquote>
+<p>参考资料</p>
+<p><a href="https://zhuanlan.zhihu.com/p/261590663">https://zhuanlan.zhihu.com/p/261590663</a></p>
+<p><a href="https://blog.csdn.net/qq_44205272/article/details/111565957">https://blog.csdn.net/qq_44205272/article/details/111565957</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/390926887">https://zhuanlan.zhihu.com/p/390926887</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/297177002">https://zhuanlan.zhihu.com/p/297177002</a></p>
+</blockquote>
+
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/golang">golang</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

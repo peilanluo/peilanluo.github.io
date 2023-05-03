@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Prometheus on 默默的心路</title>
+    <link>https://www.ceevee.cn/categories/prometheus/</link>
+    <description>Recent content in Prometheus on 默默的心路</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 31 Jul 2022 15:36:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://www.ceevee.cn/categories/prometheus/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Prometheus--PromQL</title>
+      <link>https://www.ceevee.cn/post/prometheus/promql/</link>
+      <pubDate>Sun, 31 Jul 2022 15:36:20 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/prometheus/promql/</guid>
+      <description>1. PromQL聚合操作 PromQL的聚合操作仅适用于单个即时向量，其基本语法为： &amp;lt;aggr-op&amp;gt;([parameter,] &amp;lt;vector expression&amp;gt;) [without|by (&amp;lt;label list&amp;gt;)] 其中： aggr-op：为聚合操作符，包括如下表 名</description>
+    </item>
+    
+    <item>
+      <title>Prometheus--Prometheus的数据类型和PromQL简介</title>
+      <link>https://www.ceevee.cn/post/prometheus/prometheus_basic/</link>
+      <pubDate>Sun, 19 Jun 2022 11:18:20 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/prometheus/prometheus_basic/</guid>
+      <description>Prometheus的数据类型 Prometheus把所有数据存储为时间序列（time series）数据，每个时间序列数据都具有带时间戳的数据</description>
+    </item>
+    
+  </channel>
+</rss>

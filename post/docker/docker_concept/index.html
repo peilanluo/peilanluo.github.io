@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Docker--一些基础知识 - 默默的心路</title>
+    <meta property="og:title" content="Docker--一些基础知识 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2021-03-28T18:49:53&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2021-03-28T18:49:53&#43;08:00">
+        
+    <meta name="description" content="Docker--一些基础知识">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/docker/docker_concept/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">Docker--一些基础知识</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2021年3月28日
+                            18:49
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/docker">docker</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#搭建本地私有仓库">搭建本地私有仓库</a></li>
+    <li><a href="#端口映射和容器互联">端口映射和容器互联</a>
+      <ul>
+        <li><a href="#端口映射实现容器访问">端口映射实现容器访问</a></li>
+        <li><a href="#互联机制">互联机制</a>
+          <ul>
+            <li><a href="#自定义容器名称">自定义容器名称</a></li>
+            <li><a href="#容器互联">容器互联</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <h1 id="搭建本地私有仓库">搭建本地私有仓库</h1>
+<p>安装Docker后，可以通过官方提供的registry镜像来搭建本地私有仓库：</p>
+<pre><code>docker run -d -p 5000:5000 registry:2
+
+// 指定镜像文件存放在本地的指定路径
+docker run -d -p 5000:5000 -v /Users/qiao/docker/registry:/var/list/registry registry:2
+</code></pre><p>启动容器后可以在docker上把其他镜像推送到仓库中</p>
+<pre><code>// 先把一个现存的镜像加上tag
+docker tag redis:latest 127.0.0.1:5000/test
+// 执行上传
+docker push 127.0.0.1:5000/test
+</code></pre><p>在浏览器访问<code>http://localhost:5000/v2/_catalog</code>得到以下结果，说明上传成功</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="nt">&#34;repositories&#34;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&#34;test&#34;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>有关<code>registry</code>的命令有一下几种：</p>
+<ul>
+<li>列出所有存储库：<code>GET http://localhost:5000/v2/_catalog</code></li>
+<li>列出镜像所有tag <code>http://localhost:5000/v2/test/tags/list</code></li>
+<li>从私有镜像中心拉取镜像<code>docker pull 127.0.0.1:5000/test:latest</code></li>
+</ul>
+<h1 id="端口映射和容器互联">端口映射和容器互联</h1>
+<p>docker提供两种方式来满足服务访问的需求，一是允许映射容器内应用的服务端口到本地宿主主机；二是互联机制实现多个容器间通过容器名来快速访问。</p>
+<h2 id="端口映射实现容器访问">端口映射实现容器访问</h2>
+<p>在启动容器时，如果不指定对应参数，在容器外部无法通过网络来访问容器内的网络应用和服务，解决这个问题可以通过<code>-p</code>或<code>-P</code>参数来指定端口映射。当使用<code>-P</code>(大写)标记时，Docker会随机映射一个49000~49900的端口到内部容器开放的网络端口。</p>
+<pre><code>// 使用-P随机映射端口
+docker run -d -P nginx:latest
+// 指定映射端口
+docker run -d -p 5000:5000 registry:2
+// 绑定任意端口到容器的5000端口
+docker run -d -p 127.0.0.1::5000 registry:2
+// 查看映射端口配置
+docker port dreamy_taussig 5000
+</code></pre><h2 id="互联机制">互联机制</h2>
+<p>容器间的互联可以使用容器的名称快速访问到源容器，而不用指定具体地 IP地址。</p>
+<h3 id="自定义容器名称">自定义容器名称</h3>
+<p>创建容器时系统会默认分配一个名字，但更推荐自己命名。在docker中可以使用<code>--name</code>来指定容器名称。</p>
+<pre><code>docker run -d -P --name myRegistry registry:2
+</code></pre><p>如此创建的容器就会被命名为<code>myRegistry</code>，另外使用<code>docker inspect 容器id</code>可以查看容器的名称。</p>
+<h3 id="容器互联">容器互联</h3>
+<p>在docker中使用<code>--link</code>参数可以让容器之间安全的进行交互，<code>--link</code>的参数格式为：<code>--link name:alias</code>，其中<code>name</code>是要链接的容器的名称，<code>alias</code>是别名。</p>
+<p>例如我现在要安装一个lnmp的环境，可以执行以下操作过程：</p>
+<pre><code>// 安装Mysql
+docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql:latest
+// 安装php
+docker run --name php7 -p 9000:9000 -v /Users/xxx/www:/usr/local/nginx/html --link mysql:mysql php:7.3
+// 安装nginx
+docker run --name nginx -p 80:80 -v /Users/xxx/www:/usr/local/nginx/html --link php7:php7 nginx:latest
+</code></pre><blockquote>
+<p>参考书目：《Docker技术入门与实践》杨保华 戴王剑 曹亚仑</p>
+</blockquote>
+
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/golang">golang</a></li>
+                                
+                                <li><a href="/tags/docker">docker</a></li>
+                                
+                                <li><a href="/tags/%E6%A6%82%E5%BF%B5">概念</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

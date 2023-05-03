@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>mysql—四大特性（ACID）、事务的隔离级别和死锁 - 默默的心路</title>
+    <meta property="og:title" content="mysql—四大特性（ACID）、事务的隔离级别和死锁 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2022-05-31T15:31:45&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2022-05-31T15:31:45&#43;08:00">
+        
+    <meta name="description" content="mysql—四大特性（ACID）、事务的隔离级别和死锁">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/mysql/mysql_acid/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">mysql—四大特性（ACID）、事务的隔离级别和死锁</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2022年5月31日
+                            15:31
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/mysql">mysql</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-事务的特性acid">1 事务的特性（ACID）</a></li>
+        <li><a href="#2-事务的并发问题">2 事务的并发问题</a></li>
+        <li><a href="#3-事务的隔离界别">3 事务的隔离界别</a></li>
+        <li><a href="#4-死锁">4 死锁</a>
+          <ul>
+            <li><a href="#41-处理死锁的方式">4.1 处理死锁的方式</a></li>
+            <li><a href="#42-间隙锁">4.2 间隙锁</a></li>
+            <li><a href="#43-避免死锁的方式">4.3 避免死锁的方式</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <blockquote>
+<p>参考文献：https://blog.csdn.net/zDavid_2018/article/details/89929862
+《高性能MySQL（第3版）》</p>
+</blockquote>
+<p>事务就是一组原子性的SQL查询，或者说一个独立的工作单元。如果能成功的应用该组的全部语句，那么就执行，如果有任何一条语句因崩溃或其他原因无法执行，那么所有语句都不会执行。</p>
+<h2 id="1-事务的特性acid">1 事务的特性（ACID）</h2>
+<p>事务具有四个特征：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）和持续性（Durability）。这四个特性简称为ACID特性，具体的含义如下：</p>
+<ul>
+<li>原子性：一个事务时一个不可分割的工作单位，事务中包括的操作，要么都做，要么都不做。</li>
+<li>一致性：事务必须是使数据库从一个一致性状态变到另一个一致性状态，一致性与原子性是密切相关的。</li>
+<li>隔离性：一个事务执行不能被其他事务干扰。即一个事务内部的操作及使用的数据对并发的其他数据是隔离的，并发执行的各个事务之间不能互相干扰。</li>
+<li>持久性：一个事务一旦提交，它对数据库的改变就是永久性的，接下来的其他操作或故障不应当对其执行结果有任何影响。</li>
+</ul>
+<h2 id="2-事务的并发问题">2 事务的并发问题</h2>
+<p><code>脏读</code>是事务A读取了事务B更新的数据，然后事务B回滚操作，那么A读取到的数据就是脏数据。</p>
+<p><code>不可重复读</code>是指事务A多次读取同一数据，事务B在事务A多次读取的过程中，对数据做了更新并提交，导致事务A多次读取统一数据不一致。</p>
+<p><code>虚读</code>（幻读）是指当事务不是独立执行时发生的一种现象，例如第一个事务对一个表中的数据进行了修改，这种修改涉及到表中的全部数据行，同时，第二个事务也修改这个表中的数据，这种修改时向表中插入一条数据，以后就会发生操作第一个事务的用户发现表中还有没有修改的数据行，就好象发生了幻觉一样。</p>
+<h2 id="3-事务的隔离界别">3 事务的隔离界别</h2>
+<p>数据库共定义了四种隔离级别，包括：</p>
+<ul>
+<li>read uncommitted（读取未提交内容）：三种并发问题均无法保证。</li>
+<li>read committed（读取已提交内容）：可避免脏读情况发生。大部分数据库的隔离级别是读已提交（MySQL不是）</li>
+<li>repeatable read（可重复读）：可避免脏读、不可重复读情况的发生。可重复度是MySQL的默认事务隔离级别。</li>
+<li>serializable（可串行化）：可避免脏读、不可重复读、虚读情况的发生。</li>
+</ul>
+<p>如何查看MySQL中的事务隔离级别：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">select</span> <span class="o">@@</span><span class="k">global</span><span class="p">.</span><span class="n">tx_isolation</span> <span class="o">#</span> <span class="err">查看系统隔离级别</span>
+<span class="k">select</span> <span class="o">@@</span><span class="n">tx_isolation</span> <span class="o">#</span> <span class="err">查看会话隔离级别（</span><span class="mi">5</span><span class="p">.</span><span class="mi">0</span><span class="err">以上版本）</span>
+<span class="k">select</span> <span class="o">@@</span><span class="n">transaction_isolation</span> <span class="o">#</span> <span class="err">查看会话隔离级别（</span><span class="mi">8</span><span class="p">.</span><span class="mi">0</span><span class="err">以上版本）</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如何修改MySQL中的事务隔离级别</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">set</span> <span class="k">session</span> <span class="k">transaction</span> <span class="k">isolation</span> <span class="k">level</span> <span class="k">read</span> <span class="k">committed</span><span class="p">;</span>
+<span class="k">set</span> <span class="k">session</span> <span class="k">transaction</span> <span class="k">isolation</span> <span class="k">level</span> <span class="k">repeatable</span> <span class="k">read</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="4-死锁">4 死锁</h2>
+<p>死锁是指两个或者多个事务在同一资源上相互占用，并请求锁定对方占用的资源，从而导致恶性循环的现象。当多个事务试图以不同的顺序锁定资源时，就可能会产生死锁。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">START</span> <span class="k">TRANSACTION</span><span class="p">;</span>
+<span class="k">UPDATE</span> <span class="n">StockPrice</span> <span class="k">SET</span> <span class="k">close</span><span class="o">=</span><span class="mi">45</span><span class="p">.</span><span class="mi">50</span> <span class="k">WHERE</span> <span class="n">stock_id</span><span class="o">=</span><span class="mi">4</span> <span class="k">and</span> <span class="nb">date</span><span class="o">=</span><span class="s1">&#39;2002-05-01&#39;</span>
+<span class="k">UPDATE</span> <span class="n">StockPrice</span> <span class="k">SET</span> <span class="k">close</span><span class="o">=</span><span class="mi">19</span><span class="p">.</span><span class="mi">80</span> <span class="k">WHERE</span> <span class="n">stoci_id</span><span class="o">=</span><span class="mi">3</span> <span class="k">and</span> <span class="nb">date</span><span class="o">=</span><span class="s1">&#39;2002-05-02&#39;</span>
+<span class="k">COMMIT</span>
+
+<span class="k">START</span> <span class="k">TRANSACTION</span><span class="p">;</span>
+<span class="k">UPDATE</span> <span class="n">StockPrice</span> <span class="k">SET</span> <span class="n">high</span><span class="o">=</span><span class="mi">20</span><span class="p">.</span><span class="mi">12</span> <span class="k">WHERE</span> <span class="n">stock_id</span><span class="o">=</span><span class="mi">3</span> <span class="k">and</span> <span class="nb">date</span><span class="o">=</span><span class="s1">&#39;2002-05-02&#39;</span>
+<span class="k">UPDATE</span> <span class="n">StockPrice</span> <span class="k">SET</span> <span class="n">high</span><span class="o">=</span><span class="mi">47</span><span class="p">.</span><span class="mi">20</span> <span class="k">WHERE</span> <span class="n">stoci_id</span><span class="o">=</span><span class="mi">4</span> <span class="k">and</span> <span class="nb">date</span><span class="o">=</span><span class="s1">&#39;2002-05-01&#39;</span>
+<span class="k">COMMIT</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果凑巧上面的两个事务都执行了第一个UPDATE语句，更新了一行数据，同时也锁定了该行数据，接着每个事务都尝试去执行第二条UPDATE语句，却发现该行已经被对方锁定，然后两个事务都在等待对方释放锁，同时又持有对方需要的锁，则陷入死循环。</p>
+<p>为了解决这种问题，数据库系统实现了各种死锁检测和死锁超时机制。比如InnoDB处理死锁的方式是，将持有最少行级排它锁的事务进行回滚。</p>
+<p>这里还需要注意的是，行锁在InnoDB中是基于<code>索引</code>实现的，所以一旦某个加锁操作没有使用索引，那么该锁就会退化为<code>表锁</code>。</p>
+<p>死锁发生后，只有赋分或者完全回滚其中的一个事务，才能打破死锁。对于事务型的系统，这是无法避免的，所以应用程序在设计时必须考虑如何处理死锁，大部分情况下只需要重新执行因死锁回滚的事务即可。</p>
+<h3 id="41-处理死锁的方式">4.1 处理死锁的方式</h3>
+<p>MySQL有两种处理死锁的方式，一种是等待超时一种是死锁检测：</p>
+<ul>
+<li>等待超时：由<code>innodb_lock_wait_timeout=50s</code>控制</li>
+<li>死锁检测：主动回滚一条事务（将持有最少行级排它锁的事务进行回滚），让其他事务继续执行，通过<code>innodb_deadlock_detect=on</code>开启。</li>
+</ul>
+<h3 id="42-间隙锁">4.2 间隙锁</h3>
+<p>间隙锁（Gap Lock）是指锁加在不存在的空闲空间，可以是两个索引记录之间，也可能是第一个索引记录之前或最后一个索引之后的空间。</p>
+<p>当我们使用<code>范围条件</code>而不是相等条件索引数据，并请求共享或排它锁时，InnoDB会给符合条件的已有数据记录的索引加锁，对于键值在条件范围内但不存在的记录，叫做“间隙（Gap）”。在<code>可重复读</code>级别下（其作用主要是为了避免可重复度级别下幻读的问题），InnoDB也会对这个间隙加锁，这种锁机制就叫做<code>临键锁</code>（Next-Key锁），临键锁只与非唯一索引列有关，在唯一索引列上不存在临键锁。举个例子：</p>
+<p>首先创建一个table：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">student</span><span class="o">`</span> <span class="p">(</span>
+    <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+    <span class="o">`</span><span class="n">age</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+    <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">),</span>
+    <span class="k">KEY</span> <span class="o">`</span><span class="n">age</span><span class="o">`</span> <span class="p">(</span><span class="o">`</span><span class="n">age</span><span class="o">`</span><span class="p">)</span>
+<span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="k">DEFAULT</span> <span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span>
+
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">student</span> <span class="k">values</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>然后执行下面两个事务：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="n">M1</span><span class="err">：</span><span class="k">BEGIN</span><span class="p">;</span>
+<span class="n">M1</span><span class="err">：</span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">student</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">AND</span> <span class="n">id</span> <span class="o">&lt;</span><span class="mi">5</span> <span class="k">FOR</span> <span class="k">UPDATE</span><span class="p">;</span>
+<span class="n">M2</span><span class="err">：</span><span class="k">BEGIN</span><span class="p">;</span>
+<span class="n">M2</span><span class="err">：</span><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">student</span> <span class="k">values</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">M2</span><span class="err">：</span><span class="k">COMMIT</span><span class="p">;</span>
+<span class="n">M1</span><span class="err">：</span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">student</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">AND</span> <span class="n">id</span> <span class="o">&lt;</span><span class="mi">5</span> <span class="k">FOR</span> <span class="k">UPDATE</span><span class="p">;</span>
+<span class="n">M1</span><span class="err">：</span><span class="k">COMMIT</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在M1第一次执行SELECT语句时，只会锁住id=4这一行。在M1第二次执行SELECT语句时，由于M2插入了一条(2,2)的数据，这时多了一条数据，就产生了<code>幻读</code>，对此MySQL的解决方法是，使用间隙锁，将id在(1,4]，(4,7]的数据全部加锁，这样在M2插入(2,2)或(6,6)会被锁阻塞以防止M1出现幻读。</p>
+<h3 id="43-避免死锁的方式">4.3 避免死锁的方式</h3>
+<p>首先要收集死锁信息，MySQL可以使用<code>SHOW ENGINE INNODB STATUS</code>查看死锁的原因，也可以在调试阶段开启<code>innodb_print_all_deadlocks</code>，收集死锁日志。</p>
+<p>同时，避免死锁还需要再应用层面进行约束：</p>
+<ul>
+<li>尽量避免出现长事务。</li>
+<li>修改多个表或者多个行的时候，将修改的顺序保持一致。</li>
+<li>创建索引，可以使创建的锁更少。</li>
+<li>在业务条件允许的情况下，尽量使用较低隔离级别的事务隔离，减少隔离级别带来的附加成本。</li>
+<li>减少基于范围的数据检索过滤条件，避免因为隔离锁带来的负面影响而锁定了不该锁定的数据。</li>
+<li>尽量使用主键或唯一索引更新数据，因为唯一索引不会产生间隙锁。</li>
+</ul>
+
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/mysql">mysql</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>数据结构 on 默默的心路</title>
+    <link>https://www.ceevee.cn/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
+    <description>Recent content in 数据结构 on 默默的心路</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 03 May 2023 23:38:21 +0800</lastBuildDate>
+    
+	<atom:link href="https://www.ceevee.cn/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>数据结构--hash表</title>
+      <link>https://www.ceevee.cn/post/data/hash/</link>
+      <pubDate>Wed, 03 May 2023 23:38:21 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/data/hash/</guid>
+      <description>哈希表是数组的一种扩展，由数组演化而来，底层依赖数组支持按下标快速访问元素的特性。 哈希函数 哈希函数首先是一个函数，可以把它定义成hash(k</description>
+    </item>
+    
+    <item>
+      <title>数据结构--红黑树</title>
+      <link>https://www.ceevee.cn/post/data/red_black_tree/</link>
+      <pubDate>Mon, 14 Jun 2021 19:02:21 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/data/red_black_tree/</guid>
+      <description>由于普通二叉搜索树在最坏的情况下会转变成一个线性的链表，其时间复杂度会退化为O(n)，并且如果树的高度很高，他的效率也是无法保证的，所以在普</description>
+    </item>
+    
+    <item>
+      <title>数据结构--二叉搜索树</title>
+      <link>https://www.ceevee.cn/post/data/binary_search_tree/</link>
+      <pubDate>Tue, 01 Sep 2020 15:02:21 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/data/binary_search_tree/</guid>
+      <description>二叉搜索树 概念 二叉搜索树是一种特殊的二叉树，对于二叉搜索树的任意根结点x，其左子树上所有结点的值最大不超过x，其右子树上所有结点的值最小不低</description>
+    </item>
+    
+    <item>
+      <title>数据结构--树</title>
+      <link>https://www.ceevee.cn/post/data/tree/</link>
+      <pubDate>Sun, 19 Jan 2020 16:03:21 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/data/tree/</guid>
+      <description>树和二叉树的定义 树的基本术语 结点：树中的每一个独立单元。如图中的A、B、C、D等。 结点的度：结点拥有的子树的个数称为结点的度。 树的度：树内各</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>elasticsearch on 默默的心路</title>
+    <link>https://www.ceevee.cn/tags/elasticsearch/</link>
+    <description>Recent content in elasticsearch on 默默的心路</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 10 Jul 2021 17:05:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://www.ceevee.cn/tags/elasticsearch/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>elasticsearch--搜索</title>
+      <link>https://www.ceevee.cn/post/elasticsearch/search/</link>
+      <pubDate>Sat, 10 Jul 2021 17:05:20 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/elasticsearch/search/</guid>
+      <description>索引和映射 手动创建索引和映射 这里主要使用curl工具来发送请求。先手动创建一个名为user的索引。 1 curl -X PUT localhost:9200/user 获取映射 1 curl -X GET localhost:9200/user/_mapping/user?pretty 其中第一个us</description>
+    </item>
+    
+  </channel>
+</rss>

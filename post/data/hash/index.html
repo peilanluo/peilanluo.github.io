@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>数据结构--hash表 - 默默的心路</title>
+    <meta property="og:title" content="数据结构--hash表 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2023-05-03T23:38:21&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2023-05-03T23:38:21&#43;08:00">
+        
+    <meta name="description" content="数据结构--hash表">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/data/hash/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">数据结构--hash表</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2023年5月3日
+                            23:38
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">数据结构</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#哈希函数">哈希函数</a></li>
+        <li><a href="#哈希冲突">哈希冲突</a>
+          <ul>
+            <li><a href="#开放寻址法">开放寻址法</a></li>
+            <li><a href="#链表法">链表法</a></li>
+            <li><a href="#哈希冲突解决法的选用">哈希冲突解决法的选用</a></li>
+          </ul>
+        </li>
+        <li><a href="#go中的哈希表实现">go中的哈希表实现</a>
+          <ul>
+            <li><a href="#获取数据">获取数据</a></li>
+            <li><a href="#存放数据">存放数据</a></li>
+            <li><a href="#扩容">扩容</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <p><code>哈希表</code>是数组的一种扩展，由数组演化而来，底层依赖数组支持按下标快速访问元素的特性。</p>
+<h2 id="哈希函数">哈希函数</h2>
+<p>哈希函数首先是一个函数，可以把它定义成hash(key)，其实key代表元素的键值，hash(key)代表通过哈希函数得到的哈希值，而哈希值便是数组的下标，通过这个下标直接读取记录的值。</p>
+<p>哈希函数有三个基本要求，如下：</p>
+<ul>
+<li>哈希函数得到的哈希值是一个非负整数。</li>
+<li>如果key1=key2，那么hash(key1)==hash(key2)</li>
+<li>如果key1≠key2，那么hash(key1)≠hash(key2)</li>
+</ul>
+<h2 id="哈希冲突">哈希冲突</h2>
+<p>因为几乎不可能得到一个完全不冲突的哈希函数，所以为了解决哈希冲突，常用的方法有以下两类：开放寻址法和链表法。</p>
+<h3 id="开放寻址法">开放寻址法</h3>
+<p>开放寻址法的核心思想是：一旦出现哈希冲突，就通过重新探测新位置的方法来解决冲突。</p>
+<h4 id="线性探测法">线性探测法</h4>
+<p>线性探测法即当向哈希表内<code>插入</code>数据时，如果某个数组经过哈希函数计算之后，对应的存储位置已经被占用了，我们就从这个位置开始，在数组中依次往后查找，直到找到空闲位置为止。</p>
+<p>线性探测法的<code>查找</code>过程类似于插入，如果在对应下标取到的值hash后与key不对应，则按顺序开始往后找，如果遍历到空闲位置还没找到那就说明要查找的值在哈希表中不存在。</p>
+<p>线性探测法的<code>删除</code>有些特别，在找到对应值后不能简单的把该位置置空，因为有可能影响到后续的查找，而是将该位置标记为deleted，这样在查找到该位置时，不会停下来。</p>
+<h4 id="二次探测法和双重哈希法">二次探测法和双重哈希法</h4>
+<p>线性探测法的步长为1，二次探测法的步长变成了原来的二次方。</p>
+<p>双重哈希法是当第一个哈希函数计算得到的存储位置已经被占用，在用第二个哈希函数重新计算存储位置，知道找到空闲位置为止。</p>
+<h3 id="链表法">链表法</h3>
+<p>链表法是一种更加常用的哈希冲突解决方法。链表法是在哈希表的每一个“桶”或“槽”会对应一个链表，我们把哈希值相同的元素放到相同槽位对应的链表中。</p>
+<p>对于使用链表法解决哈希冲突的哈希表，查找、删除的时间复杂度与链表的长度k成正比，也就是O(k)，对于哈希比较均匀的哈希函数，从理论上来说，<code>k=n/m</code>，其中n表示哈希表中的数据个数，m表示哈希表中槽的个数，当k不大时，可以认为查找、删除的时间复杂度是O(1)。这个k便是<code>装载因子</code>，装载因子越大，说明链表长度越长，哈希表的性能就越低。</p>
+<h3 id="哈希冲突解决法的选用">哈希冲突解决法的选用</h3>
+<p>当数据量比较小、装载因子小的时候（装载因子小于1），适合采用开放寻址法。其他时候适合采用，链表法。</p>
+<p>链表法的扩容策略一般为，当装载因子达到一定数值时，扩大到原来的两倍（例如：java中当元素个数抄错0.75*哈希表的容量时，触发扩容。）</p>
+<h2 id="go中的哈希表实现">go中的哈希表实现</h2>
+<p>在go中，哈希表是通过<code>map</code>实现的。主要的数据结构如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">hmap</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">count</span> <span class="kt">int</span> <span class="c1">// 元素的个数
+</span><span class="c1"></span>    <span class="nx">B</span> <span class="kt">uint8</span> <span class="c1">// buckets数组的长度就是2^B个
+</span><span class="c1"></span>    <span class="nx">overflow</span> <span class="kt">uint16</span> <span class="c1">// 溢出桶的数量
+</span><span class="c1"></span>    
+    <span class="nx">buckets</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// 2^B个桶对应的数组指针
+</span><span class="c1"></span>    <span class="nx">oldbuckets</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// 发生扩容时，记录扩容前的buckets数组指针
+</span><span class="c1"></span>    
+    <span class="nx">extra</span> <span class="o">*</span><span class="nx">mapextra</span> <span class="c1">// 用于保存溢出桶的地址
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">mapextra</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">overflow</span> <span class="o">*</span><span class="p">[]</span><span class="o">*</span><span class="nx">bmap</span>
+    <span class="nx">oldoverflow</span> <span class="o">*</span><span class="p">[]</span><span class="o">*</span><span class="nx">bmap</span>
+    
+    <span class="nx">nextOverflow</span> <span class="o">*</span><span class="nx">bmap</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">bmap</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">tophash</span> <span class="p">[</span><span class="nx">bucketCnt</span><span class="p">]</span><span class="kt">uint8</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">bmap</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">tophash</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="kt">uint8</span> <span class="c1">// 存储哈希值的高8位
+</span><span class="c1"></span>    <span class="nx">data</span> <span class="kt">byte</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1">// key value数据
+</span><span class="c1"></span>    <span class="nx">overflow</span> <span class="o">*</span><span class="nx">bmap</span> <span class="c1">// 溢出bucket的地址
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="/imgs/v2-a8fbef952441e788d882d0656c2cf091_1440w.webp" alt="go map">
+go map的底层结构是hmap，hmap中维护着若干个bucket数组。</p>
+<p>bucket数组中每个元素都是bmap结构，每个桶中保存了8个kv对，如果8个满了，又来了一个key落在这个桶里，会使用overflow连接下一个桶。</p>
+<h3 id="获取数据">获取数据</h3>
+<p><img src="/imgs/v2-c289a260a1d233fd862d79eef50fdf76_1440w.webp" alt="map获取数据">
+假设当前<code>B=4</code>，即桶的数量位<code>2^B=16</code>个，当从map中获取key的数据时，可以分为以下几步：</p>
+<ul>
+<li>计算key的hash值（64位系统对应64个比特位）</li>
+<li>通过最后的B位来确定在哪号桶，当前B=4，所以取对应hash值的后四位01010101，换算成10进制为5，所以在5号桶。</li>
+<li>根据key对应hash值的前8位快速确定是在这个桶的哪个位置（对应tophash中存储的前8位），前8位一致，则执行下一步</li>
+<li>对比key完整的hash值是否匹配，如果匹配则获取对应value。</li>
+<li>如果没有找到，就去连接的下一个溢出桶中寻找。</li>
+</ul>
+<h3 id="存放数据">存放数据</h3>
+<p><img src="/imgs/v2-c289a260a1d233fd862d79eef50fdf76_1440w.223webp.webp" alt="map存储数据">
+向map中填充数据的过程可以分为如下几步：</p>
+<ul>
+<li>通过key的hash值后B位确实是哪一个桶。</li>
+<li>遍历当前桶，通过key的tophash和hash值，防止key重复，然后找到第一个可以插入的位置存储数据。</li>
+<li>如果当前桶元素已满，会通过overflow链接创建一个新的桶，来存储数据。</li>
+</ul>
+<h3 id="扩容">扩容</h3>
+<p>go map的扩容有两种方式，一种是等量扩容，另一种是2倍扩容。</p>
+<h4 id="等量扩容">等量扩容</h4>
+<p>由于map中不断地put和delete key，桶中可能会出现很多断断续续的空位，这些空位会导致连接的bmap溢出桶很长，导致扫描时间变长。等量扩容实际上是一种整理，把后置位的数据整理到前面，这种情况下，元素会发生重排，但不会换桶。</p>
+<h4 id="两倍容量扩容">两倍容量扩容</h4>
+<p>2倍容量扩容是因为当前桶数组确实不够用了，发生这种扩容时，元素会重排，可能会发生桶迁移。每次扩容B+1，即桶的数量乘以2。</p>
+<h5 id="发生扩容的条件">发生扩容的条件</h5>
+<p>首先需要了解go map中装载因子计算的方式：<code>loadFactor := count / 2^B</code>，即<code>装载因子=map中元素的个数 / map中当前桶的个数</code>也可以理解为每个桶中平均元素的个数。</p>
+<p>go map中发生扩容有两个条件：</p>
+<ul>
+<li>装载因子 &gt; 6.5，正常情况下，如果没有溢出桶，那么一个桶中最多有8个元素，当平均每个桶中超过6.5个时，意味着当前容量要不足了，发生扩容。</li>
+<li>溢出桶的数量过多
+<ul>
+<li>当B &lt; 15时，如果overflow的bucket数量超过2^B。</li>
+<li>当B &gt;= 15时，overflow的bucket数量超过2^15</li>
+</ul>
+</li>
+</ul>
+<h5 id="扩容时的细节">扩容时的细节</h5>
+<p>发生扩容时，会将老数据先存入到oldbuckets。</p>
+<p>每次对map进行删改操作时，会触发从oldbucket中迁移到bucket操作。</p>
+<p>在扩容没有完成前，每次get或put遍历数据时，都会先遍历oldbuckets，然后再遍历buckets。</p>
+
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">数据结构</a></li>
+                                
+                                <li><a href="/tags/hash%E8%A1%A8">hash表</a></li>
+                                
+                                <li><a href="/tags/%E6%95%A3%E5%88%97%E8%A1%A8">散列表</a></li>
+                                
+                                <li><a href="/tags/map">map</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

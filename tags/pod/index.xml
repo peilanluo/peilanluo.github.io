@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pod on 默默的心路</title>
+    <link>https://www.ceevee.cn/tags/pod/</link>
+    <description>Recent content in Pod on 默默的心路</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 18 Apr 2021 15:01:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://www.ceevee.cn/tags/pod/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>kubernetes--Pod的应用</title>
+      <link>https://www.ceevee.cn/post/kubernetes/pod/</link>
+      <pubDate>Sun, 18 Apr 2021 15:01:20 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/kubernetes/pod/</guid>
+      <description>Pod是Kubernetes中能够创建和部署的最小单元，是Kubernetes集群中的一个应用实例，总是部署在同一个节点node上。Pod中</description>
+    </item>
+    
+  </channel>
+</rss>

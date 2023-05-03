@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Prometheus--PromQL - 默默的心路</title>
+    <meta property="og:title" content="Prometheus--PromQL - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2022-07-31T15:36:20&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2022-07-31T15:36:20&#43;08:00">
+        
+    <meta name="description" content="Prometheus--PromQL">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/prometheus/promql/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">Prometheus--PromQL</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2022年7月31日
+                            15:36
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/prometheus">Prometheus</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-promql聚合操作">1. PromQL聚合操作</a></li>
+        <li><a href="#2-promql运算符">2. PromQL运算符</a>
+          <ul>
+            <li><a href="#21-算术运算符">2.1 算术运算符</a></li>
+            <li><a href="#22-关系运算符">2.2 关系运算符</a></li>
+            <li><a href="#23-向量匹配">2.3 向量匹配</a></li>
+            <li><a href="#24-逻辑运算符">2.4 逻辑运算符</a></li>
+          </ul>
+        </li>
+        <li><a href="#3-promql函数">3. PromQL函数</a>
+          <ul>
+            <li><a href="#31-数学函数">3.1 数学函数</a></li>
+            <li><a href="#32-时间函数">3.2 时间函数</a></li>
+            <li><a href="#33-标签操作函数">3.3 标签操作函数</a></li>
+            <li><a href="#34-counter指标增长率">3.4 Counter指标增长率</a></li>
+            <li><a href="#35-gauge指标趋势变化预测">3.5 Gauge指标趋势变化预测</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <h2 id="1-promql聚合操作">1. PromQL聚合操作</h2>
+<p>PromQL的聚合操作仅适用于单个即时向量，其基本语法为：</p>
+<pre><code class="language-Prometheus" data-lang="Prometheus">&lt;aggr-op&gt;([parameter,] &lt;vector expression&gt;) [without|by (&lt;label list&gt;)]
+</code></pre><p>其中：</p>
+<ul>
+<li>aggr-op：为聚合操作符，包括如下表</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">名称</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">sum</td>
+<td align="left">求和，将组中所有的值相加</td>
+</tr>
+<tr>
+<td align="center">max</td>
+<td align="left">最大值，将组内最大值返回</td>
+</tr>
+<tr>
+<td align="center">min</td>
+<td align="left">最小值</td>
+</tr>
+<tr>
+<td align="center">avg</td>
+<td align="left">平均值，例：计算每个CPU每分钟的空闲时间，然后对主机上的所有CPU求平均值<!-- raw HTML omitted --><code>avg without(cpu,mode)(rate(node_cpu_seconds_total{mode=&quot;idle&quot;} [1m]))</code></td>
+</tr>
+<tr>
+<td align="center">stddev</td>
+<td align="left">标准差，对一组数字分布情况的统计度量，用于检查异常值。例如，作业中的一个实例具有与平均值相差几个标准差的度量标砖，这一现象表明它可能存在问题</td>
+</tr>
+<tr>
+<td align="center">stdvar</td>
+<td align="left">标准方差，是标准差的平方，用于统计</td>
+</tr>
+<tr>
+<td align="center">count</td>
+<td align="left">计数，计算组中的时间序列数。例子：返回主机磁盘设备数量<!-- raw HTML omitted --> <code>count without(device)(node_disk_read_bytes_total)</code></td>
+</tr>
+<tr>
+<td align="center">count_values</td>
+<td align="left">对相同value进行计数，用于统计时间序列中每一个样本值出现的次数。count_values会为每个唯一的样本值输出一个时间序列，并且每一个时间序列包含一个额外的标签。这个标签的名字由聚合参数指定，同时这个标签值是唯一的样本值。</td>
+</tr>
+<tr>
+<td align="center">bottomk</td>
+<td align="left">用于对样本值进行排序，返回当前样本值后N位的时间序列</td>
+</tr>
+<tr>
+<td align="center">topk</td>
+<td align="left">与bottomk相反，例子：获取HTTP请求数据前五位的时序样本数据<!-- raw HTML omitted --> <code>top(5, http_requests_total)</code></td>
+</tr>
+<tr>
+<td align="center">quantile</td>
+<td align="left">用于计算当前样本数据值的分布情况：quantile(Φ, express)。其中，0≤Φ≤1。例如：当Φ=0.5时，用来表示找到以下样本数据中的中位数：quantile (0.5 http_requests_total)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>parameter：为可选参数，聚合的参数</li>
+</ul>
+<h2 id="2-promql运算符">2. PromQL运算符</h2>
+<p>Prometheus中的运算符，不仅可以用于对即时向量进行简单的算术运算，还可以将运算符应用于两个基于标签分组的即时向量。运算符包括，算术运算符、关系运算符、向量匹配模式和逻辑运算符。</p>
+<h3 id="21-算术运算符">2.1 算术运算符</h3>
+<p>Prometheus提供的算术运算符包括：+、-、*、/、%、^(幂运算)。运算符支持三类操作：scalar/scalar（标量/标量）、vector/scalar（即时向量/标量）、vector/vector（即时向量/即时向量）。</p>
+<p>标量之间无需多言，即时向量与标量之间算术运算时，算术运算符会依次作用于即时向量中的每一个样本值，从而得到一组新的时间序列。</p>
+<p>即时向量与即时向量进行算术运算的过程相对复杂一点，例如：node_disk_read_bytes_total和node_disk_written_bytes_total获取磁盘读写总时间，node_disk_read_bytes_total+node_disk_written_bytes_total，该表达式工作过程是依次找到与左边向量元素匹配（标签完全一致）的右边向量进行运算，如果没找到，直接丢弃，新的时间序列将不包含指标名称。</p>
+<h3 id="22-关系运算符">2.2 关系运算符</h3>
+<p>关系运算符即比较运算符，包括==、!=、&gt;、&lt;、≥、≤，也支持三类操作：scalar/scalar（标量/标量）、vector/scalar（即时向量/标量）、vector/vector（即时向量/即时向量）。</p>
+<p>两个标量之间进行关系运算，必须使用bool修饰符，0（false）或者1（true）。</p>
+<p>即时向量与标量之间进行关系运算时，这个运算符会应用到某个当前时刻每个时间序列上，如果结果是false会被丢弃。</p>
+<p>即时向量与即时向量之间进行关系运算时，运算符默认情况下是过滤的，用于匹配条目。</p>
+<h3 id="23-向量匹配">2.3 向量匹配</h3>
+<p>两个即时向量之间使用运算符时，会涉及到向量的匹配机制，Prometheus提供了两种基本的向量匹配模式：ont-to-one向量匹配和many-to-one向量匹配。</p>
+<h4 id="231-one-to-one">2.3.1 one-to-one</h4>
+<p>它从运算符的两侧表达式中获取即时向量，找到两个具有完全相同标签和对应值的一对唯一条目。如果运算符两侧标签不一致，可以使用关键字<code>on</code>（指定标签上匹配）或<code>ignoring</code>（忽略指定的标签）修改标签见的匹配行为。表达格式位：</p>
+<pre><code class="language-Prometheus" data-lang="Prometheus">&lt;vector expr&gt;&lt;bin-op&gt; ignoring(&lt;label list&gt;) &lt;vector expr&gt;
+&lt;vector expr&gt;&lt;bin-op&gt; on(&lt;label list&gt;) &lt;vector expr&gt;
+
+vector expr：向量表达式
+bin-op：运算符
+</code></pre><h4 id="232-many-to-one和ont-to-many">2.3.2 many-to-one和ont-to-many</h4>
+<p>使用该匹配模式时，需要使用group_left或group_right修饰符明确指定哪边的向量可以在对侧拥有多个匹配样本。表达格式为：</p>
+<pre><code class="language-Prometheus" data-lang="Prometheus">&lt;vector expr&gt;&lt;bin-op&gt; ignoring(&lt;label list&gt;) group_left(&lt;label list&gt;) &lt;vector expr&gt;
+&lt;vector expr&gt;&lt;bin-op&gt; ignoring(&lt;label list&gt;) group_right(&lt;label list&gt;) &lt;vector expr&gt;
+&lt;vector expr&gt;&lt;bin-op&gt; on(&lt;label list&gt;) group_left(&lt;label list&gt;) &lt;vector expr&gt;
+&lt;vector expr&gt;&lt;bin-op&gt; on(&lt;label list&gt;) group_right(&lt;label list&gt;) &lt;vector expr&gt;
+</code></pre><h3 id="24-逻辑运算符">2.4 逻辑运算符</h3>
+<p>逻辑运算符包括and、or和unless，仅可用在向量和向量之间，所有逻辑运算符都以多对多的方式工作。</p>
+<h4 id="241-vector1-and-vector2">2.4.1 vector1 and vector2</h4>
+<p>and会产生一个由vector1的元素组成的新的向量，该向量包括vector1中完全匹配vector2中的元素。</p>
+<h4 id="242-vector1-or-vector2">2.4.2 vector1 or vector2</h4>
+<p>or运算符会缠身搞一个新的向量，包含vector1的所有原始元素（标签集+值），以及vector2中没有与vector1匹配标签集的所有元素。</p>
+<h4 id="243-vector1-unless-vector2">2.4.3 vector1 unless vector2</h4>
+<p>unless会产生一个由vector1元素组成的向量，而这些元素在vector2中没有与标签集完全匹配的元素，两个向量中所有匹配元素都被删除。</p>
+<h2 id="3-promql函数">3. PromQL函数</h2>
+<p>Prometheus提供了多种功能的函数，包括数学函数、时间函数、标签操作函数、Counter指标增长率计算函数等。</p>
+<h3 id="31-数学函数">3.1 数学函数</h3>
+<p>数学函数对即时向量执行标准的数学运算。</p>
+<ul>
+<li>abs()：返回即时向量每个值的绝对值。</li>
+<li>sqrt()：返回即时向量中值的平方根。</li>
+<li>round()：将即时向量中的值四舍五入到最近的整数。</li>
+<li>clamp_max()和clamp_minx()：分别允许对即时向量中的值设置上限和下限。</li>
+</ul>
+<h3 id="32-时间函数">3.2 时间函数</h3>
+<p>Prometheus使用的是协调世界时（UTC），没有时区的概念。</p>
+<ul>
+<li>time()：将查询的计算时间以秒为单位返回。</li>
+<li>时钟和日历类函数，包括以下种类：
+<ul>
+<li>minute()：返回每个时间的分钟数，从0~59。</li>
+<li>hour()：返回每个时间一天中的小时数，从0~23。</li>
+<li>day_of_week()：返回星期几，从0~6。</li>
+<li>day_of_month()：返回日期，从1~31。</li>
+<li>day_in_month()：返回每个月的天数，从28~31。</li>
+<li>month()：返回月份，从1~12。</li>
+<li>year()：返回年份。</li>
+</ul>
+</li>
+</ul>
+<h3 id="33-标签操作函数">3.3 标签操作函数</h3>
+<p>下面介绍标签函数。</p>
+<h4 id="331-label_replace函数">3.3.1 label_replace()函数</h4>
+<p>该函数的格式如下：</p>
+<pre><code class="language-Prometheus" data-lang="Prometheus">label_replace(v instant-vector, dst_label string, replacement string, src_label string, regex string)
+</code></pre><p><code>v instant-vector</code>代表输入的即时向量，函数会将即时向量中的每个时间序列进行处理，将正则表达式<code>regex</code>与标签值<code>src_label</code>匹配，如果匹配，则返回时间序列，且把<code>dst_label</code>标签值替换为<code>replacement</code>。</p>
+<p>例如：</p>
+<pre><code class="language-Prometheus" data-lang="Prometheus"># 现有
+up{instance=&quot;aaa.111.com:9100&quot;,job=&quot;DNS_node_exporter&quot;} 1
+# 使用 label_replace(up, &quot;host&quot;, &quot;$1&quot;, &quot;instance&quot;, &quot;(.*):.*&quot;)
+up{host=&quot;aaa.111.com&quot;,instance=&quot;aaa.111.com:9100&quot;,job=&quot;DNS_node_exporter&quot;} 1
+</code></pre><h4 id="332-label_join函数">3.3.2 label_join()函数</h4>
+<p>该函数的格式如下：</p>
+<pre><code class="language-Prometheus" data-lang="Prometheus">label_join(v instant-vector, dst_label string, separator string, src_label_1_string, src_label_2_string, ...)
+</code></pre><p><code>v instant-vector</code>代表输入的即时向量，该函数可以将标签值链接在一起，使用分隔符<code>separator</code>连接所有<code>src_label</code>的值，并返回包含连接值的标签<code>dst_label</code>的时间序列。</p>
+<h3 id="34-counter指标增长率">3.4 Counter指标增长率</h3>
+<p>Counter指标增长率有三个函数。</p>
+<h4 id="341-increase函数">3.4.1 increase()函数</h4>
+<p>increase(v range-vector)函数只能和计数器一起使用，用于区间向量中时间序列增量的计算。它获取取件向量中第一个和最后一个样本，并返回其增长量。例如：</p>
+<pre><code class="language-Prometheus" data-lang="Prometheus"># 计算最近三分钟的增长量
+increase(process_cpu_seconds_total[3m])
+</code></pre><h4 id="342-rate函数">3.4.2 rate()函数</h4>
+<p>rate(v range-vector)同样需要和计数器一起使用，用于计算区间向量中时间序列每秒的平均增长率。它是实际工作中使用的主要函数，适用于告警和缓慢移动计数器的图形。</p>
+<pre><code class="language-Prometheus" data-lang="Prometheus">rate(process_cpu_seconds_total[3m])
+</code></pre><h4 id="343-irate函数">3.4.3 irate()函数</h4>
+<p>irate(v range-vector)计算区间向量中时间序列的每秒即时增长率，是一个灵敏度更高的函数。由于irate函数比rate灵敏度更高，在需要分析长期趋势或告警规则的场景中，推荐使用rate函数。</p>
+<h3 id="35-gauge指标趋势变化预测">3.5 Gauge指标趋势变化预测</h3>
+<p>predict_linear(v range-vector, t scalar)基于区间向量，使用简单的线性回归预测时间序列1秒的值，从而可以对时间序列的变化趋势作出预测。例如：</p>
+<pre><code class="language-Prometheus" data-lang="Prometheus"># 根据过去1小时的样本数据，预测主机的可用磁盘空间是否在4小时内被占满
+predict_linear(node_filesystem_free_bytes{job=&quot;node_exporter&quot;}[1h], 4 * 3600) &lt; 0
+</code></pre>
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/prometheus">Prometheus</a></li>
+                                
+                                <li><a href="/tags/promql">PromQL</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

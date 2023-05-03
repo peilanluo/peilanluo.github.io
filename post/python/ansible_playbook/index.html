@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>ansible--playbook - 默默的心路</title>
+    <meta property="og:title" content="ansible--playbook - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2019-11-19T19:33:09&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2019-11-19T19:33:09&#43;08:00">
+        
+    <meta name="description" content="ansible--playbook">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/python/ansible_playbook/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">ansible--playbook</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2019年11月19日
+                            19:33
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/python">python</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#playbook语法">playbook语法</a></li>
+    <li><a href="#playbook小技巧">playbook小技巧</a>
+      <ul>
+        <li><a href="#限定执行范围">限定执行范围</a>
+          <ul>
+            <li><a href="#--limit">&ndash;limit</a></li>
+            <li><a href="#--list-hosts">&ndash;list-hosts</a></li>
+          </ul>
+        </li>
+        <li><a href="#用户与权限设置">用户与权限设置</a>
+          <ul>
+            <li><a href="#--remote-user">&ndash;remote-user</a></li>
+            <li><a href="#--ask-sudo-pass">&ndash;ask-sudo-pass</a></li>
+            <li><a href="#--sudo">&ndash;sudo</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#handlers">Handlers</a>
+      <ul>
+        <li><a href="#handlers的使用">Handlers的使用</a></li>
+        <li><a href="#handlers的一些注意事项">Handlers的一些注意事项</a></li>
+      </ul>
+    </li>
+    <li><a href="#变量">变量</a>
+      <ul>
+        <li><a href="#playbook变量">Playbook变量</a></li>
+        <li><a href="#注册变量">注册变量</a></li>
+        <li><a href="#主机变量和组变量">主机变量和组变量</a></li>
+        <li><a href="#变量的优先级">变量的优先级</a></li>
+      </ul>
+    </li>
+    <li><a href="#ifthenwhen流程控制">if/then/when——流程控制</a>
+      <ul>
+        <li><a href="#when关键字">when关键字</a></li>
+        <li><a href="#changed_whenfailed_when">changed_when、failed_when</a></li>
+      </ul>
+    </li>
+    <li><a href="#tags标签">Tags标签</a></li>
+    <li><a href="#block块">Block块</a></li>
+    <li><a href="#includes">Includes</a></li>
+    <li><a href="#roles">Roles</a>
+      <ul>
+        <li><a href="#基本用法">基本用法</a></li>
+        <li><a href="#变量-1">变量</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <h1 id="playbook语法">playbook语法</h1>
+<p>playbook使用YAML语法描述配置文件，总的来说具有以下特性：</p>
+<ul>
+<li>需要以“&mdash;”开始，且需顶行手写</li>
+<li>此行开始正常些playbook的内容</li>
+<li>使用 # 号注释代码</li>
+<li>缩进必须是统一的，不能讲空格和Tab混用。</li>
+<li>缩进的级别必须是一致的。</li>
+<li>大小写敏感。</li>
+<li>key/value值可同行写也可以换行写，同行使用<code>:</code>，换行需要以<code>-分隔</code></li>
+<li>一个name只能包括一个task。</li>
+</ul>
+<h1 id="playbook小技巧">playbook小技巧</h1>
+<h2 id="限定执行范围">限定执行范围</h2>
+<h3 id="--limit">&ndash;limit</h3>
+<p>可以使用该关键字限定一台或多台主机</p>
+<pre><code>ansible-playbook playbook.yml --limit local
+</code></pre><h3 id="--list-hosts">&ndash;list-hosts</h3>
+<p>如果想知道在执行playbook时哪些主机受到影响，可以使用该关键字</p>
+<h2 id="用户与权限设置">用户与权限设置</h2>
+<h3 id="--remote-user">&ndash;remote-user</h3>
+<p>指定用户</p>
+<h3 id="--ask-sudo-pass">&ndash;ask-sudo-pass</h3>
+<p>传递sudo密码到远程主机</p>
+<h3 id="--sudo">&ndash;sudo</h3>
+<p>强制play使用sudo用户</p>
+<pre><code>ansible-playbook playbook.yml --sudo --sudo-user=docker --ask-sudo-pass
+</code></pre><h1 id="handlers">Handlers</h1>
+<p>Handlers类似于编程语言中的钩子函数，可以在某一task执行完毕后，使用notify关键字进行调用。</p>
+<h2 id="handlers的使用">Handlers的使用</h2>
+<p>Handlers的基本使用
+Handlers应定义在任务之前，使用notify关键字进行调用后，会自动读取名称相同的Handlers。</p>
+<pre><code>handlers：
+    - name: restart apache
+       service: name=apache2 state=restarted
+tasks:
+    - name: 开启apache rewrite模块
+    apache2_module: name=rewrite state=present
+    notify： restart apache
+</code></pre><p>调用多个</p>
+<pre><code>notify: 
+    - restart apache
+    - restart memcached
+</code></pre><p>嵌套调用</p>
+<pre><code>handlers：
+    - name: restart apache
+       service: name=apache2 state=restarted
+       notify: restart memcached
+</code></pre><h2 id="handlers的一些注意事项">Handlers的一些注意事项</h2>
+<ul>
+<li>Handlers只有在其所在的任务被执行时，才会被运行；如果一个任务重定义了<code>notify</code>调用Handlers，但是由于条件判断等原因，该任务未被执行，那么Handlers同样不会被执行。</li>
+<li>Handlers只会在<code>Play</code>的末尾运行一次；如果想在一个Playbook的中间运行Handlers，则需要使用meta模块来实现，例如：<code>- meta: flush_handlers</code></li>
+<li>如果一个Play在运行到调用Handlers的语句之前失败了，那么这个Handlers将不会被执行。我们可以使用mega模块的&ndash;force-handlers选项来强制执行Handlers，即使是Handlers所在的Play中途运行失败也能运行。</li>
+</ul>
+<h1 id="变量">变量</h1>
+<h2 id="playbook变量">Playbook变量</h2>
+<p>在Playbook中，最常见的定义变量的方法是使用vars代码块。</p>
+<pre><code>---
+- hosts: local
+    vars: 
+        key: value
+    tasks:
+        - debug: msg=&quot;Variable 'key' is set to {{ key }}&quot;
+</code></pre><p>同时，变量的定义也可以在一个独立的文件中完成，方法是在Playbook中使用<code>vars_files</code>代码块来引用。</p>
+<pre><code>---
+- hosts: local
+  vars_files:
+    - vars.yml
+  tasks:
+    - debug: msg=&quot;Variable 'key' is set to {{ key }}&quot;
+# vars.yml内容如下
+---
+key: value
+</code></pre><p>利用Ansible的内置环境变量实现变量配置未见的有条件导入。</p>
+<p>当前生产环境中又多台主机，分别安装了CentOS系统和Debian系统，同时为两套系统设置两个变量定义文件：apache_CentOS.yml和apache_default.yml，进行如下配置</p>
+<pre><code>---
+- hosts: local
+    var_files:
+        - [&quot;apache_{{ ansible_os_family }}.yml&quot;, &quot;apache_default.yml&quot;]
+    tasks:
+        - service: name={{ apache }} state=running
+</code></pre><p>在执行Playbook过程中，Ansible会先尝试读取对应名称的变量定义文件，如果没找到，会读取apache_default.yml</p>
+<h2 id="注册变量">注册变量</h2>
+<p>注册变量，其实就是将操作的结果，包括标准输出和标准错误输出，保存到变量中，然后再根据这个变量的内容来决定下一步的操作，在这个过程中用来保存操作结果的变量就叫注册变量。</p>
+<p>注册变量使用<code>register</code>关键字进行注册，注册完毕后可以通过<code>stdout</code>标准输出和<code>stderr</code>错误输出来读取注册变量的内容。</p>
+<h2 id="主机变量和组变量">主机变量和组变量</h2>
+<p>主机变量和组变量的定义有两种方式，第一种可以直接定义在inventory文件中</p>
+<pre><code># 主机变量，只对对应的主机生效
+[local]
+server1 key=value
+
+# 组变量，只对当前组生效
+[local:vars]
+key=value
+</code></pre><p>第二种方式定义在group_vars和host_vars目录中</p>
+<p>在Ansible目录中新建目录<code>group_vars</code>和<code>host_vars</code>，变量文件的名称要对应组或者主机的名称，然后在文件中以key:value的形式定义变量。</p>
+<p>同时也可以在这两个文件夹下定义<code>all.yml</code>文件，来为所有主机组合主机定义变量。</p>
+<p>要获取某一远程主机的变量可以使用<code>{{ hostvars['server1']['key'] }}</code>的方式</p>
+<h2 id="变量的优先级">变量的优先级</h2>
+<p>以下变量优先级由高到低</p>
+<ul>
+<li>命令行中定义的变量（用-e定义的变量）</li>
+<li>在Inventory中定义的连续变量（比如ansible_ssh_user）</li>
+<li>大多数的其他变量（命令行装换、play中的变量、included的变量、role中的变量等）</li>
+<li>在Inventory中定义的其他变量</li>
+<li>有系统通过gather_facts方法发现的Facts</li>
+<li>“Role默认变量”</li>
+</ul>
+<h1 id="ifthenwhen流程控制">if/then/when——流程控制</h1>
+<h2 id="when关键字">when关键字</h2>
+<p>需要在特定条件下才能执行的语句，使用<code>when</code>关键字进行定义。</p>
+<pre><code>- shell: php --version
+register: php_version
+-shell: yum -y downgrade php*
+when: &quot;'7.0' in php_version.stdout&quot;
+</code></pre><h2 id="changed_whenfailed_when">changed_when、failed_when</h2>
+<p>有时候Ansible的任务返回结果无论成功失败都是changed，我们可以使用<code>changed_when</code>手动标识任务的成功状态。</p>
+<pre><code>---
+- hosts: local
+    tasks:
+        -name: Install dependencies
+        command: &quot;composer global require phpunit/phpunit --prefer-dist&quot;
+        register: composer
+        changed_when: &quot;'Nothing to install or update' not in composer.stdout&quot;
+</code></pre><h1 id="tags标签">Tags标签</h1>
+<p>默认情况下，Ansible在执行一个Playbook时，会执行Playbook中定义的所有任务。Ansible的标签功能可以给角色（Roles）、文件、单独的任务甚至整个Playbook打上标签，然后利用这些标签来指定要运行Playbook中的个别任务，或不执行指定的任务。</p>
+<pre><code>---
+- hosts: local
+    # 给整个Playbook所有任务打标签
+    tags: deploy
+    roles: 
+        # 给角色打标签
+        - { role: tomcat, tags: ['tomcat', 'app'] }
+    tasks:
+        - name: ping
+            command: &quot;ECHO 'Hello World'&quot;
+            # 给单独的任务打标签
+            tags: 
+                - hello
+</code></pre><p>执行特定的Tags任务</p>
+<pre><code># 执行标签任务
+ansible-playbook test.yml --tags &quot;hello&quot;
+# 不执行标签任务
+ansible-playbook test.yml --skip-tags &quot;hello&quot;
+</code></pre><h1 id="block块">Block块</h1>
+<p>块功能可以将任务进行分组，可以在块级别上应用任务变量。</p>
+<pre><code>---
+- hosts: local
+  tasks:
+    # Install and configure Apache on RedHat/CentOS hosts.
+    - block:
+        - yum: name=httpd state=present
+        - template: src=httpd.comf.j2 dest=/etc/httpd/conf/httpd.conf
+        - service: name=httpd state=started enabled=yes
+    when: ansible_os_family == 'RedHat'
+    sudo: yes
+    
+    # Install and configure Apache on Debian/Ubuntu hosts.
+    - block:
+        - apt: name=apache2 state=present
+        - template: src=httpd.conf.j2 dest=/etc/apache2/apache2.conf
+        - service: name=apache2 state=started enabled=yes
+    when: ansible_os_family == 'Debian'
+    sudo: yes
+</code></pre><p>使用块功能处理任务的异常</p>
+<pre><code>---
+- hosts: local
+  tasks:
+    - block:
+        - name: test
+          script: monitoring-connect.sh
+        rescue:
+          - name: 只有脚本报错时才执行
+            debug: msg=&quot;error&quot;
+        always:
+          - name: 无论结果如何都执行
+            debug: msg=&quot;always&quot;
+</code></pre><h1 id="includes">Includes</h1>
+<p>Includes可以引用文件，已达到代码复用的效果，不仅可以引用YML文件，还可以引用Vars、Handlers、Files文件</p>
+<pre><code>---
+- hosts: local
+    tasks:
+        - include: included.yml
+            # 带条件引入
+            when: 1 in [1, 2, 3]
+</code></pre><h1 id="roles">Roles</h1>
+<p>Roles可以通过特定的目录结构自动引入和该Roles相关的文件，已达到解耦和复用的目的。</p>
+<h2 id="基本用法">基本用法</h2>
+<pre><code># 在根目录下创建对应文件夹，在创建main.yml，添加Roles后，会自动读取Main.yml的内容
+mkdir -p roles/deploy/tasks
+cd roles/deploy/tasks
+touch main.yml
+# 引入Roles
+---
+- hosts: local
+    roles:
+        - deploy
+</code></pre><h2 id="变量-1">变量</h2>
+<p>Roles会自动读取同名Roles目录同名目录下的vars目录的main.yml文件中定义的变量，无需引入。</p>
+
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/python">python</a></li>
+                                
+                                <li><a href="/tags/ansible">ansible</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

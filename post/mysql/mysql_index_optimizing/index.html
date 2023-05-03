@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>mysql--索引优化 - 默默的心路</title>
+    <meta property="og:title" content="mysql--索引优化 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2020-11-29T16:01:45&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2020-11-29T16:01:45&#43;08:00">
+        
+    <meta name="description" content="mysql--索引优化">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/mysql/mysql_index_optimizing/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">mysql--索引优化</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2020年11月29日
+                            16:01
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/mysql">mysql</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-索引基础">1 索引基础</a>
+          <ul>
+            <li><a href="#11-b-tree索引的限制">1.1 B-Tree索引的限制</a></li>
+            <li><a href="#111-哈希索引">1.1.1 哈希索引</a></li>
+          </ul>
+        </li>
+        <li><a href="#2-索引的优点">2 索引的优点</a></li>
+        <li><a href="#3-高性能的索引策略">3 高性能的索引策略</a>
+          <ul>
+            <li><a href="#31-独立的列">3.1 独立的列</a></li>
+            <li><a href="#32-前缀索引和索引选择性">3.2 前缀索引和索引选择性</a></li>
+            <li><a href="#33-多列索引">3.3 多列索引</a></li>
+            <li><a href="#34-选择合适的索引列顺序">3.4 选择合适的索引列顺序</a></li>
+            <li><a href="#35-聚簇索引">3.5 聚簇索引</a></li>
+            <li><a href="#36-覆盖索引">3.6 覆盖索引</a></li>
+            <li><a href="#37-使用索引扫描来做排序">3.7 使用索引扫描来做排序</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <h2 id="1-索引基础">1 索引基础</h2>
+<p>MySQL支持多种索引引擎，最常用的例如B-Tree、哈希索引。</p>
+<h3 id="11-b-tree索引的限制">1.1 B-Tree索引的限制</h3>
+<p>现在有这么一个场景，有一个B-Tree类型的组合索引，组合索引的字段依次为<code>last_name</code>、<code>first_name</code>、<code>birthday</code></p>
+<ul>
+<li>如果不是按照索引的最左列开始查找，则无法使用索引。例如如果直接查找first_name则无法使用索引。</li>
+<li>不能跳过索引中的列。例如，搜索<code>last_name</code>字段后，如果不指定<code>first_name</code>，则MySQL只能使用索引的第一列。</li>
+<li>如果查询中有某个列的范围查询，则其右边所有列都无法使用索引优化查找。例如，<code>WHERE last_name = 'a' AND first_name LIKE 'b%' AND birthday = '2000-01-01'</code>,这个查询只能使用索引的前两列。</li>
+</ul>
+<h3 id="111-哈希索引">1.1.1 哈希索引</h3>
+<p>哈希索引基于哈希表实现，只有精确匹配索引所有列的查询才有效。在MySQL中只有Memory引擎显式支持哈希索引，这里只做简单地了解。</p>
+<h2 id="2-索引的优点">2 索引的优点</h2>
+<p>索引不止可以让服务器快速定位到表的指定位置，还有以下优点：</p>
+<ul>
+<li>索引大大减少了服务器需要扫描的数据量。</li>
+<li>索引可以帮助服务器避免排序和临时表。</li>
+<li>索引可以将随机I/O变为顺序I/O。</li>
+</ul>
+<h2 id="3-高性能的索引策略">3 高性能的索引策略</h2>
+<p>正确的创建和使用索引是实现高性能查询的基础，接下来是一些高效使用索引的要点。</p>
+<h3 id="31-独立的列">3.1 独立的列</h3>
+<p>如果查询的列不是独立的，则MySQL就不会使用索引。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">actor_id</span> <span class="k">FROM</span> <span class="n">actor</span> <span class="k">WHERE</span> <span class="n">actor_id</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="32-前缀索引和索引选择性">3.2 前缀索引和索引选择性</h3>
+<p>当需要索引很长的字符列时，索引会变得大且慢，对于这样的情况，通常可以只索引开始的部分字符，这可以大大节约索引空间，从而提高索引效率，但这样会降低索引的选择性（索引的选择性是指，不重复的索引值和数据表的记录总数的比值，索引的选择性越高则查询效率越高）</p>
+<p>一般情况下某个列的前缀的选择性也是足够高的，足以满足查询性能。对于BLOG、TEXT或很长的VARCHAR类型的列，必须使用前缀索引，因为MySQL不允许索引这些列的完整长度。</p>
+<p>前缀索引是一种能使索引更小、更快的有效办法，但也有其缺点：MySQL无法使用前缀索引做ORDER BY和GROUP BY，也无法使用前缀索引做覆盖扫描。</p>
+<h3 id="33-多列索引">3.3 多列索引</h3>
+<p>首先要明确一个概念：在多个列上建立独立的单独索引大部分情况下并不能提高MySQL的查询性能。</p>
+<p>当出现多个单独索引时会有以下问题：</p>
+<ul>
+<li>当出现服务器对多个索引做相交操作时（通常有多个AND条件），通常意味着需要一个包含所有相关列的多列索引，而不是多个独立的单列索引。</li>
+<li>当服务器需要对多个索引做联合操作时（通常有多个OR条件），通常需要耗费大量的CPU和内存资源在算法的缓存、排序和合并操作上。特别是当其中有些索引的选择性不高，需要合并扫描返回大量数据的时候。</li>
+<li>更重要的是，优化器不会把这些计算到“查询成本”（cost）中，优化器只关心随机页面读取。这会使得查询的成本被“低估”，导致该执行计划还不如直接走全表扫描。</li>
+</ul>
+<p>如果在EXPLAIN中看到有索引合并，应该好好检查一下查询和表的结构，看是不是已经是最优的。也可以通过参数optimizer_switch来关闭索引合并功能。也可以使用IGNORE INDEX提示让优化器忽略掉某些索引。</p>
+<h3 id="34-选择合适的索引列顺序">3.4 选择合适的索引列顺序</h3>
+<p>如何选择索引的列顺序有一个经验法则：将选择性最高的列放到索引最前列。例：</p>
+<p>下面有这样一条语句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">payment</span> <span class="k">WHERE</span> <span class="n">staff_id</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">AND</span> <span class="n">customer_id</span> <span class="o">=</span> <span class="mi">584</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如何判断是该将staff_id还是customer_id放到组合索引的前面呢，可以通过</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span> <span class="n">staff_id</span><span class="p">)</span><span class="o">/</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">staff_id_selectivity</span><span class="p">,</span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span> <span class="n">customer_id</span><span class="p">)</span><span class="o">/</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">customer_id_selectivity</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">payment</span><span class="p">;</span>
+
+<span class="n">staff_id_selectivity</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">0001</span>
+<span class="n">customer_id_selectivity</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">0373</span>
+<span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">):</span> <span class="mi">16049</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>很明显，customer_id的选择性更高，所以应该将customer_id放在前面。</p>
+<h3 id="35-聚簇索引">3.5 聚簇索引</h3>
+<p>聚簇索引并不是一种单独的数据类型，而是一种数据存储方式。当表有聚簇索引时，它的数据行实际上存放在索引的叶子页中。InnoDB通过主键聚集数据，如果没有定义主键，InnoDB会选择唯一的非空索引代替，如果没有这样的索引，InnoDB会隐式定义一个主键作为聚簇索引。</p>
+<p>通过二级索引查找行，存储引擎需要找到二级索引的叶子节点获得对应的主键值，然后根据这个值去聚簇索引中查找到对应的行。</p>
+<p>非聚簇索引将数据存储与索引分开，索引结构的叶子节点只想了对应行，myisam通过key_buffer把索引先缓存到内存中，当需要访问数据时，在内存中直接搜索索引，然后通过索引找到磁盘数据。</p>
+<h3 id="36-覆盖索引">3.6 覆盖索引</h3>
+<p>如果一个索引包含所有需要查询的字段的值，我们就称之为“覆盖索引”。使用覆盖索引能直接从索引中读取需要的值，而无需再回表查询。</p>
+<p>覆盖索引有以下好处：</p>
+<ul>
+<li>索引条目远小于数据行大小，所以如果只需要读取索引，那MySQL就会极大的减少数据访问量。</li>
+<li>因为索引是按照列值顺序存储的，所以对于I/O密集型的范围查询会比随机从磁盘读取每一行数据的I/O要少得多。</li>
+<li>一些存储引擎如MyISAM在内存中只缓存索引，数据则依赖于操作系统来缓存，因此要访问数据需要一次系统调用。</li>
+<li>由于InnoDB的聚簇索引，覆盖索引对InnoDB表特别有用。InnoDB的二级索引在叶子节点中保存了行的主键值，所以如果二级主键能够覆盖查询，则可以避免对主键索引的二次查询。</li>
+</ul>
+<p>当发起一个被索引覆盖的查询（也叫做索引覆盖查询）时，在EXPLAIN的EXTRA列可以看到“Using index”的信息。</p>
+<p>索引覆盖还有很多陷阱会导致无法实现优化。MySQL查询优化器会在执行检察前判断一个索引能进行覆盖。假设索引覆盖了WHERE条件中的字段，但不是整个查询涉及的字段。如果条件为假，MySQL5.5和更早的版本也是会回表获取数据行，尽管并不需要这一行且最终会被过滤掉。下面是一个例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="o">#</span> <span class="err">下面有这么一条语句</span>
+<span class="k">EXPLAIN</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">actor</span><span class="o">=</span><span class="s1">&#39;SEAN CARRY&#39;</span> <span class="k">AND</span> <span class="n">title</span> <span class="k">LIKE</span> <span class="s1">&#39;%APOLLO%&#39;</span>
+
+<span class="err">最终</span><span class="n">extra列显示Using</span> <span class="k">where</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里索引无法覆盖到有两个原因：</p>
+<ul>
+<li>首先查询列表中选择了所有的列，而没有任何索引覆盖了所有的列。</li>
+<li>MySQL不能再索引中执行左模糊的LIKE操作。</li>
+</ul>
+<p>也有办法可以解决上面说的两个问题，需要重写查询并巧妙地设计索引。先将索引扩展至覆盖三个数据列（artist, title, prod_id），然后按如下方式重写查询：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">EXPLAIN</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">JOIN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">prod_id</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">actor</span> <span class="o">=</span> <span class="s1">&#39;SEAN CARRY&#39;</span> <span class="k">AND</span> <span class="n">title</span> <span class="k">LIKE</span> <span class="s1">&#39;%APOLLO%&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">t1</span> <span class="k">ON</span> <span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">prod_id</span> <span class="o">=</span> <span class="n">products</span><span class="p">.</span><span class="n">prod_id</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这种方式叫做延迟关联，因为延迟了对列的访问。在查询的第一个阶段MySQL可以使用覆盖索引，在FROM子句中找到prod_id，然后根据这些prod_id在外层查询匹配获取需要的所有列值。虽然无法使用索引覆盖整个查询，但比完全无法利用索引覆盖的好。</p>
+<h3 id="37-使用索引扫描来做排序">3.7 使用索引扫描来做排序</h3>
+<p>MySQL有两种方式可以生成有序的结果：通过排序操作；或者按索引顺序扫描。如果EXPLAIN出来的type列的值为“index”，则说明MySQL使用了索引扫描来排序。</p>
+<p>只有当索引的列顺序和ORDER BY子句的顺序完全一致，并且所有列的排序方向（倒序或正序）都一样时，MySQL才能使用索引来对结果做排序。如果查询需要关联多张表，则只有当ORDER BY子句引用的字段全部为第一个表时，才能使用索引做排序。ORDER BY子句和查找型查询的限制是一样的：需要满足最左前缀的要求；否则，MySQL都需要执行排序操作，而无法利用索引排序。</p>
+<p>有一种情况下ORDER BY子句可以不满足索引的最左前缀的要求，就是前导列为常量的时候。下面是一个例子：
+<img src="/imgs/index_optmizing_sort_example.png" alt="index_optmizing_sort_example"></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">EXPLAIN</span> <span class="k">SELECT</span> <span class="n">rental_id</span><span class="p">,</span> <span class="n">staff_id</span><span class="p">,</span> <span class="k">FROM</span> <span class="n">rental</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">=</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">inventory_id</span><span class="p">,</span> <span class="n">customer_id</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面的ORDER BY子句并没有满足索引的最左前缀的要求，也可以用于查询排序，这是因为索引的第一列被指定为一个常数。</p>
+<p>另外还有，下面的这些也是有效的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="p">...</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">=</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">inventory_id</span> <span class="k">DESC</span><span class="p">;</span>
+
+<span class="p">...</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">&gt;</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">rental_date</span><span class="p">,</span> <span class="n">inventory_id</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>下面是一些不能使用索引做排序的查询：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="o">#</span> <span class="err">使用了两种不同的排序方向</span>
+<span class="p">...</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">=</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">inventory_id</span> <span class="k">DESC</span><span class="p">,</span> <span class="n">customer_id</span> <span class="k">ASC</span><span class="p">;</span>
+
+<span class="o">#</span> <span class="err">引用了一个不在索引中的列</span>
+<span class="p">...</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">=</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">inventory_id</span><span class="p">,</span> <span class="n">staff_id</span><span class="p">;</span>
+
+<span class="o">#</span> <span class="err">无法组成最左前缀</span>
+<span class="p">...</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">=</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">customer_id</span><span class="p">;</span>
+
+<span class="o">#</span> <span class="err">第一列是范围查询，不符合最左前缀</span>
+<span class="p">...</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">&gt;</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">inventory_id</span><span class="p">,</span> <span class="n">customer_id</span><span class="p">;</span>
+
+<span class="o">#</span> <span class="n">inventory_id属于范围查找</span>
+<span class="p">...</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">=</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">AND</span> <span class="n">inventory_id</span> <span class="k">IN</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">customer_id</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>参考书目：《高性能MySQL(第3版)》</p>
+</blockquote>
+
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/mysql">mysql</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

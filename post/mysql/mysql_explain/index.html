@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>mysql—EXPLAIN的使用 - 默默的心路</title>
+    <meta property="og:title" content="mysql—EXPLAIN的使用 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2021-03-29T20:43:45&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2021-03-29T20:43:45&#43;08:00">
+        
+    <meta name="description" content="mysql—EXPLAIN的使用">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/mysql/mysql_explain/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">mysql—EXPLAIN的使用</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2021年3月29日
+                            20:43
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/mysql">mysql</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#explain中的列">EXPLAIN中的列</a>
+      <ul>
+        <li><a href="#id列">id列</a></li>
+        <li><a href="#select_type列">select_type列</a>
+          <ul>
+            <li><a href="#subquery">SUBQUERY</a></li>
+            <li><a href="#derived">DERIVED</a></li>
+            <li><a href="#union">UNION</a></li>
+            <li><a href="#union-result">UNION RESULT</a></li>
+          </ul>
+        </li>
+        <li><a href="#table列">table列</a></li>
+        <li><a href="#type列">type列</a></li>
+        <li><a href="#possible_keys列">possible_keys列</a></li>
+        <li><a href="#key列">key列</a></li>
+        <li><a href="#key_len列">key_len列</a></li>
+        <li><a href="#ref列">ref列</a></li>
+        <li><a href="#rows列">rows列</a></li>
+        <li><a href="#extra列">Extra列</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <p>EXPLAIN命令是查看查询优化器如何决定执行查询的主要方法，但是它是有局限性的，并不总是准确的，但他在一定程度上仍然是衡量MySQL优化的最好工具。</p>
+<h1 id="explain中的列">EXPLAIN中的列</h1>
+<p>EXPLAIN的输出总是有相同的列，可变的是行数及内容，以下是EXPLAIN结果中每一列的意义：</p>
+<h2 id="id列">id列</h2>
+<p>这一列总是包含一个编号，标识SELECT所属的行。</p>
+<p>在UNION查询中，UNION结果总是放在一个匿名的临时表中，之后MySQL将结果读取到临时表外，临时表并不在原SQL中出现，因此它的id列是NULL。</p>
+<h2 id="select_type列">select_type列</h2>
+<p>这一列显示了对应行是简单还是复杂SELECT（如果是复杂类型，那么具体是三种复杂类型中的哪一种）。SIMPLE值意味着查询 不包括子查询和UNION。如果查询有任何复杂的子部分，则最外层部分标记为PRIMARY，其他部分标记如下：</p>
+<h3 id="subquery">SUBQUERY</h3>
+<p>包含在SELECT列表中的子查询中的SELECT（不在FROM子句中）标记为SUBQUERY。</p>
+<h3 id="derived">DERIVED</h3>
+<p>DERIVED值用来表示包含在FROM子句中的子查询中的SELECT，MySQL会递归执行并将结果放到一个临时表中。服务器内部称其派生表，因为该临时表是从子查询中派生出来的。</p>
+<h3 id="union">UNION</h3>
+<p>在UNION中的第二个和随后的SELECT被标记为UNION。第一个SELECT被标记就好像它以部分外查询来执行，这就是之前在UNION中第一个SELECT显示为PRIMARY的原因，如果UNION被FROM子句中的子查询包含，那么它的第一个SELECT会被标记为DERIVED。</p>
+<h3 id="union-result">UNION RESULT</h3>
+<p>用来从UNION的匿名临时表检索结果的SELECT被标记为UNION RESULT。</p>
+<h2 id="table列">table列</h2>
+<p>这一列显示了对应行正在访问哪个表。通过这一列可以从上到下观察MySQL的关联优化器为查询选择的关联顺序。</p>
+<h2 id="type列">type列</h2>
+<p>这一列显示了访问的关联类型，即MySQL决定如何查找表中的行。下面是重要的访问方法，一次从最差到最优：</p>
+<ul>
+<li>ALL：即全表扫描，这里也有例外，比如在查询里使用了LIMIT，或者在Extra列中显示&quot;Using distinct/not exists&rdquo;</li>
+<li>index：这个跟全表扫描一样，只是MySQL扫描表时按索引次序进行而不是行，它的主要优点是避免了排序，最大的缺点是要承担按索引次序读取整个表的开销。</li>
+<li>range：范围扫描就是一个有限制的索引扫描，它开始于索引里的某一点，返回匹配这个值域的行，这比全索引扫描好一些。带有BETWEEN和WHERE子句中带有&gt;的查询是最典型的范围扫描。当有IN()和OR时，也会显示为范围扫描，但这两者其实是不同的访问类型，在性能上有重要的差异。</li>
+<li>ref：这是一种索引访问，它返回所有匹配某个值的行。此类索引访问只有当使用非唯一索引或者唯一性索引的非唯一性前缀时才会发生。</li>
+<li>eq_ref：使用这种索引查找，MySQL知道最多只返回一条符合条件的记录，这种访问防范可以在MySQL使用主键或者唯一性索引查找时看到。</li>
+<li>const, system：当MySQL能对查询的某部分进行优化并将其转换成一个常量时，它就会使用这些类型。例如当将某一行的主键放入WHERE子句中时，就会出现。</li>
+<li>NULL：这种访问方式意味着MySQL能在优化阶段分解查询语句，在执行阶段甚至不用在访问表或者索引，例如从一个索引列表里选取最小值可以通过单独查找索引来完成，不需要在执行时访问表。</li>
+</ul>
+<h2 id="possible_keys列">possible_keys列</h2>
+<p>这一列显示了查询可以使用哪些索引，这是基于查询访问的列和使用的比较操作符来判断的。这个列表是在优化过程的早期创建的，隐刺有些罗列出来的索引可能对于后续优化过程是没用的。</p>
+<h2 id="key列">key列</h2>
+<p>这一列显示了MySQL决定采用哪个索引来优化查询，如果该索引没有出现在possible_keys列中，那么MySQL选用它是出于另外的原因，例如，覆盖索引。</p>
+<h2 id="key_len列">key_len列</h2>
+<p>该列显示了MySQL在索引里使用的字节数。key_len显示了在索引字段中可能的最大长度，而不是表中数据使用的实际字节数。</p>
+<h2 id="ref列">ref列</h2>
+<p>这一列显示了之前的表在key列记录的索引中查找值所用的列或常量。</p>
+<h2 id="rows列">rows列</h2>
+<p>这一列是MySQL估计为了找到所需的行而要读取的行数。</p>
+<h2 id="extra列">Extra列</h2>
+<p>这一列包含的是不适合在其他列显示的额外信息。常见的值有以下几种：</p>
+<ul>
+<li>Using index：MySQL将使用覆盖索引，以避免访问表。</li>
+<li>Using where：MySQL服务器将在存储引擎检索行后再进行过滤。许多WHERE条件里涉及索引中的列，当读取索引时，就能被存储引擎检验。</li>
+<li>Using temporary：MySQL在对查询结果排序时会使用一个临时表。</li>
+<li>Using filesort：MySQL会对结果使用一个外部索引排序，而不是按索引次序从表里读取行。</li>
+<li>Range checked for each record(index map: N)：没有好用的索引，新的索引将在联结的每一行上重新估算。</li>
+</ul>
+
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/mysql">mysql</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

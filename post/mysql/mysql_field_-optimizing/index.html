@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>mysql--Schema与数据类型优化 - 默默的心路</title>
+    <meta property="og:title" content="mysql--Schema与数据类型优化 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2020-11-21T18:08:45&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2020-11-21T18:08:45&#43;08:00">
+        
+    <meta name="description" content="mysql--Schema与数据类型优化">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/mysql/mysql_field_-optimizing/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">mysql--Schema与数据类型优化</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2020年11月21日
+                            18:08
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/mysql">mysql</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#存储引擎">存储引擎</a></li>
+    <li><a href="#数据类型优化">数据类型优化</a>
+      <ul>
+        <li><a href="#整数类型">整数类型</a></li>
+        <li><a href="#实数类型">实数类型</a></li>
+        <li><a href="#varchar和char类型">VARCHAR和CHAR类型</a>
+          <ul>
+            <li><a href="#varchar类型">VARCHAR类型</a></li>
+            <li><a href="#char">CHAR</a></li>
+          </ul>
+        </li>
+        <li><a href="#blog和text类型">BLOG和TEXT类型</a></li>
+        <li><a href="#使用枚举enum代替字符串类型">使用枚举（ENUM）代替字符串类型</a></li>
+        <li><a href="#日期和时间类型">日期和时间类型</a>
+          <ul>
+            <li><a href="#datetime">DATETIME</a></li>
+            <li><a href="#timestamp">TIMESTAMP</a></li>
+          </ul>
+        </li>
+        <li><a href="#特殊类型数据">特殊类型数据</a></li>
+        <li><a href="#一些琐碎的知识">一些琐碎的知识</a>
+          <ul>
+            <li><a href="#加快alter-table操作的速度">加快ALTER TABLE操作的速度</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <h1 id="存储引擎">存储引擎</h1>
+<p>在MySQL5.5版本将InnoDB作为默认的存储引擎。</p>
+<h1 id="数据类型优化">数据类型优化</h1>
+<p>通常把可为null的列改为not null带来的性能提升比较小，所以（调优时）没有必要首先在现有schema中查找并修改掉这种情况，除非确定这回导致问题。但是，如果计划在列上建立索引，就应该尽量避免设计成可为null的列。</p>
+<p>timestamp只使用datetime一般的存储空间，并且会根据时区变化。</p>
+<h2 id="整数类型">整数类型</h2>
+<ul>
+<li>tinyint、smallint、mediumint、int、bigint分别使用8、16、24、32、64为存储空间。</li>
+<li>MySQL可以为整数类型指定宽度，例如INT(11)，对大多数应用这是没有意义的：它不会限制值的合法范围，只是规定MySQL的一些交互工具用来显示字符的个数。对于存储和计算来说，INT(1)和INT(20)是相同的。</li>
+</ul>
+<h2 id="实数类型">实数类型</h2>
+<p>实数是带有小数部分的数字。DECIMAL类型用于存储精确的小数，但因为需要额外的空间和计算开销，所以应该尽量只在对小数进行精确计算时才使用DECIMAL（例如存储财务数据）</p>
+<h2 id="varchar和char类型">VARCHAR和CHAR类型</h2>
+<h3 id="varchar类型">VARCHAR类型</h3>
+<p>VARCHAR类型用于存储可变长字符串，它比定长类型更节省空间，VARCHART需要使用额外的1或2个额外字节记录字符串的长度，如果列的最大长度小于或等于255字节，则只使用1个字节表示，否则使用2个字节。假设使用latin1字符集，一个VARCHAR(10)的列需要11个字节的存储空间。VARCHAR(1000)的列需要1002个字节，因为需要2个字节存储长度信息。</p>
+<blockquote>
+<p>在InnoDB中，它可以把过长的VARCHAR存储为BLOB，我们稍后讨论这个问题。</p>
+</blockquote>
+<h3 id="char">CHAR</h3>
+<p>CHAR类型是定长的：MySQL总是根据定义的字符串长度分配足够的空间。当存储CHAR值时，MySQL会删除所有的末尾空格。CHAR值会根据需要采用空格进行填充以方便计较。</p>
+<p>CHAR适合存储很短的字符串，或者所有值都接近同一个长度。例如CHAR非常适合存储密码的MD5值。</p>
+<h2 id="blog和text类型">BLOG和TEXT类型</h2>
+<p>BLOB和TEXT都是为存储很大的数据而设计的字符串数据类型，分别采用二进制和字符方式存储。</p>
+<p>BOLB和TEXT家族之间仅有的不同是BLOB类型存储的是二进制数据，没有排序规则或字符集，而TEXT类型有字符集和排序规则。</p>
+<p>MySQL对BLOG和TEXT列进行排序与其他类型是不同的：它只对没个列的最前max_sort_length字节而不是整个字符串做排序。如果只需要排序前面一小部分字符，则可以减小max_sort_length的配置，或者使用<code>ORDER BY SUSTRING(column, length)</code>。</p>
+<h2 id="使用枚举enum代替字符串类型">使用枚举（ENUM）代替字符串类型</h2>
+<p>有时候可以使用枚举代替常用的字符串类型。枚举列可以把一些不重复的字符串存储成一个预定义的集合。MySQL在存储枚举时非常紧凑，会根据列表值的数量压缩到一个或者两个字节中。MySQL内部会将每个值在列表中的位置保存为整数，并且在表.frm文件中保存“数字-字符串”映射关系的“查找表”。</p>
+<h2 id="日期和时间类型">日期和时间类型</h2>
+<h3 id="datetime">DATETIME</h3>
+<p>这个类型能保存大范围的值，从1001年到9999年，精度为秒。它把日期和时间封装到格式为YYYYMMDDHHMMSS的整数中，与时区无关。使用8个字节的存储空间。</p>
+<h3 id="timestamp">TIMESTAMP</h3>
+<p>这个类型保存了1970年1月1日午夜以来的秒数，TIMESTAMP只使用4个字节的存储空间，只能表示1970年到2038年。MySQL提供了<code>FROM_UNIXTIME()</code>，并提供了<code>UNIX_TIMESTAMP()</code>函数把日期转换为Unix时间戳。</p>
+<h2 id="特殊类型数据">特殊类型数据</h2>
+<p>IPv4地址应该使用无符号整数来存储，MySQL提供<code>INET_ATON()</code>和<code>INET_NTOA()</code>函数在这两种表示方法之间转换。</p>
+<h2 id="一些琐碎的知识">一些琐碎的知识</h2>
+<h3 id="加快alter-table操作的速度">加快ALTER TABLE操作的速度</h3>
+<p>MySQL的ALTER TABLE操作的性能对大表来说是个大问题。MySQL执行大部分修改表结构操作的方法是用新的结构创建一个空表，从旧表中查出所有的数据插入新表，然后删除旧表</p>
+<blockquote>
+<p>参考书目：《高能能MySQL（第3版）》</p>
+</blockquote>
+
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/mysql">mysql</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

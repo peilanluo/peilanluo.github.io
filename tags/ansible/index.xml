@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ansible on 默默的心路</title>
+    <link>https://www.ceevee.cn/tags/ansible/</link>
+    <description>Recent content in ansible on 默默的心路</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 19 Nov 2019 19:33:09 +0800</lastBuildDate>
+    
+	<atom:link href="https://www.ceevee.cn/tags/ansible/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>ansible--playbook</title>
+      <link>https://www.ceevee.cn/post/python/ansible_playbook/</link>
+      <pubDate>Tue, 19 Nov 2019 19:33:09 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/python/ansible_playbook/</guid>
+      <description>playbook语法 playbook使用YAML语法描述配置文件，总的来说具有以下特性： 需要以“&amp;mdash;”开始，且需顶行手写 此行开始正</description>
+    </item>
+    
+    <item>
+      <title>ansible--Ad-Hoc命令集 </title>
+      <link>https://www.ceevee.cn/post/python/ansible_adhoc/</link>
+      <pubDate>Tue, 19 Nov 2019 16:42:25 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/python/ansible_adhoc/</guid>
+      <description>Ad-Hoc相当于临时命令，适用于解决一些临时性的问题 用法 基本用法为：ansible &amp;lt;pattern&amp;gt; [options] options的可用选项如下（只列出部分）： -v, &amp;nd</description>
+    </item>
+    
+    <item>
+      <title>ansible--ansible基础</title>
+      <link>https://www.ceevee.cn/post/python/ansible_basic/</link>
+      <pubDate>Tue, 19 Nov 2019 15:52:12 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/python/ansible_basic/</guid>
+      <description>配置文件 ansible的配置文件只有一个，即ansible.cfg，它可以存在于多个地方，ansible读取配置文件的顺序依次是当前命令执行</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>golang on 默默的心路</title>
+    <link>https://www.ceevee.cn/tags/golang/</link>
+    <description>Recent content in golang on 默默的心路</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 11 Sep 2022 18:12:53 +0800</lastBuildDate>
+    
+	<atom:link href="https://www.ceevee.cn/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>golang--一些面试必备基础知识</title>
+      <link>https://www.ceevee.cn/post/golang/basic/</link>
+      <pubDate>Sun, 11 Sep 2022 18:12:53 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/golang/basic/</guid>
+      <description>切片的扩容策略 首先判断，如果新申请容量大于2倍的旧容量，最终容量就是新申请的容量。 如果旧容量小于1024，则新容量是旧容量的两倍。 如果旧切片</description>
+    </item>
+    
+    <item>
+      <title>istio--流量控制</title>
+      <link>https://www.ceevee.cn/post/kubernetes/istio_crd/</link>
+      <pubDate>Mon, 15 Aug 2022 21:44:53 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/kubernetes/istio_crd/</guid>
+      <description>参考文献：云原生社区《深入理解Istio 云原生服务网格进阶实战》 1. 流量控制 Istio的流量控制是通过一系列的CRD（Kubernetes的自</description>
+    </item>
+    
+    <item>
+      <title>golang--GMP模型和垃圾回收机制</title>
+      <link>https://www.ceevee.cn/post/golang/gmp_gc/</link>
+      <pubDate>Mon, 31 Jan 2022 18:12:53 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/golang/gmp_gc/</guid>
+      <description>golang的GMP模型 G G是Goroutine的缩写。Goroutine是一个由Go运行时管理的轻量级线程，一般称之为协程。协程是用户态的</description>
+    </item>
+    
+    <item>
+      <title>kubernetes--详解Service</title>
+      <link>https://www.ceevee.cn/post/kubernetes/service/</link>
+      <pubDate>Sun, 18 Apr 2021 16:06:16 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/kubernetes/service/</guid>
+      <description>通过创建Service可以为一组具有相同功能的容器应用提供一个统一的入口地址，并将请求负载分发到后端的各个应用容器上。 Service的基本用</description>
+    </item>
+    
+    <item>
+      <title>kubernetes--Pod的应用</title>
+      <link>https://www.ceevee.cn/post/kubernetes/pod/</link>
+      <pubDate>Sun, 18 Apr 2021 15:01:20 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/kubernetes/pod/</guid>
+      <description>Pod是Kubernetes中能够创建和部署的最小单元，是Kubernetes集群中的一个应用实例，总是部署在同一个节点node上。Pod中</description>
+    </item>
+    
+    <item>
+      <title>Docker--Dockerfile的使用</title>
+      <link>https://www.ceevee.cn/post/docker/docker_dockerfile/</link>
+      <pubDate>Sun, 28 Mar 2021 18:50:53 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/docker/docker_dockerfile/</guid>
+      <description>使用Dockerfile创建镜像 Dockerfile是一个文本格式的配置文件，用户可以使用Dockerfile来快速创建自定义的镜像。 基本结</description>
+    </item>
+    
+    <item>
+      <title>Docker--一些基础知识</title>
+      <link>https://www.ceevee.cn/post/docker/docker_concept/</link>
+      <pubDate>Sun, 28 Mar 2021 18:49:53 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/docker/docker_concept/</guid>
+      <description>搭建本地私有仓库 安装Docker后，可以通过官方提供的registry镜像来搭建本地私有仓库： docker run -d -p 5000:5000 registry:2 // 指定镜像文件存放在本地的指定路径</description>
+    </item>
+    
+    <item>
+      <title>golang--排序算法Golang实现</title>
+      <link>https://www.ceevee.cn/post/golang/sort/</link>
+      <pubDate>Tue, 03 Nov 2020 23:21:34 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/golang/sort/</guid>
+      <description>冒泡排序 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 // 简单冒泡排序，效率极差 func SimpleBubbleSort(arr []int) []int { for i := 0; i &amp;lt; len(arr); i++ { for</description>
+    </item>
+    
+    <item>
+      <title>kubernetes--的一些重要概念</title>
+      <link>https://www.ceevee.cn/post/kubernetes/important_concept/</link>
+      <pubDate>Wed, 26 Aug 2020 18:26:53 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/kubernetes/important_concept/</guid>
+      <description>Kubernetes是什么 Kubernetes是一个全新的基于容器技术的分布式架构领先方案，他的前身是谷歌内部使用逾十余年的Borg技术，K</description>
+    </item>
+    
+    <item>
+      <title>golang--深入简出，带你用golang的反射撸一个公用后台查询方法</title>
+      <link>https://www.ceevee.cn/post/golang/reflect_admin/</link>
+      <pubDate>Mon, 13 Apr 2020 18:32:53 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/golang/reflect_admin/</guid>
+      <description>一些基本方法 本篇不会介绍反射的基本概念和原理等，会从每个常用的方法入手，讲解一些基本和进阶用法，反射不太适合在业务层使用，因为会几何倍的降低</description>
+    </item>
+    
+    <item>
+      <title>golang--安装golang并安装grpc-grpcgateway环境</title>
+      <link>https://www.ceevee.cn/post/golang/install_grpc_grpcgateway/</link>
+      <pubDate>Thu, 15 Aug 2019 13:57:20 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/golang/install_grpc_grpcgateway/</guid>
+      <description>安装goland环境 下载golang安装包，国内环境打开https://studygolang.com/dl，国外环境打开https://g</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,1039 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>golang--深入简出，带你用golang的反射撸一个公用后台查询方法 - 默默的心路</title>
+    <meta property="og:title" content="golang--深入简出，带你用golang的反射撸一个公用后台查询方法 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2020-04-13T18:32:53&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2020-04-13T18:32:53&#43;08:00">
+        
+    <meta name="description" content="golang--深入简出，带你用golang的反射撸一个公用后台查询方法">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/golang/reflect_admin/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">golang--深入简出，带你用golang的反射撸一个公用后台查询方法</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2020年4月13日
+                            18:32
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/golang">golang</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#一些基本方法">一些基本方法</a>
+      <ul>
+        <li><a href="#reflecttypeof">reflect.TypeOf()</a>
+          <ul>
+            <li><a href="#elem方法"><code>Elem()</code>方法</a></li>
+          </ul>
+        </li>
+        <li><a href="#reflectvalueof">reflect.ValueOf()</a>
+          <ul>
+            <li><a href="#isnil">isNil()</a></li>
+            <li><a href="#isvalid">isValid()</a></li>
+          </ul>
+        </li>
+        <li><a href="#reflectsliceof">reflect.SliceOf()</a></li>
+        <li><a href="#reflectnew">reflect.New()</a></li>
+        <li><a href="#reflectptrto">reflect.PtrTo()</a></li>
+      </ul>
+    </li>
+    <li><a href="#结构体的反射">结构体的反射</a>
+      <ul>
+        <li><a href="#结构体字段相关的几种方法">结构体字段相关的几种方法</a>
+          <ul>
+            <li><a href="#numfield">NumField()</a></li>
+          </ul>
+        </li>
+        <li><a href="#field">Field()</a>
+          <ul>
+            <li><a href="#fieldbyname">FieldByName()</a></li>
+            <li><a href="#nummethod">NumMethod()</a></li>
+            <li><a href="#fieldbynamefunc">FieldByNameFunc()</a></li>
+            <li><a href="#method">Method()</a></li>
+            <li><a href="#methodbyname">MethodByName()</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#实战篇一编写一个公用的后台查询方法">实战篇一：编写一个公用的后台查询方法</a></li>
+    <li><a href="#实战进阶篇为单个表添加上附加信息">实战进阶篇：为单个表添加上附加信息</a></li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <h1 id="一些基本方法">一些基本方法</h1>
+<p>本篇不会介绍反射的基本概念和原理等，会从每个常用的方法入手，讲解一些基本和进阶用法，反射不太适合在业务层使用，因为会几何倍的降低运行速度，而且用反射做出来的程序健壮度不高，一旦一个环节没有处理好就会直接panic，影响程序的运行，但是在后台上使用还是很适合的，可以极大的降低代码量，从繁复的增删改查操作和无边的抛err（面向错误编程，太贴切了）中解脱出来。</p>
+<h2 id="reflecttypeof">reflect.TypeOf()</h2>
+<p>可以获取任何变量的类型对象，使用该对象可以获取变量的<code>Name</code>和<code>Kind</code>，<code>Name</code>代表的是变量类型的名称，<code>Kind</code>代表的是变量的底层类型名称，以下是两个典型的例子。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 系统变量
+</span><span class="c1"></span><span class="nx">str</span> <span class="o">:=</span> <span class="s">&#34;张三&#34;</span>
+<span class="nx">reflectType</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;name: %v kind: %v&#34;</span><span class="p">,</span> <span class="nx">reflectType</span><span class="p">.</span><span class="nf">Name</span><span class="p">(),</span> <span class="nx">reflectType</span><span class="p">.</span><span class="nf">Kind</span><span class="p">())</span>	<span class="c1">// name: string kind: string
+</span><span class="c1"></span>
+<span class="c1">// 自定义变量
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">person</span> <span class="kt">string</span>
+<span class="nx">a</span> <span class="o">:=</span> <span class="nf">person</span><span class="p">(</span><span class="s">&#34;张三&#34;</span><span class="p">)</span>
+<span class="nx">reflectType</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;name: %v kind: %v&#34;</span><span class="p">,</span> <span class="nx">reflectType</span><span class="p">.</span><span class="nf">Name</span><span class="p">(),</span> <span class="nx">reflectType</span><span class="p">.</span><span class="nf">Kind</span><span class="p">())</span>	<span class="c1">// name: person kind: string
+</span></code></pre></td></tr></table>
+</div>
+</div><h3 id="elem方法"><code>Elem()</code>方法</h3>
+<p>主要用来获取<code>指针</code>类型（只能使用在数组、chan、map、指针、切片几个类型上）的类型对象</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">str</span> <span class="o">:=</span> <span class="s">&#34;张三&#34;</span>
+<span class="nx">reflectType</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">str</span><span class="p">)</span>
+<span class="nx">reflectElem</span> <span class="o">:=</span> <span class="nx">reflectType</span><span class="p">.</span><span class="nf">Elem</span><span class="p">()</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;name: %v kind: %v&#34;</span><span class="p">,</span> <span class="nx">reflectElem</span><span class="p">.</span><span class="nf">Name</span><span class="p">(),</span> <span class="nx">reflectElem</span><span class="p">.</span><span class="nf">Kind</span><span class="p">())</span>	<span class="c1">// name: string kind: string
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="reflectvalueof">reflect.ValueOf()</h2>
+<p>可以获取任意变量的值对象，它的类型是<code>reflect.Value</code>，使用该对象同样可以获取变量的<code>Name</code>和<code>Kind</code>，通过获取<code>Kind</code>可以使用类型断言获取变量的值。</p>
+<blockquote>
+<p>这里的<code>reflect.ValueOf</code>其实作用不大，在实际应用场景中多先使用<code>reflect.ValueOf</code>获取变量的<code>reflect.Value</code>然后接<code>Interface()</code>方法把变量转化为<code>Interface{}</code>类型，获取<code>reflect.Value</code>的方法多采用<code>reflect.TypeOf()</code>加<code>reflect.New()</code>方法，后面实战部分会有详细用法。</p>
+</blockquote>
+<h3 id="isnil">isNil()</h3>
+<p>判断值对象是否为nil，只能对通道、切片、数组、map、函数、interface等使用。</p>
+<h3 id="isvalid">isValid()</h3>
+<p>判断值对象是否为有效值，即非其默认0值，例如数字类型的0，字符串类型的&rdquo;&quot;，在实际使用中，如果不对这些值进行处理，可能会直接panic。</p>
+<h2 id="reflectsliceof">reflect.SliceOf()</h2>
+<p>配合<code>reflect.TypeOf</code>返回单个类型的切片类型。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">str</span> <span class="o">:=</span> <span class="s">&#34;张三&#34;</span>
+<span class="nx">reflectType</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>
+<span class="nx">reflectSlice</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">SliceOf</span><span class="p">(</span><span class="nx">reflectType</span><span class="p">)</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;name: %v kind: %v&#34;</span><span class="p">,</span> <span class="nx">reflectSlice</span><span class="p">.</span><span class="nf">Name</span><span class="p">(),</span> <span class="nx">reflectSlice</span><span class="p">.</span><span class="nf">Kind</span><span class="p">())</span>	<span class="c1">// name:  kind: slice
+</span><span class="c1"></span>
+<span class="c1">// 获取切片中元素的值
+</span><span class="c1"></span><span class="nx">a</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">}</span>
+<span class="nx">reflectType</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">reflectType</span><span class="p">.</span><span class="nf">Len</span><span class="p">();</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">reflectType</span><span class="p">.</span><span class="nf">Index</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
+<span class="p">}</span>
+<span class="c1">// 8  9   10
+</span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>这里注意数组、指针、切片、map等一些类型是没有类型名称的。</p>
+</blockquote>
+<h2 id="reflectnew">reflect.New()</h2>
+<p>配合<code>reflect.TypeOf</code>实例化一个该类型的值对象，返回该值对象的指针（想要使用反射设置值，必须使用指针）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">str</span> <span class="o">:=</span> <span class="s">&#34;张三&#34;</span>
+<span class="nx">reflectType</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>
+<span class="nx">reflectValue</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">reflectType</span><span class="p">)</span>
+<span class="c1">// 设置值	
+</span><span class="c1"></span><span class="nx">reflectValue</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">SetString</span><span class="p">(</span><span class="s">&#34;李四&#34;</span><span class="p">)</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;value: %v kind: %v&#34;</span><span class="p">,</span> <span class="nx">reflectValue</span><span class="p">.</span><span class="nf">Elem</span><span class="p">(),</span> <span class="nx">reflectValue</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">Kind</span><span class="p">())</span>	<span class="c1">// value: 李四 kind: string
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="reflectptrto">reflect.PtrTo()</h2>
+<p>返回值对象的指针。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">str</span> <span class="o">:=</span> <span class="s">&#34;张三&#34;</span>
+<span class="nx">reflectType</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>
+<span class="k">if</span> <span class="nx">reflectType</span><span class="p">.</span><span class="nf">Kind</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">Ptr</span> <span class="p">{</span>
+  <span class="nx">reflectType</span> <span class="p">=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">PtrTo</span><span class="p">(</span><span class="nx">reflectType</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;value: %v kind: %v&#34;</span><span class="p">,</span> <span class="nx">reflectType</span><span class="p">,</span> <span class="nx">reflectType</span><span class="p">.</span><span class="nf">Kind</span><span class="p">())</span>	<span class="c1">// value: *string kind: ptr
+</span></code></pre></td></tr></table>
+</div>
+</div><h1 id="结构体的反射">结构体的反射</h1>
+<p>上面的几个方法只是开胃菜，真正常用仍然是结构体的反射，业务中各种增删改查操作都要通过数据库完成，而数据库交互使用的都是结构体，这里会先列出一些结构体反射要用到的方法，然后通过一篇后台公用model类的实战来完成这篇的内容。</p>
+<p>和上面几个基本方法有关的内容这里就不再赘述，有兴趣的可以自己私底下去试试，这里只针对一些结构体的专用方法进行说明。</p>
+<h2 id="结构体字段相关的几种方法">结构体字段相关的几种方法</h2>
+<h3 id="numfield">NumField()</h3>
+<p>返回结构体的字段数量，<code>NumField()</code>使用的对象必须是结构体，否则会panic。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Student</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Name</span> <span class="kt">string</span>
+  <span class="nx">Age</span>  <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="nx">a</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Student</span><span class="p">{</span>
+  <span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;张三&#34;</span><span class="p">,</span>
+  <span class="nx">Age</span><span class="p">:</span>  <span class="mi">18</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="nx">reflectValue</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">reflectValue</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">NumField</span><span class="p">())</span>	<span class="c1">// 2
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="field">Field()</h2>
+<p>通过字段的索引获取字段的值，从0开始，顺序参照结构体定义时的由上到下的顺序。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">a</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Student</span><span class="p">{</span>
+  <span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;张三&#34;</span><span class="p">,</span>
+  <span class="nx">Age</span><span class="p">:</span>  <span class="mi">18</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="nx">reflectValue</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">reflectValue</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">NumField</span><span class="p">();</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">reflectValue</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">Field</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="fieldbyname">FieldByName()</h3>
+<p>通过字段名称获取字段的值。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">a</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Student</span><span class="p">{</span>
+  <span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;张三&#34;</span><span class="p">,</span>
+  <span class="nx">Age</span><span class="p">:</span>  <span class="mi">18</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="nx">reflectValue</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">reflectValue</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">FieldByName</span><span class="p">(</span><span class="s">&#34;Name&#34;</span><span class="p">))</span>	<span class="c1">// 张三
+</span></code></pre></td></tr></table>
+</div>
+</div><h3 id="nummethod">NumMethod()</h3>
+<p>返回结构体的方法数量。</p>
+<h3 id="fieldbynamefunc">FieldByNameFunc()</h3>
+<p>根据传入的匿名函数返回对应名称的方法。</p>
+<h3 id="method">Method()</h3>
+<p>直接通过方法的索引，返回对应的方法。</p>
+<h3 id="methodbyname">MethodByName()</h3>
+<p>通过方法名称返回对应的方法。</p>
+<p>以上四个方法相关的函数就不放例子了，通过对应的函数获取到方法后，使用<code>Call()</code>进行调用，其中特别注意的是，调用时传入的参数必须是<code>[]reflect.Value</code>格式的。</p>
+<h1 id="实战篇一编写一个公用的后台查询方法">实战篇一：编写一个公用的后台查询方法</h1>
+<p>这里用到的数据库类为<a href="https://github.com/jinzhu/gorm">gorm</a>本篇不探讨其相关知识，如有疑惑，请自行实践。</p>
+<p>首先编写model，根目录下创建文件夹model，在model文件夹中创建search.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Student 学生
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Student</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Name</span> <span class="kt">string</span>
+	<span class="nx">Age</span>  <span class="kt">int</span>
+        <span class="nx">ID</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="c1">// TableName 表名
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">Student</span><span class="p">)</span> <span class="nf">TableName</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="s">&#34;student&#34;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>编写实现公用方法的接口，根目录下创建search.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// SearchModel 搜索接口
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">SearchModel</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">TableName</span><span class="p">()</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="c1">// SearchModelHandler 存储一些查询过程中的必要信息
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">SearchModelHandler</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Model</span> <span class="nx">SearchModel</span>
+<span class="p">}</span>
+
+<span class="c1">// GetSearchModelHandler 获取处理器
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">GetSearchModelHandler</span><span class="p">(</span><span class="nx">model</span> <span class="nx">SearchModel</span><span class="p">)</span> <span class="o">*</span><span class="nx">SearchModelHandler</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">SearchModelHandler</span><span class="p">{</span>
+		<span class="nx">Model</span><span class="p">:</span> <span class="nx">model</span><span class="p">,</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Search 查找
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">SearchModelHandler</span><span class="p">)</span> <span class="nf">Search</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="nx">query</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">model</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">Model</span><span class="p">)</span>
+	<span class="nx">itemPtrType</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">Model</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">itemPtrType</span><span class="p">.</span><span class="nf">Kind</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">Ptr</span> <span class="p">{</span>
+		<span class="nx">itemPtrType</span> <span class="p">=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">PtrTo</span><span class="p">(</span><span class="nx">itemPtrType</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">itemSlice</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">SliceOf</span><span class="p">(</span><span class="nx">itemPtrType</span><span class="p">)</span>
+	<span class="nx">res</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">itemSlice</span><span class="p">)</span>
+
+	<span class="c1">// 这一步至关重要，虽然Scan方法接收的是一个interface{}类型，但是因为我们这里传入的SearchModel，如果直接使用s.Model执行传入会报错
+</span><span class="c1"></span>	<span class="c1">// 原因在于这里的Scan的interface和我们传入的model实现的是不同的接口，Scan只认识gorm包中定义的接口类型
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">query</span><span class="p">.</span><span class="nf">Scan</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nf">Interface</span><span class="p">()).</span><span class="nx">Error</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="c1">// 这里不要学我
+</span><span class="c1"></span>		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;error&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">ret</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nb">string</span><span class="p">(</span><span class="nx">ret</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>就这样一个简单的公用类就诞生了，接下来就是调用了，在更目录下创建main.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">handler</span> <span class="o">:=</span> <span class="nf">GetSearchModelHandler</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">model</span><span class="p">.</span><span class="nx">Student</span><span class="p">{})</span>
+	<span class="nx">handler</span><span class="p">.</span><span class="nf">Search</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="实战进阶篇为单个表添加上附加信息">实战进阶篇：为单个表添加上附加信息</h1>
+<p>比如我们还有一个班级表，而在返回学生信息的时候需要加上班级信息，这该怎么操作呢，这里我只提供自己的一种思路，如果有更好的建议，请写在下方的评论里 共同交流。</p>
+<p>首先，创建class的结构体，在model文件夹内创建class.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Class 班级
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Class</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">ID</span>   <span class="kt">int</span>
+	<span class="nx">Name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="c1">// TableName 表名
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">Class</span><span class="p">)</span> <span class="nf">TableName</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="s">&#34;class&#34;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>然后编写一个公用的接口，在model文件夹下创建文件additional_api.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// AdditionalInfo 附加信息获取帮助
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">AdditionalInfo</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">FieldName</span> <span class="kt">string</span>
+	<span class="nx">Method</span>    <span class="kd">func</span><span class="p">(</span><span class="nx">ids</span> <span class="p">[]</span><span class="kt">int32</span><span class="p">)</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="c1">// MinMapAPI 获取总内容接口，相当于实战一中的SearchModel
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">MinMapAPI</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">TableName</span><span class="p">()</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="c1">// MinMapInterface 最小信息获取接口
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">MinMapInterface</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">TransFields</span><span class="p">()</span> <span class="kt">string</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面的方法先定义好，后面有用，然后修改model的内容，打开class.go输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// ClassMin 最小班级信息
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">ClassMin</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">ID</span>   <span class="kt">int</span>
+	<span class="nx">Name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="c1">// TransFields 转换名称，填写你要获取的字段的名称
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ClassMin</span><span class="p">)</span> <span class="nf">TransFields</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="s">&#34;Name&#34;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>接下来编写具体获取附加信息的方法，打开additional_api.go，输入以下内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// GetMinMap 获取最小信息
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">GetMinMap</span><span class="p">(</span><span class="nx">ids</span> <span class="p">[]</span><span class="kt">int32</span><span class="p">,</span> <span class="nx">model</span> <span class="nx">MinMapAPI</span><span class="p">,</span> <span class="nx">minModel</span> <span class="nx">MinMapInterface</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="c1">// 获取总数据的切片
+</span><span class="c1"></span>	<span class="nx">modelType</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span>
+	<span class="nx">modelSliceType</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">SliceOf</span><span class="p">(</span><span class="nx">modelType</span><span class="p">)</span>
+	<span class="nx">res</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">modelSliceType</span><span class="p">)</span>
+
+	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="nx">model</span><span class="p">).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;id in (?)&#34;</span><span class="p">,</span> <span class="nx">ids</span><span class="p">).</span><span class="nf">Scan</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nf">Interface</span><span class="p">()).</span><span class="nx">Error</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;error&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">minModelType</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">minModel</span><span class="p">).</span><span class="nf">Elem</span><span class="p">()</span>
+	<span class="nx">resValue</span> <span class="o">:=</span> <span class="nx">res</span><span class="p">.</span><span class="nf">Elem</span><span class="p">()</span>
+	<span class="nx">resLen</span> <span class="o">:=</span> <span class="nx">resValue</span><span class="p">.</span><span class="nf">Len</span><span class="p">()</span>
+
+	<span class="nx">ret</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">int</span><span class="p">]</span><span class="nx">MinMapInterface</span><span class="p">,</span> <span class="nx">resLen</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">resLen</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+                <span class="c1">// 获取当前下标的数据
+</span><span class="c1"></span>		<span class="nx">item</span> <span class="o">:=</span> <span class="nx">resValue</span><span class="p">.</span><span class="nf">Index</span><span class="p">(</span><span class="nx">i</span><span class="p">).</span><span class="nf">Elem</span><span class="p">()</span>
+                <span class="c1">// 获取要得到的字段
+</span><span class="c1"></span>		<span class="nx">name</span> <span class="o">:=</span> <span class="nx">item</span><span class="p">.</span><span class="nf">FieldByName</span><span class="p">(</span><span class="nx">minModel</span><span class="p">.</span><span class="nf">TransFields</span><span class="p">())</span>
+		<span class="nx">id</span> <span class="o">:=</span> <span class="nx">item</span><span class="p">.</span><span class="nf">FieldByName</span><span class="p">(</span><span class="s">&#34;ID&#34;</span><span class="p">)</span>
+
+                <span class="c1">// 拼接返回值
+</span><span class="c1"></span>		<span class="nx">setItem</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">minModelType</span><span class="p">)</span>
+		<span class="nx">setItem</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">FieldByName</span><span class="p">(</span><span class="s">&#34;ID&#34;</span><span class="p">).</span><span class="nf">SetInt</span><span class="p">(</span><span class="nb">int64</span><span class="p">(</span><span class="nx">id</span><span class="p">.</span><span class="nf">Interface</span><span class="p">().(</span><span class="kt">int</span><span class="p">)))</span>
+		<span class="nx">setItem</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">FieldByName</span><span class="p">(</span><span class="nx">minModel</span><span class="p">.</span><span class="nf">TransFields</span><span class="p">()).</span><span class="nf">SetString</span><span class="p">(</span><span class="nx">name</span><span class="p">.</span><span class="nf">Interface</span><span class="p">().(</span><span class="kt">string</span><span class="p">))</span>
+                <span class="c1">// 查询出来的内容是具体的model，这里类型断言转化回去
+</span><span class="c1"></span>		<span class="nx">ret</span><span class="p">[</span><span class="nx">id</span><span class="p">.</span><span class="nf">Interface</span><span class="p">().(</span><span class="kt">int</span><span class="p">)]</span> <span class="p">=</span> <span class="nx">setItem</span><span class="p">.</span><span class="nf">Interface</span><span class="p">().(</span><span class="nx">MinMapInterface</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">ret</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>修改student.go，加上获取附加数据的方法，这里使用了一个匿名函数，既保证了每个model都有其独有的参数，也保证了代码的复用性</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// AdditionalParams 附加数据参数
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Student</span><span class="p">)</span> <span class="nf">AdditionalParams</span><span class="p">()</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="nx">AdditionalInfo</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="nx">AdditionalInfo</span><span class="p">{</span>
+		<span class="s">&#34;class&#34;</span><span class="p">:</span> <span class="p">{</span>
+			<span class="nx">FieldName</span><span class="p">:</span> <span class="s">&#34;ClassID&#34;</span><span class="p">,</span>
+			<span class="nx">Method</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">ids</span> <span class="p">[]</span><span class="kt">int32</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="nf">GetMinMap</span><span class="p">(</span><span class="nx">ids</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">Class</span><span class="p">{},</span> <span class="o">&amp;</span><span class="nx">ClassMin</span><span class="p">{})</span>
+			<span class="p">},</span>
+		<span class="p">},</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>相应的，也要修改search.go，为借口添加上AdditionalParams方法，这里直接贴上search.go的最终代码以供比对</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// SearchModel 搜索接口
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">SearchModel</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">TableName</span><span class="p">()</span> <span class="kt">string</span>
+	<span class="nf">AdditionalParams</span><span class="p">()</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="nx">model</span><span class="p">.</span><span class="nx">AdditionalInfo</span>
+<span class="p">}</span>
+
+<span class="c1">// SearchModelHandler 存储一些查询过程中的必要信息
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">SearchModelHandler</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Model</span>          <span class="nx">SearchModel</span>
+	<span class="nx">ListValue</span>      <span class="nx">reflect</span><span class="p">.</span><span class="nx">Value</span>
+	<span class="nx">AdditionalData</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="c1">// GetSearchModelHandler 获取处理器
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">GetSearchModelHandler</span><span class="p">(</span><span class="nx">model</span> <span class="nx">SearchModel</span><span class="p">)</span> <span class="o">*</span><span class="nx">SearchModelHandler</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">SearchModelHandler</span><span class="p">{</span>
+		<span class="nx">Model</span><span class="p">:</span> <span class="nx">model</span><span class="p">,</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Search 查找
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">SearchModelHandler</span><span class="p">)</span> <span class="nf">Search</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+	<span class="nx">query</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">model</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">Model</span><span class="p">)</span>
+	<span class="nx">itemPtrType</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">Model</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">itemPtrType</span><span class="p">.</span><span class="nf">Kind</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">Ptr</span> <span class="p">{</span>
+		<span class="nx">itemPtrType</span> <span class="p">=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">PtrTo</span><span class="p">(</span><span class="nx">itemPtrType</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">itemSlice</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">SliceOf</span><span class="p">(</span><span class="nx">itemPtrType</span><span class="p">)</span>
+	<span class="nx">res</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">itemSlice</span><span class="p">)</span>
+
+	<span class="c1">// 这一步至关重要，虽然Scan方法接收的是一个interface{}类型，但是因为我们这里传入的SearchModel，如果直接使用s.Model执行传入会报错
+</span><span class="c1"></span>	<span class="c1">// 原因在于这里的Scan的interface和我们传入的model实现的是不同的接口，Scan只认识gorm包中定义的接口类型
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">query</span><span class="p">.</span><span class="nf">Scan</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nf">Interface</span><span class="p">()).</span><span class="nx">Error</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="c1">// 这里不要学我
+</span><span class="c1"></span>		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;error&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">s</span><span class="p">.</span><span class="nx">ListValue</span> <span class="p">=</span> <span class="nx">res</span><span class="p">.</span><span class="nf">Elem</span><span class="p">()</span>
+	
+	<span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span>
+	
+	<span class="nx">ret</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span> <span class="p">{</span>
+		<span class="s">&#34;list&#34;</span><span class="p">:</span> <span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">),</span>
+		<span class="s">&#34;additional&#34;</span><span class="p">:</span> <span class="nx">s</span><span class="p">.</span><span class="nx">AdditionalData</span><span class="p">,</span>
+	<span class="p">}</span>
+	
+	<span class="k">return</span> <span class="nx">ret</span>
+<span class="p">}</span>
+
+<span class="c1">// GetAdditionalData 获取附加信息
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">SearchModelHandler</span><span class="p">)</span> <span class="nf">GetAdditionalData</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">additionParams</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nf">AdditionalParams</span><span class="p">()</span>
+	<span class="nx">list</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">ListValue</span>
+	<span class="nx">listLen</span> <span class="o">:=</span> <span class="nx">list</span><span class="p">.</span><span class="nf">Len</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">additionParams</span><span class="p">)</span> <span class="p">&lt;</span> <span class="mi">1</span> <span class="o">||</span> <span class="nx">list</span><span class="p">.</span><span class="nf">Len</span><span class="p">()</span> <span class="p">&lt;</span> <span class="mi">1</span> <span class="p">{</span>
+		<span class="nx">s</span><span class="p">.</span><span class="nx">AdditionalData</span> <span class="p">=</span> <span class="s">&#34;&#34;</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="nx">additionalIDs</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">][]</span><span class="kt">int</span><span class="p">)</span>
+	<span class="nx">additionalData</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">additionParams</span><span class="p">))</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">listLen</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">val</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">additionParams</span> <span class="p">{</span>
+			<span class="nx">fieldName</span> <span class="o">:=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">FieldName</span>
+			<span class="c1">// 判断Map中的键是否已存在
+</span><span class="c1"></span>			<span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">additionalIDs</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+				<span class="nx">additionalIDs</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">listLen</span><span class="p">)</span>
+			<span class="p">}</span>
+
+			<span class="nx">fields</span> <span class="o">:=</span> <span class="nx">list</span><span class="p">.</span><span class="nf">Index</span><span class="p">(</span><span class="nx">i</span><span class="p">).</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">FieldByName</span><span class="p">(</span><span class="nx">fieldName</span><span class="p">)</span>
+
+			<span class="k">if</span> <span class="p">!</span><span class="nx">fields</span><span class="p">.</span><span class="nf">IsValid</span><span class="p">()</span> <span class="p">{</span>
+				<span class="k">continue</span>
+			<span class="p">}</span>
+
+			<span class="nx">additionalIDs</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">additionalIDs</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span> <span class="nx">fields</span><span class="p">.</span><span class="nf">Interface</span><span class="p">().(</span><span class="kt">int</span><span class="p">))</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">additionalIDs</span> <span class="p">{</span>
+		<span class="nx">additionalData</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="p">=</span> <span class="nx">additionParams</span><span class="p">[</span><span class="nx">k</span><span class="p">].</span><span class="nf">Method</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">ret</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">additionalData</span><span class="p">)</span>
+	<span class="nx">s</span><span class="p">.</span><span class="nx">AdditionalData</span> <span class="p">=</span> <span class="nb">string</span><span class="p">(</span><span class="nx">ret</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/golang">golang</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

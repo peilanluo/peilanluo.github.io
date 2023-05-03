@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>mysql—MVCC多版本并发控制 - 默默的心路</title>
+    <meta property="og:title" content="mysql—MVCC多版本并发控制 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2022-06-04T17:56:20&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2022-06-04T17:56:20&#43;08:00">
+        
+    <meta name="description" content="mysql—MVCC多版本并发控制">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/mysql/mysql_mvcc/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">mysql—MVCC多版本并发控制</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2022年6月4日
+                            17:56
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/mysql">mysql</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#引入mvcc的背景">引入MVCC的背景</a></li>
+        <li><a href="#mvcc实现原理">MVCC实现原理</a>
+          <ul>
+            <li><a href="#三个隐式字段">三个隐式字段</a></li>
+            <li><a href="#undo-log">undo log</a></li>
+            <li><a href="#read-view">Read View</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <blockquote>
+<p>参考：
+<a href="https://www.cnblogs.com/yaoyangding/p/15659608.html">https://www.cnblogs.com/yaoyangding/p/15659608.html</a>
+<a href="https://zhuanlan.zhihu.com/p/421769708">https://zhuanlan.zhihu.com/p/421769708</a></p>
+</blockquote>
+<p>MVCC（Multiversion Concurrency Control）即多版本并发控制，是现代数据库引擎中常用的处理读写冲突的手段，目的在于提高数据库高并发场景下的吞吐性能，做到即使有冲突时，也可以不加锁，非阻塞并发读。</p>
+<h2 id="引入mvcc的背景">引入MVCC的背景</h2>
+<p>要理解MVCC首先需要理解什么是<code>当前读</code>和<code>快照读</code>。</p>
+<ul>
+<li>当前读：诸如SELECT LOCK IN SHARE MODE（共享锁）、SELECT FOR UPDATE、UPDATE、INSERT、DELETE（排他锁）这些都是当前读，此时读取的是最新的数据，读取时会对读取的数据进行加锁，以保证其他并发事务不能修改当前记录。</li>
+<li>快照读：不加锁的SELECT操作就是快照读，快照读的前提是数据库的隔离级别不是串行级别，串行级别下快照读会退化为当前读，快照读是基于MVCC的，在很多情况下，MVCC避免了加锁操作，降低了开销。</li>
+</ul>
+<p>为了使读-写冲突不加锁，便引入了MVCC的概念，这里的读特指快照读，当前读实际上是一种加锁的操作，是悲观锁的实现。准确的来说，MVCC多版本并发控制指的是维持一个数据的多个版本，使得读写操作没有冲突。</p>
+<h2 id="mvcc实现原理">MVCC实现原理</h2>
+<p>MVCC的实现主要是通过数据库记录中的<code>三个隐式字段</code>、<code>undo日志</code>、<code>Read View</code>来实现的。</p>
+<h3 id="三个隐式字段">三个隐式字段</h3>
+<p>数据库的每行记录除了我们自己定义的字段外，还有数据库的隐式定义的DB_TRX_ID、DB_ROLL_PTR、DB_ROW_ID</p>
+<ul>
+<li>DB_TRX_ID：记录创建这条记录/最后修改该记录的事务ID</li>
+<li>DB_ROLL_PTR：回滚指针，指向这条记录的上一个版本，配合<code>undo日志</code>使用</li>
+<li>DB_ROW_ID：如果数据没有主键，InnoDB会自动以DB_ROW_ID产生一个聚簇索引</li>
+</ul>
+<h3 id="undo-log">undo log</h3>
+<p>undo log即回滚日志，用于记录数据被修改前的信息。在表的数据修改之前，会先把数据拷贝到undo log里，如果事务回滚，即可以通过undo log来还原数据。</p>
+<h4 id="undo-log的种类">undo log的种类</h4>
+<p>undo log主要分为两种：</p>
+<ul>
+<li>insert undo log：代表事务在INSERT新纪录时产生的undo log，只在事务回顾时需要，并且在事务提交后可以立即丢弃。</li>
+<li>update undo log：事务在进行UPDATE和DELETE时产生的undo log，不仅在事务回滚时需要，在快照读时也需要，只有在快照读和事务回滚不涉及该日志时，才会清除。</li>
+</ul>
+<h4 id="undo-log的版本链">undo log的版本链</h4>
+<p>多个事务并行操作某一行数据时，不同事务对该行数据的修改会产生多个版本，然后通过回滚指针，连成一个链表，这个链表就称为版本链。</p>
+<p>在undo log中排在最前面的永远是最新的旧数据，亦即与表中DB_ROLL_PTR对应的那一条日志，其他数据会记录在这条undo log记录的DB_ROLL_PTR中，这样一层一层形成一个链表。</p>
+<h3 id="read-view">Read View</h3>
+<p>Read View是事务进行快照读时产生的读视图（在innodb中，每个SQL语句执行前都会得到一个Read View），在该事务执行快照读的那一刻，会生成数据库系统当前的一个快照，记录并维护系统当前活跃事务的ID。</p>
+<p>Read View是用来做可见性判断的，遵循一个可见性算法，它会将要修改的数据的最新记录中的<code>DB_TRX_ID</code>取出来，与系统当前其他活跃事务的ID去对比，如果<code>DB_TRX_ID</code>跟Read View的属性做了某些比较，不符合可见性，那就通过<code>DB_ROLL_PTR</code>回滚指针去取出undo log中的<code>DB_TRX_ID</code>再比较，知道找到满足特定条件的<code>DB_TRX_ID</code>，那么这条就记录就是当前事务能看见的最新老版本。</p>
+<p>为了保证Read View判断可见性有以下几个重要属性：</p>
+<ul>
+<li>m_ids：当前系统中或缺的读写事务ID，数据结构为一个List。</li>
+<li>min_limit_id：生成Read View时，当前系统中活跃的读写事务中最小的事务id，即m_ids中的最小值。</li>
+<li>max_limit_id：表示生成Read View时，系统中应该分配给下一个事务的id值。</li>
+<li>creator_trx_id：创建当前Read View的事务ID。</li>
+</ul>
+<p>Read View的匹配条件规则如下：</p>
+<ul>
+<li>如果数据事务，DB_TRX_ID &lt; min_limit_id，表明生成该版本的事务在生成Read View前，已经提交，所以该版本可以被当前事务访问。</li>
+<li>如果DB_TRX_ID &gt;= max_limit_id表明生成该版本的事务在生成Read View后才生成，所以该本本不可以被当前事务访问。</li>
+<li>如果min_limit_id &lt;= DB_TRX_ID &lt; max_limit_id需要分三种情况：
+<ul>
+<li>如果m_ids包含DB_TRX_ID,则代表Read View生成时，这个事务还未提交，但是如果数据的DB_TRX_ID等于creator_trx_id的话，表明数据是自己生成的，因此是可见的。</li>
+<li>如果m_ids包含DB_TRX_ID，并且DB_TRX_ID不等于creator_trx_id，则Read View生成时，事务未提交，并且不是自己生产的，所以当前事务也是看不见的。</li>
+<li>如果m_ids不包含DB_TRX_ID，则说明这个事务在Read View生成之前就已经提交了，修改的结果，当前事务是能看见的。</li>
+</ul>
+</li>
+</ul>
+<p>知道以上三个概念以后，MVCC查询一条数据的过程可以概括为：</p>
+<ol>
+<li>获取事务自己的ID</li>
+<li>获取Read View</li>
+<li>查询得到的数据，然后与Read View中的事务版本号进行比较。</li>
+<li>如果不符合Read View的可见性规则，就需要去undo log中的查找。</li>
+<li>返回符合规则的数据。</li>
+</ol>
+
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/mysql">mysql</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

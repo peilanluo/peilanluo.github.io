@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Prometheus--Prometheus的数据类型和PromQL简介 - 默默的心路</title>
+    <meta property="og:title" content="Prometheus--Prometheus的数据类型和PromQL简介 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2022-06-19T11:18:20&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2022-06-19T11:18:20&#43;08:00">
+        
+    <meta name="description" content="Prometheus--Prometheus的数据类型和PromQL简介">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/prometheus/prometheus_basic/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">Prometheus--Prometheus的数据类型和PromQL简介</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2022年6月19日
+                            11:18
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/prometheus">Prometheus</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#prometheus的数据类型">Prometheus的数据类型</a>
+          <ul>
+            <li><a href="#metric">metric</a></li>
+            <li><a href="#label">label</a></li>
+            <li><a href="#sample">sample</a></li>
+          </ul>
+        </li>
+        <li><a href="#promql简介">PromQL简介</a>
+          <ul>
+            <li><a href="#时间序列选择器">时间序列选择器</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <h2 id="prometheus的数据类型">Prometheus的数据类型</h2>
+<p><code>Prometheus</code>把所有数据存储为时间序列（time series）数据，每个时间序列数据都具有带时间戳的数据流，数据流都由其指标（metric）名称和一组键值对（也称为标签label）唯一标识，即不同的标签代表不同的时间序列。我们可以基于这些标签很容易地对监控数据进行聚合、过滤和整理。</p>
+<h3 id="metric">metric</h3>
+<p><code>metric</code>即指标，可以理解为定义了某个监控指标类型名称。指标名称可以由ASCII字母、数字、下划线和冒号组成，但应该以字母开头，后面可以跟任意数量的字母、数字和下划线。一个指标由一下几个字段组成：</p>
+<ul>
+<li>指标名称</li>
+<li>任意数量的标签，当然也可以是零个，标识为键值数组。</li>
+<li>当前指标值</li>
+<li>可选的指标标准时间戳</li>
+</ul>
+<p>看一个例子</p>
+<pre><code class="language-Prometheus" data-lang="Prometheus">go_gc_duration_seconds{quantile=&quot;0&quot;} 1.5028e-05
+</code></pre><p>其中，<code>go_gc_duration_seconds</code>为指标名称，类似<code>quantile=&quot;0&quot;</code>的为标签，最后是指标值。</p>
+<h4 id="metric的四种类型">metric的四种类型</h4>
+<p>Prometheus提供了四种核心指标类型，包括Counter、Gauge、Histogram和Summary。</p>
+<h5 id="metric的类型counter">metric的类型：Counter</h5>
+<p><code>Counter</code>是最常用的指标类型，有如下特点：</p>
+<ul>
+<li>其值从0开始只能增加，不会减少，可以理解为一个计数器</li>
+<li>重启进程后，会被重置</li>
+</ul>
+<h5 id="metric的类型gauge">metric的类型：Gauge</h5>
+<p><code>Gauge</code>是对一个值的瞬时测量，反映系统当前状态的快照，有如下特点：</p>
+<ul>
+<li>测量值是一个瞬时的数据，其值可以任意增加或减少</li>
+<li>重启进程后，会被重置</li>
+</ul>
+<h5 id="metric的类型histogram">metric的类型：Histogram</h5>
+<p><code>Histogram</code>即直方图，用于表示在一段时间范围内对数据进行采样，对指定区间以及总数进行分组统计。典型的应用有请求持续时间、响应大小等。在查询语言中，它有三种作用：</p>
+<ul>
+<li>对每个采样点进行统计，对应到各个分类值中及bucket</li>
+<li>对每个采样点值累计和（sum）</li>
+<li>对采样点的次数累计和（count）</li>
+</ul>
+<h5 id="metric的类型summary">metric的类型：Summary</h5>
+<p><code>Summary</code>即概率图，常用于跟踪与实践相关的数据。典型的应用有请求持续时间、响应大小等，Summary同样提供count和sum功能，还提供quantiles功能，可以按百分比划分跟踪结果，例如quantile取值0.95，则表示取样本里95%数据。</p>
+<h3 id="label">label</h3>
+<p>label即标签，是界定时间序列的一个关键性指标，对标签的任意添加或删除操作都将创建一个新的实践序列。</p>
+<h3 id="sample">sample</h3>
+<p>sample即样本，按照某个时序以时间维度采集的数据，有序的样本形成了实际的时间序列数据列表，每个样本包括两方面内容：</p>
+<ul>
+<li>一个float64类型值</li>
+<li>毫秒级精度的时间戳</li>
+</ul>
+<h2 id="promql简介">PromQL简介</h2>
+<p>Prometheus存储数据使用的是时序数据库，其使用的操作语言名为<code>PromQL</code>，它可以使用标签进行任意聚合，还可以使用标签将不同的指标连接在一起进行算术操作。</p>
+<p>在Prometheus的表达式语言中，PromQL数据类型归类为以下四种：</p>
+<ul>
+<li>即时向量（instant vector），是指同一时刻的一组时间序列，每个时间序列包含一个样本，所有样本共享相同的时间戳，即每个时序只有一个点。</li>
+<li>区间向量（range vector），是指在任何一个时间范围内的一组时间序列，包含每个时间序列随时间变化的一系列数据点，这时每个时序有多个点。</li>
+<li>标量（scalar），即纯量数据，一个简单的数字浮点值，只有一个数字，没有时序。</li>
+<li>字符串（string），一个目前未被使用的简单字符串值。</li>
+</ul>
+<h3 id="时间序列选择器">时间序列选择器</h3>
+<h4 id="instant-vector-selectors">instant vector selectors</h4>
+<p>也可以称为“即时向量选择器”，它返回查询计算时间之前的最新样本的及时向量，即一个包含零个或多个时间序列的列表。</p>
+<pre><code class="language-Prometheus" data-lang="Prometheus">UP{job=&quot;mysqld_node&quot;}
+</code></pre><p>上面的例子中，UP是metric name，使用花括号（{}）括起来的<code>job=&quot;mysqld_node&quot;</code>是标签，类似于“=”的还有其他表达式：</p>
+<ul>
+<li><code>=</code>：相等匹配模式，用来指定返回的时间序列具有与给定标签值完全相同的标签名称。</li>
+<li><code>!=</code>：反向匹配符，与“=”相反。</li>
+<li><code>=~</code>：正则表达匹配模式，这里的正则表达式是完全锚定的，即假设有一个表达式x，它只会匹配字符串x，而不匹配xy或yx，需要模糊匹配可以使用<code>.*</code>作为前缀或后缀，例如，job=~&quot;node_.*&rdquo;</li>
+<li><code>!~</code>：反向正则表达匹配模式，与“=~”相反。</li>
+</ul>
+<p>另外，<code>UP{job=&quot;mysqld_node&quot;}</code>等效于<code>{__name__=&quot;UP&quot;,job=&quot;mysqld_node&quot;}</code>，这样就可以对metric name也使用正则了。</p>
+<h4 id="range-vector-selector">Range Vector Selector</h4>
+<p>与每个时间序列返回一个样本的即时向量选择器不同，区间向量选择器可以为每个时间序列返回许多样本。</p>
+<pre><code class="language-Prometheus" data-lang="Prometheus">process_cpu_seconds_total[1m]
+</code></pre><p>例子中的<code>process_cpu_seconds_total</code>是metric name，<code>[1m]</code>意为查看过去一分钟之内的数据。</p>
+<h4 id="offset-modifier">Offset Modifier</h4>
+<p>表示在即时向量或区间向量表达式中，都以当前时间为基准。</p>
+<pre><code class="language-Prometheus" data-lang="Prometheus">process_resident_memory_bytes{job=&quot;prometheus&quot;} offset 15m
+process_resident_memory_bytes{job=&quot;prometheus&quot;} [1d]offset 1d
+</code></pre>
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/prometheus">Prometheus</a></li>
+                                
+                                <li><a href="/tags/promql">PromQL</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

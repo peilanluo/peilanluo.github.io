@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>数据结构--二叉搜索树 - 默默的心路</title>
+    <meta property="og:title" content="数据结构--二叉搜索树 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2020-09-01T15:02:21&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2020-09-01T15:02:21&#43;08:00">
+        
+    <meta name="description" content="数据结构--二叉搜索树">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/data/binary_search_tree/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">数据结构--二叉搜索树</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2020年9月1日
+                            15:02
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">数据结构</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#二叉搜索树">二叉搜索树</a>
+      <ul>
+        <li><a href="#概念">概念</a></li>
+        <li><a href="#二叉搜索树的查找">二叉搜索树的查找</a>
+          <ul>
+            <li><a href="#查找">查找</a></li>
+            <li><a href="#查找最小元素">查找最小元素</a></li>
+            <li><a href="#查找最大元素">查找最大元素</a></li>
+            <li><a href="#查找某个结点的后继结点">查找某个结点的后继结点</a></li>
+            <li><a href="#查找某个节点的前驱结点">查找某个节点的前驱结点</a></li>
+          </ul>
+        </li>
+        <li><a href="#二叉搜索树的插入和删除">二叉搜索树的插入和删除</a>
+          <ul>
+            <li><a href="#插入">插入</a></li>
+            <li><a href="#删除">删除</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <h1 id="二叉搜索树">二叉搜索树</h1>
+<h2 id="概念">概念</h2>
+<p>二叉搜索树是一种特殊的二叉树，对于二叉搜索树的任意根结点x，其左子树上所有结点的值最大不超过x，其右子树上所有结点的值最小不低于x。</p>
+<p>如果设二叉搜索树共有n个元素，无论哪种操作，平均每次操作需要O(logn)的时间，最坏运行时间是O(n)，出现在如果这棵树是一条n个结点组成的线性链。</p>
+<h2 id="二叉搜索树的查找">二叉搜索树的查找</h2>
+<h3 id="查找">查找</h3>
+<p>首先列出树的基本数据结构，这里使用<code>golang</code>作为主语言。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// TreeNode 树结点
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">TreeNode</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">Val</span>    <span class="kt">int</span>
+  <span class="nx">Parent</span> <span class="o">*</span><span class="nx">TreeNode</span>
+  <span class="nx">Left</span>   <span class="o">*</span><span class="nx">TreeNode</span>
+  <span class="nx">Right</span>  <span class="o">*</span><span class="nx">TreeNode</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>二叉搜索树的查找即为在二叉树中找到具有指定关键字的结点，其时间复杂度为O(h)，h为树的高度。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 递归查找
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">TreeSearch</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">val</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">TreeNode</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">t</span> <span class="o">==</span> <span class="kc">nil</span> <span class="o">||</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Val</span> <span class="o">==</span> <span class="nx">val</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">t</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="nx">val</span> <span class="p">&lt;</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Val</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nf">TreeSearch</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">Left</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nf">TreeSearch</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">Right</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="查找最小元素">查找最小元素</h3>
+<p>根据二叉搜索树的特性，查找最小元素即为沿着left结点找到最后一个部位nil的元素。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">Minimum</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="o">*</span><span class="nx">TreeNode</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Left</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">t</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="nf">Minimum</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">Left</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="查找最大元素">查找最大元素</h3>
+<p>与查找最小元素对称，这里不再做讨论。</p>
+<h3 id="查找某个结点的后继结点">查找某个结点的后继结点</h3>
+<p>首先要明确后继结点的概念，如果要求x结点的后继节点，即大于x的结点值的最小关键字的结点。</p>
+<p>根据二叉搜索树的特性，一个结点的右子树中的所有结点的关键字均大于该结点，问题可以转换为在该结点的右子树中查找具有最小关键字的结点。<img src="/imgs/1598946169669.jpg" alt="1598946169669"></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">TreeSuccessor</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="o">*</span><span class="nx">TreeNode</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Right</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nf">Minimum</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">Right</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>但是，上面的这个函数并不能求出所有的情况，如果一个结点的右孩子为空，它同样是能够拥有后继结点的，当它是左孩子时，其后继为它的父结点（例如结点2），当它属于根结点的左子树且为右孩子时，它的后继结点为其根结点（例如结点13）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">TreeSuccessor</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="o">*</span><span class="nx">TreeNode</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Right</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nf">Minimum</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">Right</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="nx">parent</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Parent</span>
+  <span class="k">for</span> <span class="nx">parent</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="nx">t</span> <span class="o">==</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Right</span> <span class="p">{</span>
+    <span class="nx">t</span> <span class="p">=</span> <span class="nx">parent</span>
+    <span class="nx">parent</span> <span class="p">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Parent</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">parent</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="查找某个节点的前驱结点">查找某个节点的前驱结点</h3>
+<p>与查找后继结点对称，这里不做讨论。</p>
+<h2 id="二叉搜索树的插入和删除">二叉搜索树的插入和删除</h2>
+<h3 id="插入">插入</h3>
+<p>插入操作相对来说很简单，只要判断要插入值的大小，依据搜索二叉树的性质找出其要插入的位置即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">TreeInsert</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">val</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">y</span> <span class="o">*</span><span class="nx">TreeNode</span>
+  <span class="k">for</span> <span class="nx">t</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">y</span> <span class="p">=</span> <span class="nx">t</span>
+    <span class="k">if</span> <span class="nx">val</span> <span class="p">&lt;</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Val</span> <span class="p">{</span>
+      <span class="nx">t</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Left</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">t</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Right</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="nx">newNode</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">TreeNode</span><span class="p">{</span>
+    <span class="nx">Val</span><span class="p">:</span> <span class="nx">val</span><span class="p">,</span>
+    <span class="nx">Parent</span><span class="p">:</span> <span class="nx">y</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="nx">y</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">t</span> <span class="p">=</span> <span class="nx">newNode</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">val</span> <span class="p">&lt;</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Val</span> <span class="p">{</span>
+    <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">newNode</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">newNode</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="删除">删除</h3>
+<p>删除一个结点z具体分析来看有以下几种情况：</p>
+<ul>
+<li>结点z没有左孩子，用其右孩子r来代替z，其中r可以是nil也可以不是。
+<img src="/imgs/img_1599145869232.png" alt="img_1599145869232"></li>
+<li>结点z有一个左孩子l但没有右孩子，用l来替换z。
+<img src="/imgs/img_1599147362062.png" alt="img_1599147362062"></li>
+<li>结点z有两个孩子，其左孩子是结点l，其右孩子y是其后继，y的右孩子是结点x）（由搜索二叉树的特性，一个结点的左子树必然不大于其根节点，所以一个结点的后继是必然没有左子树的，如果有，那他就不是该节点的后继了）。用y替换z，修改使l成为y的左孩子，但保留x仍为y的右孩子。
+<img src="/imgs/img_1599147662676.png" alt="img_1599147662676"></li>
+<li>结点z有两个孩子（左孩子l和右孩子r），并且z的后继y≠r位于r的子树中，则用y的右孩子x来代替y，并且使y成为r的双亲，再设置y为q的孩子和l的双亲。
+<img src="/imgs/img_1599147932360.png" alt="img_1599147932360"></li>
+</ul>
+<p>以下为用代码表示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// TreeDelete 删除结点
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">TreeDelete</span><span class="p">(</span><span class="nx">tree</span><span class="p">,</span> <span class="nx">z</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="o">*</span><span class="nx">TreeNode</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Left</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">tree</span> <span class="p">=</span> <span class="nf">Transplant</span><span class="p">(</span><span class="nx">tree</span><span class="p">,</span> <span class="nx">z</span><span class="p">,</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Right</span><span class="p">)</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Right</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">tree</span> <span class="p">=</span> <span class="nf">Transplant</span><span class="p">(</span><span class="nx">tree</span><span class="p">,</span> <span class="nx">z</span><span class="p">,</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Left</span><span class="p">)</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="c1">// 在z右子树中查找y的后继
+</span><span class="c1"></span>		<span class="nx">y</span> <span class="p">=</span> <span class="nf">TreeSuccessor</span><span class="p">(</span><span class="nx">z</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Parent</span> <span class="o">!=</span> <span class="nx">z</span> <span class="p">{</span>
+			<span class="nx">tree</span> <span class="p">=</span> <span class="nf">Transplant</span><span class="p">(</span><span class="nx">tree</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span><span class="p">)</span>
+			<span class="nx">y</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Right</span>
+			<span class="nx">y</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">y</span>
+		<span class="p">}</span>
+		<span class="nx">tree</span> <span class="p">=</span> <span class="nf">Transplant</span><span class="p">(</span><span class="nx">tree</span><span class="p">,</span> <span class="nx">z</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span>
+		<span class="nx">y</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Left</span>
+		<span class="nx">y</span><span class="p">.</span><span class="nx">Left</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">y</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Transplant</span><span class="p">(</span><span class="nx">tree</span><span class="p">,</span> <span class="nx">u</span><span class="p">,</span> <span class="nx">v</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="o">*</span><span class="nx">TreeNode</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">tree</span> <span class="p">=</span> <span class="nx">v</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">u</span> <span class="o">==</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">{</span>
+		<span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">v</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">v</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="nx">v</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">v</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="nx">tree</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">数据结构</a></li>
+                                
+                                <li><a href="/tags/%E6%A0%91">树</a></li>
+                                
+                                <li><a href="/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91">二叉搜索树</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

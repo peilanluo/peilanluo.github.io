@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.74.2" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>MongoDB--聚合 - 默默的心路</title>
+    <meta property="og:title" content="MongoDB--聚合 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2020-12-08T22:58:20&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2020-12-08T22:58:20&#43;08:00">
+        
+    <meta name="description" content="MongoDB--聚合">
+        
+    <meta name="author" content="Qiao">
+    <meta property="og:url" content="https://www.ceevee.cn/post/mongodb/mongodb_aggregate/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.ceevee.cn">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.ceevee.cn">博客</a>
+                    
+                    <a  href="https://www.ceevee.cn/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">MongoDB--聚合</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2020年12月8日
+                            22:58
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/mongodb">MongoDB</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#聚合框架">聚合框架</a></li>
+    <li><a href="#管道操作符">管道操作符</a>
+      <ul>
+        <li><a href="#match">$match</a></li>
+        <li><a href="#project">$project</a>
+          <ul>
+            <li><a href="#管道表达式">管道表达式</a></li>
+            <li><a href="#数学表达式">数学表达式</a></li>
+            <li><a href="#日期表达式">日期表达式</a></li>
+            <li><a href="#字符串表达式">字符串表达式</a></li>
+            <li><a href="#逻辑表达式">逻辑表达式</a></li>
+          </ul>
+        </li>
+        <li><a href="#group">$group</a>
+          <ul>
+            <li><a href="#算术操作符">算术操作符</a></li>
+            <li><a href="#极值操作符">极值操作符</a></li>
+            <li><a href="#数组操作符">数组操作符</a></li>
+            <li><a href="#unwind拆分">$unwind拆分</a></li>
+            <li><a href="#sort排序">$sort排序</a></li>
+            <li><a href="#limit">$limit</a></li>
+            <li><a href="#skip">$skip</a></li>
+            <li><a href="#使用管道">使用管道</a></li>
+          </ul>
+        </li>
+        <li><a href="#聚合命令">聚合命令</a>
+          <ul>
+            <li><a href="#count">count</a></li>
+            <li><a href="#distinct">distinct</a></li>
+            <li><a href="#group-1">group</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <h1 id="聚合框架">聚合框架</h1>
+<p>使用聚合框架可以对集合中的文档进行变换和组合。可以用多个构件创建一个管道（pipeline），这些构件包括筛选（filtering）、投射（projecting）、分组（grouping）、排序（sorting）、限制（limiting）和跳过（skipping）。</p>
+<h1 id="管道操作符">管道操作符</h1>
+<p>不同的管道操作符可以按任意顺序组合在一起使用，而且可以被重复任意多次。</p>
+<h2 id="match">$match</h2>
+<p>$match用于对文档集合进行筛选。$match可以使用所有常规的查询操作符（$gt、$lt、$in）等，在实际应用中，应尽可能将$match放在管道的前面位置，这样做可以快速将不需要的文档过滤掉，以减少管道工作量，另外，如果在投射和分组之前执行$match，查询可以使用索引。</p>
+<h2 id="project">$project</h2>
+<p>使用$project可以从子文档中提取字段，可以重命名字段，还可以在这些字段上进行其他操作。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">// 只返回author字段
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">articles</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span>
+    <span class="p">{</span><span class="s1">&#39;$project&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;author&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;_id&#39;</span><span class="o">:</span> <span class="mi">0</span><span class="p">}}</span>
+<span class="p">)</span>
+
+<span class="c1">// 将_id在返回结果中重命名为userId
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">articles</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span>
+    <span class="p">{</span><span class="s1">&#39;$project&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;userId&#39;</span><span class="o">:</span> <span class="s1">&#39;$_id&#39;</span><span class="p">,</span> <span class="s1">&#39;_id&#39;</span><span class="o">:</span> <span class="mi">0</span><span class="p">}}</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里的$fieldname语法是为了在聚合框架中引用fieldname字段的值。</p>
+<h3 id="管道表达式">管道表达式</h3>
+<p>最简单的 &ldquo;$project&rdquo; 表达式是包含和排除字段，以及字段名称（&ldquo;$fieldname&rdquo;）。
+但是，还有一些更强大的选项。也可以使用表达式（expression）将多个字面量和变
+量组合在一个值中使用。</p>
+<h3 id="数学表达式">数学表达式</h3>
+<p>数学表达式可用于操作数值。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">// 将salary和bonus相加
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">employees</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span>
+<span class="p">{</span>
+    <span class="s2">&#34;$project&#34;</span> <span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&#34;totalPay&#34;</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&#34;$add&#34;</span> <span class="o">:</span> <span class="p">[</span><span class="s2">&#34;$salary&#34;</span><span class="p">,</span> <span class="s2">&#34;$bonus&#34;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="c1">// 将salary和bonus相加再减去一定金额
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">employees</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">({</span>
+    <span class="s2">&#34;$project&#34;</span> <span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&#34;totalPay&#34;</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&#34;$subtract&#34;</span> <span class="o">:</span> <span class="p">[{</span><span class="s2">&#34;$add&#34;</span> <span class="o">:</span> <span class="p">[</span><span class="s2">&#34;$salary&#34;</span><span class="p">,</span> <span class="s2">&#34;$bonus&#34;</span><span class="p">]},</span> <span class="s2">&#34;$401k&#34;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>数学表达式可以进行任意层次的嵌套。下面是每个操作符的语法：</p>
+<ul>
+<li>$add: [expr1[, expr2, &hellip;, exprN]] 将所有表达式相加</li>
+<li>$substract: [expr1, expr2] 用第一个减去第二个</li>
+<li>$multiply: [expr1[, expr2, &hellip;, exprN]] 将所有表达式相乘</li>
+<li>$devide: [expr1, expr2] 用第一个除以第二个的商</li>
+<li>$mod: [expr1, expr2] 用第一个除以第二个的余数</li>
+</ul>
+<h3 id="日期表达式">日期表达式</h3>
+<p>聚合框架中用于提取日期信息的表达式有：$year、$month、$week、$dayOfMonth、$dayOfWeek、$dayOfYear、$hour、$minute、$second，只能对日期类型的字段进行日期操作，不能对数值类型字段做日期操作。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">// 返回入职的月份
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">employees</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span>
+    <span class="p">{</span><span class="s1">&#39;$project&#39;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s1">&#39;hiredIn&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$month&#39;</span><span class="o">:</span> <span class="s1">&#39;$hireDate&#39;</span><span class="p">}</span>
+    <span class="p">}}</span>
+<span class="p">)</span>
+
+<span class="c1">// 返回每个雇员在公司内的工作时间
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">employees</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span>
+    <span class="p">{</span><span class="s1">&#39;$project&#39;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s1">&#39;tenure&#39;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s1">&#39;$substract&#39;</span><span class="o">:</span> <span class="p">[{</span><span class="s1">&#39;$year&#39;</span><span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">()},</span> <span class="p">{</span><span class="s1">&#39;$year&#39;</span><span class="o">:</span> <span class="s1">&#39;$hireDate&#39;</span><span class="p">}]</span>
+        <span class="p">}</span>
+    <span class="p">}}</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="字符串表达式">字符串表达式</h3>
+<p>字符串表达式如下所示：</p>
+<ul>
+<li>$substr: [expr, startOffset, numToReturn] 其中第一个参数 expr 必须是个字符串，这个操作会截取这个字符串的子串（从
+第 startOffset 字节开始的 numToReturn 字节，注意，是字节，不是字符。</li>
+<li>$concat: [expr1[, expr2, &hellip;, exprN]] 将给定的表达式连在一起返回。</li>
+<li>$toLower: expr 返回expr的小写形式</li>
+<li>$toUpper: expr 返回expr的大写形式</li>
+</ul>
+<h3 id="逻辑表达式">逻辑表达式</h3>
+<p>逻辑表达式如下所示：</p>
+<ul>
+<li>$cmp: [expr1, expr2] 比较expr1和expr2，如果相等返回0，1&lt;2返回负数，1&gt;2返回整数。</li>
+<li>$strcasecmp: [string1, string2] 比较两个字符串</li>
+<li>$eq/$ne/$gt/$gte/$lt/$lte: [expr1, expr2] 对1和2执行相应的比较操作。</li>
+<li>$and: [expr1[, expr2, &hellip;, exprN]] 所有表达式与操作</li>
+<li>$or: [expr1[, expr2, &hellip;, exprN]] 所有表达式或操作</li>
+<li>$not: expr 取反</li>
+<li>$cond: [booleanExpr, trueExpr, falseExpr] 三元运算符</li>
+<li>$ifNull: [expr, replacementExpr] expr是null返回replacement，否则expr</li>
+</ul>
+<h2 id="group">$group</h2>
+<p>$group操作可以将文档依据特定字段的不同值进行分组。示例如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span><span class="s1">&#39;$group&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;_id&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;state&#39;</span><span class="o">:</span> <span class="s2">&#34;$state&#34;</span><span class="p">,</span> <span class="s1">&#39;city&#39;</span><span class="o">:</span> <span class="s2">&#34;$city&#34;</span><span class="p">}}}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="算术操作符">算术操作符</h3>
+<p>有连个操作符可以用于对数值类型字段的值进行计算：</p>
+<ul>
+<li>$sum: value 对于分组中的每一个文档，将value与计算结果相加。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">sales</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;$group&#39;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s1">&#39;_id&#39;</span><span class="o">:</span> <span class="s1">&#39;$country&#39;</span><span class="p">,</span>
+            <span class="nx">totalRevenue</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$sum&#39;</span><span class="o">:</span> <span class="s1">&#39;$revenue&#39;</span><span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>$avg: value 返回分组中文档的平均值</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">sales</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">{</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;$group&#39;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s1">&#39;_id&#39;</span><span class="o">:</span> <span class="s1">&#39;$country&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;totalRevenue&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$avg&#39;</span><span class="o">:</span> <span class="s1">&#39;$revenue&#39;</span><span class="p">},</span> <span class="c1">// 计算平均收入
+</span><span class="c1"></span>            <span class="s1">&#39;numSales&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$sum&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">}</span> <span class="c1">// 计算每个国家的销量
+</span><span class="c1"></span>        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="极值操作符">极值操作符</h3>
+<p>下面是四个机制操作符：</p>
+<ul>
+<li>$max: expr 返回分组内的最大值</li>
+<li>$min: expr 返回分组内的最小值</li>
+<li>$first: expr 返回分组的第一个值，忽略后面所有值。</li>
+<li>$last: expr 返回返祖中的最后一个值</li>
+</ul>
+<h3 id="数组操作符">数组操作符</h3>
+<p>数组操作符可以对数组进行操作。</p>
+<ul>
+<li>$addToSet: expr 如果当前数组中不包含expr，那就将它添加到数组中。再返回结果集中，每个元素最多出现一次，而且元素顺序不确定。</li>
+<li>$push: expr 不管expr是什么值，都把它添加到数组中，返回包含所有值的数组。</li>
+</ul>
+<h3 id="unwind拆分">$unwind拆分</h3>
+<p>$unwind可以将数组中的每一个值拆分为单独的文档。例如，如果有一篇拥有多条评论的博客，可以用$wind将每条评论拆分为一个独立的文档：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">blog</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">({</span><span class="s1">&#39;$unwind&#39;</span><span class="o">:</span> <span class="s1">&#39;$comments&#39;</span><span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="sort排序">$sort排序</h3>
+<p>可以根据任何字段（或者多个字段）进行排序，如果要对大量的文档进行排序，应该在管道的第一阶段进行排序，这时的排序操作可以使用索引。</p>
+<p>可以在排序中使用文档中实际存在的字段，也可以使用在投射时重命名的字段：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">videos</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;$project&#39;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s1">&#39;hot&#39;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s1">&#39;$add&#39;</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;$praises&#39;</span><span class="p">,</span> <span class="s1">&#39;$comments&#39;</span><span class="p">]</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="mi">1</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;$sort&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;hot&#39;</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="limit">$limit</h3>
+<p>$limit会接收一个数字，返回结果集中的前n个文档。</p>
+<h3 id="skip">$skip</h3>
+<p>$skip会接收一个数字，然后丢掉结果集中的前n个文档，将剩余文档作为结果集返回。</p>
+<h3 id="使用管道">使用管道</h3>
+<p>结果集大小超过16M或者使用内存超过100M的聚合会直接报错，所以应当谨慎使用聚合。</p>
+<h2 id="聚合命令">聚合命令</h2>
+<p>MongoDB为在集合上执行基本的聚合任务提供了一些命令，在执行一些简单聚合操作时可以不适用聚合框架。</p>
+<h3 id="count">count</h3>
+<p>count会返回集合中的文档数量</p>
+<h3 id="distinct">distinct</h3>
+<p>distinct用来找出给定键的所有不同值，使用时必须制定集合和键。</p>
+<h3 id="group-1">group</h3>
+<p>作用和sql中的GROUP BY相同。</p>
+
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/mongodb">MongoDB</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://www.ceevee.cn">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (5)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2023 <a rel="nofollow" href="https://www.ceevee.cn">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>

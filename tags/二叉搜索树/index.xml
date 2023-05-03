@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>二叉搜索树 on 默默的心路</title>
+    <link>https://www.ceevee.cn/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/</link>
+    <description>Recent content in 二叉搜索树 on 默默的心路</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 01 Sep 2020 15:02:21 +0800</lastBuildDate>
+    
+	<atom:link href="https://www.ceevee.cn/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>数据结构--二叉搜索树</title>
+      <link>https://www.ceevee.cn/post/data/binary_search_tree/</link>
+      <pubDate>Tue, 01 Sep 2020 15:02:21 +0800</pubDate>
+      
+      <guid>https://www.ceevee.cn/post/data/binary_search_tree/</guid>
+      <description>二叉搜索树 概念 二叉搜索树是一种特殊的二叉树，对于二叉搜索树的任意根结点x，其左子树上所有结点的值最大不超过x，其右子树上所有结点的值最小不低</description>
+    </item>
+    
+  </channel>
+</rss>
