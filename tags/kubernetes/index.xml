@@ -2,48 +2,48 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>kubernetes on 默默的心路</title>
-    <link>https://www.ceevee.cn/tags/kubernetes/</link>
+    <link>https://peilanluo.github.io/tags/kubernetes/</link>
     <description>Recent content in kubernetes on 默默的心路</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Mon, 15 Aug 2022 21:44:53 +0800</lastBuildDate>
     
-	<atom:link href="https://www.ceevee.cn/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://peilanluo.github.io/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>istio--流量控制</title>
-      <link>https://www.ceevee.cn/post/kubernetes/istio_crd/</link>
+      <link>https://peilanluo.github.io/post/kubernetes/istio_crd/</link>
       <pubDate>Mon, 15 Aug 2022 21:44:53 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/kubernetes/istio_crd/</guid>
+      <guid>https://peilanluo.github.io/post/kubernetes/istio_crd/</guid>
       <description>参考文献：云原生社区《深入理解Istio 云原生服务网格进阶实战》 1. 流量控制 Istio的流量控制是通过一系列的CRD（Kubernetes的自</description>
     </item>
     
     <item>
       <title>kubernetes--详解Service</title>
-      <link>https://www.ceevee.cn/post/kubernetes/service/</link>
+      <link>https://peilanluo.github.io/post/kubernetes/service/</link>
       <pubDate>Sun, 18 Apr 2021 16:06:16 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/kubernetes/service/</guid>
+      <guid>https://peilanluo.github.io/post/kubernetes/service/</guid>
       <description>通过创建Service可以为一组具有相同功能的容器应用提供一个统一的入口地址，并将请求负载分发到后端的各个应用容器上。 Service的基本用</description>
     </item>
     
     <item>
       <title>kubernetes--Pod的应用</title>
-      <link>https://www.ceevee.cn/post/kubernetes/pod/</link>
+      <link>https://peilanluo.github.io/post/kubernetes/pod/</link>
       <pubDate>Sun, 18 Apr 2021 15:01:20 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/kubernetes/pod/</guid>
+      <guid>https://peilanluo.github.io/post/kubernetes/pod/</guid>
       <description>Pod是Kubernetes中能够创建和部署的最小单元，是Kubernetes集群中的一个应用实例，总是部署在同一个节点node上。Pod中</description>
     </item>
     
     <item>
       <title>kubernetes--的一些重要概念</title>
-      <link>https://www.ceevee.cn/post/kubernetes/important_concept/</link>
+      <link>https://peilanluo.github.io/post/kubernetes/important_concept/</link>
       <pubDate>Wed, 26 Aug 2020 18:26:53 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/kubernetes/important_concept/</guid>
+      <guid>https://peilanluo.github.io/post/kubernetes/important_concept/</guid>
       <description>Kubernetes是什么 Kubernetes是一个全新的基于容器技术的分布式架构领先方案，他的前身是谷歌内部使用逾十余年的Borg技术，K</description>
     </item>
     

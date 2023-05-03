@@ -2,39 +2,39 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>MongoDB on 默默的心路</title>
-    <link>https://www.ceevee.cn/tags/mongodb/</link>
+    <link>https://peilanluo.github.io/tags/mongodb/</link>
     <description>Recent content in MongoDB on 默默的心路</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Tue, 08 Dec 2020 22:58:20 +0800</lastBuildDate>
     
-	<atom:link href="https://www.ceevee.cn/tags/mongodb/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://peilanluo.github.io/tags/mongodb/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>MongoDB--聚合</title>
-      <link>https://www.ceevee.cn/post/mongodb/mongodb_aggregate/</link>
+      <link>https://peilanluo.github.io/post/mongodb/mongodb_aggregate/</link>
       <pubDate>Tue, 08 Dec 2020 22:58:20 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/mongodb/mongodb_aggregate/</guid>
+      <guid>https://peilanluo.github.io/post/mongodb/mongodb_aggregate/</guid>
       <description>聚合框架 使用聚合框架可以对集合中的文档进行变换和组合。可以用多个构件创建一个管道（pipeline），这些构件包括筛选（filtering）</description>
     </item>
     
     <item>
       <title>MongoDB--索引</title>
-      <link>https://www.ceevee.cn/post/mongodb/mongodb_index/</link>
+      <link>https://peilanluo.github.io/post/mongodb/mongodb_index/</link>
       <pubDate>Mon, 07 Dec 2020 20:46:20 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/mongodb/mongodb_index/</guid>
+      <guid>https://peilanluo.github.io/post/mongodb/mongodb_index/</guid>
       <description>MongoDB中的索引 MongoDB中的索引一部分用法和MySQL中是很相似的，但有些部分也存在差异。 使用复合索引 复合索引相对于单键索引要复</description>
     </item>
     
     <item>
       <title>MongoDB--一些基础知识</title>
-      <link>https://www.ceevee.cn/post/mongodb/mongodb_basic/</link>
+      <link>https://peilanluo.github.io/post/mongodb/mongodb_basic/</link>
       <pubDate>Mon, 07 Dec 2020 20:41:20 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/mongodb/mongodb_basic/</guid>
+      <guid>https://peilanluo.github.io/post/mongodb/mongodb_basic/</guid>
       <description>mongoDB的基本操作符 $inc 增加或减少数字 $push 向已有的数组末尾加入一个元素 $each 可以配合$push使用添加多个值 1 {&amp;#34;$push&amp;#34;: {&amp;#34;tags&amp;#34;: {&amp;#34;$each&amp;#34;: [1, 2, 3]}}} $addToSet 可以插入不重复的值</description>
     </item>
     

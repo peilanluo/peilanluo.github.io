@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>istio on 默默的心路</title>
-    <link>https://www.ceevee.cn/tags/istio/</link>
+    <link>https://peilanluo.github.io/tags/istio/</link>
     <description>Recent content in istio on 默默的心路</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Mon, 15 Aug 2022 21:44:53 +0800</lastBuildDate>
     
-	<atom:link href="https://www.ceevee.cn/tags/istio/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://peilanluo.github.io/tags/istio/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>istio--流量控制</title>
-      <link>https://www.ceevee.cn/post/kubernetes/istio_crd/</link>
+      <link>https://peilanluo.github.io/post/kubernetes/istio_crd/</link>
       <pubDate>Mon, 15 Aug 2022 21:44:53 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/kubernetes/istio_crd/</guid>
+      <guid>https://peilanluo.github.io/post/kubernetes/istio_crd/</guid>
       <description>参考文献：云原生社区《深入理解Istio 云原生服务网格进阶实战》 1. 流量控制 Istio的流量控制是通过一系列的CRD（Kubernetes的自</description>
     </item>
     

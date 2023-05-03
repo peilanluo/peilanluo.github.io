@@ -2,48 +2,48 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>概念 on 默默的心路</title>
-    <link>https://www.ceevee.cn/tags/%E6%A6%82%E5%BF%B5/</link>
+    <link>https://peilanluo.github.io/tags/%E6%A6%82%E5%BF%B5/</link>
     <description>Recent content in 概念 on 默默的心路</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Sun, 18 Apr 2021 16:06:16 +0800</lastBuildDate>
     
-	<atom:link href="https://www.ceevee.cn/tags/%E6%A6%82%E5%BF%B5/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://peilanluo.github.io/tags/%E6%A6%82%E5%BF%B5/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>kubernetes--详解Service</title>
-      <link>https://www.ceevee.cn/post/kubernetes/service/</link>
+      <link>https://peilanluo.github.io/post/kubernetes/service/</link>
       <pubDate>Sun, 18 Apr 2021 16:06:16 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/kubernetes/service/</guid>
+      <guid>https://peilanluo.github.io/post/kubernetes/service/</guid>
       <description>通过创建Service可以为一组具有相同功能的容器应用提供一个统一的入口地址，并将请求负载分发到后端的各个应用容器上。 Service的基本用</description>
     </item>
     
     <item>
       <title>kubernetes--Pod的应用</title>
-      <link>https://www.ceevee.cn/post/kubernetes/pod/</link>
+      <link>https://peilanluo.github.io/post/kubernetes/pod/</link>
       <pubDate>Sun, 18 Apr 2021 15:01:20 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/kubernetes/pod/</guid>
+      <guid>https://peilanluo.github.io/post/kubernetes/pod/</guid>
       <description>Pod是Kubernetes中能够创建和部署的最小单元，是Kubernetes集群中的一个应用实例，总是部署在同一个节点node上。Pod中</description>
     </item>
     
     <item>
       <title>Docker--一些基础知识</title>
-      <link>https://www.ceevee.cn/post/docker/docker_concept/</link>
+      <link>https://peilanluo.github.io/post/docker/docker_concept/</link>
       <pubDate>Sun, 28 Mar 2021 18:49:53 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/docker/docker_concept/</guid>
+      <guid>https://peilanluo.github.io/post/docker/docker_concept/</guid>
       <description>搭建本地私有仓库 安装Docker后，可以通过官方提供的registry镜像来搭建本地私有仓库： docker run -d -p 5000:5000 registry:2 // 指定镜像文件存放在本地的指定路径</description>
     </item>
     
     <item>
       <title>kubernetes--的一些重要概念</title>
-      <link>https://www.ceevee.cn/post/kubernetes/important_concept/</link>
+      <link>https://peilanluo.github.io/post/kubernetes/important_concept/</link>
       <pubDate>Wed, 26 Aug 2020 18:26:53 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/kubernetes/important_concept/</guid>
+      <guid>https://peilanluo.github.io/post/kubernetes/important_concept/</guid>
       <description>Kubernetes是什么 Kubernetes是一个全新的基于容器技术的分布式架构领先方案，他的前身是谷歌内部使用逾十余年的Borg技术，K</description>
     </item>
     

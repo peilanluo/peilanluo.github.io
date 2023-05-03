@@ -2,75 +2,75 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>mysql on 默默的心路</title>
-    <link>https://www.ceevee.cn/tags/mysql/</link>
+    <link>https://peilanluo.github.io/tags/mysql/</link>
     <description>Recent content in mysql on 默默的心路</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Sun, 18 Sep 2022 17:40:45 +0800</lastBuildDate>
     
-	<atom:link href="https://www.ceevee.cn/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://peilanluo.github.io/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>mysql—存储引擎</title>
-      <link>https://www.ceevee.cn/post/mysql/mysql_engine/</link>
+      <link>https://peilanluo.github.io/post/mysql/mysql_engine/</link>
       <pubDate>Sun, 18 Sep 2022 17:40:45 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/mysql/mysql_engine/</guid>
+      <guid>https://peilanluo.github.io/post/mysql/mysql_engine/</guid>
       <description>1 InnoDB存储引擎 InnoDB是MySQL默认的事务型引擎（从MySQL 5.5开始作为默认的存储引擎），它被设计用来处理大量的短期事务。</description>
     </item>
     
     <item>
       <title>mysql—MVCC多版本并发控制</title>
-      <link>https://www.ceevee.cn/post/mysql/mysql_mvcc/</link>
+      <link>https://peilanluo.github.io/post/mysql/mysql_mvcc/</link>
       <pubDate>Sat, 04 Jun 2022 17:56:20 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/mysql/mysql_mvcc/</guid>
+      <guid>https://peilanluo.github.io/post/mysql/mysql_mvcc/</guid>
       <description>参考： https://www.cnblogs.com/yaoyangding/p/15659608.html https://zhuanlan.zhihu.com/p/421769708 MVCC（Multiversion Concurrency Control）即多版本并发控制，是现代数据库引擎中常用的处理读写冲突的手段，目的在于提高数据</description>
     </item>
     
     <item>
       <title>mysql—四大特性（ACID）、事务的隔离级别和死锁</title>
-      <link>https://www.ceevee.cn/post/mysql/mysql_acid/</link>
+      <link>https://peilanluo.github.io/post/mysql/mysql_acid/</link>
       <pubDate>Tue, 31 May 2022 15:31:45 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/mysql/mysql_acid/</guid>
+      <guid>https://peilanluo.github.io/post/mysql/mysql_acid/</guid>
       <description>参考文献：https://blog.csdn.net/zDavid_2018/article/details/89929862 《高性能MyS</description>
     </item>
     
     <item>
       <title>mysql—EXPLAIN的使用</title>
-      <link>https://www.ceevee.cn/post/mysql/mysql_explain/</link>
+      <link>https://peilanluo.github.io/post/mysql/mysql_explain/</link>
       <pubDate>Mon, 29 Mar 2021 20:43:45 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/mysql/mysql_explain/</guid>
+      <guid>https://peilanluo.github.io/post/mysql/mysql_explain/</guid>
       <description>EXPLAIN命令是查看查询优化器如何决定执行查询的主要方法，但是它是有局限性的，并不总是准确的，但他在一定程度上仍然是衡量MySQL优化的</description>
     </item>
     
     <item>
       <title>mysql--查询性能优化</title>
-      <link>https://www.ceevee.cn/post/mysql/mysql_query_optimizing/</link>
+      <link>https://peilanluo.github.io/post/mysql/mysql_query_optimizing/</link>
       <pubDate>Sun, 29 Nov 2020 22:04:45 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/mysql/mysql_query_optimizing/</guid>
+      <guid>https://peilanluo.github.io/post/mysql/mysql_query_optimizing/</guid>
       <description>为什么查询速度会变慢 所谓查询优化最重要的是响应时间，如果把查询看作是一个任务，那么它是由一些列子任务组成，每个子任务消耗一定的时间。如果要优</description>
     </item>
     
     <item>
       <title>mysql--索引优化</title>
-      <link>https://www.ceevee.cn/post/mysql/mysql_index_optimizing/</link>
+      <link>https://peilanluo.github.io/post/mysql/mysql_index_optimizing/</link>
       <pubDate>Sun, 29 Nov 2020 16:01:45 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/mysql/mysql_index_optimizing/</guid>
+      <guid>https://peilanluo.github.io/post/mysql/mysql_index_optimizing/</guid>
       <description>1 索引基础 MySQL支持多种索引引擎，最常用的例如B-Tree、哈希索引。 1.1 B-Tree索引的限制 现在有这么一个场景，有一个B-Tree类型</description>
     </item>
     
     <item>
       <title>mysql--Schema与数据类型优化</title>
-      <link>https://www.ceevee.cn/post/mysql/mysql_field_-optimizing/</link>
+      <link>https://peilanluo.github.io/post/mysql/mysql_field_-optimizing/</link>
       <pubDate>Sat, 21 Nov 2020 18:08:45 +0800</pubDate>
       
-      <guid>https://www.ceevee.cn/post/mysql/mysql_field_-optimizing/</guid>
+      <guid>https://peilanluo.github.io/post/mysql/mysql_field_-optimizing/</guid>
       <description>存储引擎 在MySQL5.5版本将InnoDB作为默认的存储引擎。 数据类型优化 通常把可为null的列改为not null带来的性能提升比较小，所</description>
     </item>
     
