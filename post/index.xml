@@ -6,10 +6,19 @@
     <description>Recent content in Posts on 默默的心路</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 03 May 2023 23:38:21 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 04 May 2023 14:11:53 +0800</lastBuildDate>
     
 	<atom:link href="https://peilanluo.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>golang--channel的底层原理</title>
+      <link>https://peilanluo.github.io/post/golang/channel/</link>
+      <pubDate>Thu, 04 May 2023 14:11:53 +0800</pubDate>
+      
+      <guid>https://peilanluo.github.io/post/golang/channel/</guid>
+      <description>参考文献：https://juejin.cn/post/7157663775955353614 在go中，channel是用于goroutin</description>
+    </item>
     
     <item>
       <title>数据结构--hash表</title>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>channel on 默默的心路</title>
+    <link>https://peilanluo.github.io/tags/channel/</link>
+    <description>Recent content in channel on 默默的心路</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 04 May 2023 14:11:53 +0800</lastBuildDate>
+    
+	<atom:link href="https://peilanluo.github.io/tags/channel/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>golang--channel的底层原理</title>
+      <link>https://peilanluo.github.io/post/golang/channel/</link>
+      <pubDate>Thu, 04 May 2023 14:11:53 +0800</pubDate>
+      
+      <guid>https://peilanluo.github.io/post/golang/channel/</guid>
+      <description>参考文献：https://juejin.cn/post/7157663775955353614 在go中，channel是用于goroutin</description>
+    </item>
+    
+  </channel>
+</rss>

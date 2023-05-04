@@ -6,10 +6,28 @@
     <description>Recent content in Tags on 默默的心路</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 03 May 2023 23:38:21 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 04 May 2023 14:11:53 +0800</lastBuildDate>
     
 	<atom:link href="https://peilanluo.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>channel</title>
+      <link>https://peilanluo.github.io/tags/channel/</link>
+      <pubDate>Thu, 04 May 2023 14:11:53 +0800</pubDate>
+      
+      <guid>https://peilanluo.github.io/tags/channel/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>golang</title>
+      <link>https://peilanluo.github.io/tags/golang/</link>
+      <pubDate>Thu, 04 May 2023 14:11:53 +0800</pubDate>
+      
+      <guid>https://peilanluo.github.io/tags/golang/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>hash表</title>
@@ -62,15 +80,6 @@
       <pubDate>Mon, 12 Sep 2022 16:44:20 +0800</pubDate>
       
       <guid>https://peilanluo.github.io/tags/redis/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>golang</title>
-      <link>https://peilanluo.github.io/tags/golang/</link>
-      <pubDate>Sun, 11 Sep 2022 18:12:53 +0800</pubDate>
-      
-      <guid>https://peilanluo.github.io/tags/golang/</guid>
       <description></description>
     </item>
     
