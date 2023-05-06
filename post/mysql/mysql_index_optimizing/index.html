@@ -113,7 +113,7 @@
 <ul>
 <li>如果不是按照索引的最左列开始查找，则无法使用索引。例如如果直接查找first_name则无法使用索引。</li>
 <li>不能跳过索引中的列。例如，搜索<code>last_name</code>字段后，如果不指定<code>first_name</code>，则MySQL只能使用索引的第一列。</li>
-<li>如果查询中有某个列的范围查询，则其右边所有列都无法使用索引优化查找。例如，<code>WHERE last_name = 'a' AND first_name LIKE 'b%' AND birthday = '2000-01-01'</code>,这个查询只能使用索引的前两列。</li>
+<li>如果查询中有某个列的范围查询，则其右边所有列都无法使用索引优化查找。例如，<code>WHERE last_name = 'a' AND first_name LIKE 'b%' AND birthday = '2000-01-01'</code>,这个查询只能使用索引的前两列。（补充，实际上birthday='2000-01-01&rsquo;在5.6之后是可以使用到索引下推的）</li>
 </ul>
 <h3 id="111-哈希索引">1.1.1 哈希索引</h3>
 <p>哈希索引基于哈希表实现，只有精确匹配索引所有列的查询才有效。在MySQL中只有Memory引擎显式支持哈希索引，这里只做简单地了解。</p>
