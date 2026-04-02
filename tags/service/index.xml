@@ -4,21 +4,16 @@
     <title>Service on 默默的心路</title>
     <link>https://peilanluo.github.io/tags/service/</link>
     <description>Recent content in Service on 默默的心路</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zh-CN</language>
     <lastBuildDate>Sun, 18 Apr 2021 16:06:16 +0800</lastBuildDate>
-    
-	<atom:link href="https://peilanluo.github.io/tags/service/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <atom:link href="https://peilanluo.github.io/tags/service/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>kubernetes--详解Service</title>
       <link>https://peilanluo.github.io/post/kubernetes/service/</link>
       <pubDate>Sun, 18 Apr 2021 16:06:16 +0800</pubDate>
-      
       <guid>https://peilanluo.github.io/post/kubernetes/service/</guid>
-      <description>通过创建Service可以为一组具有相同功能的容器应用提供一个统一的入口地址，并将请求负载分发到后端的各个应用容器上。 Service的基本用</description>
+      <description>&lt;p&gt;通过创建Service可以为一组具有相同功能的容器应用提供一个统一的入口地址，并将请求负载分发到后端的各个应用容器上。&lt;/p&gt;&#xA;&lt;h1 id=&#34;service的基本用法&#34;&gt;Service的基本用法&lt;/h1&gt;&#xA;&lt;p&gt;对于一个Pod来说，使用Pod的IP地址和端口号是可以访问到容器应用内的服务的，但是Pod的IP地址是不可靠的，因为当Pod所在的Node发生故障时，Pod会被调度到另一个Node，Pod的IP地址将发生变化。通过Service可以有效的解决这个问题并能为服务提供负载均衡。&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

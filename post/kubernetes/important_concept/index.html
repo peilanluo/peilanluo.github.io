@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="kubernetes--的一些重要概念">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/kubernetes/important_concept/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -122,13 +122,12 @@
 </li>
 </ul>
 <p><code>Node</code>可以在运行期间动态增加到Kubernetes集群中，前提是在这个节点上已经正确安装、配置和启动了上述关键进程，在默认情况下kubelet会向Master注册自己，这也是Kubernetes推荐的Node管理方式。当<code>Node</code>被纳入集群管理，kubelet会定时上报自身情报，当指定时间不上报信息，会被标记为不可用，随后<code>Master</code>会触发“工作负载大转移”的自动流程。执行以下命令可以查看在集群中有多少<code>Node</code>：</p>
-<pre><code>
+<pre tabindex="0"><code>
 kubectl get nodes
 
 // 查看某个node基本信息
 
 kubectl describe node &lt;node_name&gt;
-
 </code></pre><h1 id="pod">Pod</h1>
 <p><code>Pod</code>是Kubernetes最重要的基本概念。<code>Pod</code>的基本结构如下图所示：<img src="/imgs/kubernetes_pod_1234123413421243.png" alt="Kubernetes Pod结构"></p>
 <p>每个<code>Pod</code>都有一个特殊的被称为“根容器”的Pause容器。Pause容器对应的镜像属于Kubernetes平台的一部分，除了Pause容器，每个Pod还包含一个或多个紧密相关的用户业务容器。<code>Pod</code>容器设计如此结构的原理在于，在一组容器作为一个单元的情况下，难以简单地对整体进行判断及有效的行动，用一个和业务无关且不易死亡的Pause容器作为Pod的根容器，以它的状态代表整个容器的状态，就解决了这个问题。</p>
@@ -173,8 +172,7 @@ Service的服务能力和服务质量始终符合预期标准。</p>
 <h1 id="namespace">Namespace</h1>
 <p>如果有多个用户或项目组使用同一个Kubernetes Cluster，可以使用NameSpace将一个屋里的Cluster逻辑上划分为多个虚拟Cluster，每个Cluster就是一个Namesapce。不同的Namespace里的资源时完全隔离的。</p>
 <blockquote>
-<p>参考书目：《Kubernetes》权威指南</p>
-</blockquote>
+<p>参考书目：《Kubernetes》权威指南</p></blockquote>
 
                         </div>
 
@@ -307,6 +305,12 @@ Service的服务能力和服务质量始终符合预期标准。</p>
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -358,7 +362,7 @@ Service的服务能力和服务质量始终符合预期标准。</p>
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

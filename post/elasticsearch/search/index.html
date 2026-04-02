@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="elasticsearch--搜索">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/elasticsearch/search/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -138,45 +138,45 @@
 <p>这里主要使用curl工具来发送请求。先手动创建一个名为user的索引。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">curl -X PUT localhost:9200/user
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X PUT localhost:9200/user
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="获取映射">获取映射</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">curl -X GET localhost:9200/user/_mapping/user?pretty
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X GET localhost:9200/user/_mapping/user?pretty
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>其中第一个user是索引名称，第二个user是类型名称。</p>
 <h2 id="删除索引和映射">删除索引和映射</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">curl -X DELETE localhost:9200/user
-curl -X DELETE localhost:9200/user/user
-<span class="c1"># 删除数据</span>
-curl -X DELETE localhost:9200/user/user/1
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X DELETE localhost:9200/user
+</span></span><span class="line"><span class="cl">curl -X DELETE localhost:9200/user/user
+</span></span><span class="line"><span class="cl"><span class="c1"># 删除数据</span>
+</span></span><span class="line"><span class="cl">curl -X DELETE localhost:9200/user/user/1
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h1 id="搜索">搜索</h1>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">curl -X POST localhost:9200/user/user/_search?pretty -d <span class="s1">&#39;json字符串&#39;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X POST localhost:9200/user/user/_search?pretty -d <span class="s1">&#39;json字符串&#39;</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="常用的基础查询和过滤器">常用的基础查询和过滤器</h2>
 <h3 id="match_all查询">match_all查询</h3>
@@ -191,7 +191,7 @@ curl -X DELETE localhost:9200/user/user/1
 <p>term查询和过滤器是可执行的查询中最简单的几个，它们可以指定搜索的文档字段和词条，但是被搜索的词条是没有经过分析的，文档中的词条必须要精确匹配才能作为结果返回。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -200,19 +200,19 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;term&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;tags&#34;</span><span class="o">:</span> <span class="s2">&#34;elasticsearch&#34;</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;term&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;tags&#34;</span><span class="o">:</span> <span class="s2">&#34;elasticsearch&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>和term类似，还可以使用term过滤器来限制结果文档，使其包含特定的词条，不过无须计算得分。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -228,27 +228,27 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;filtered&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;match_all&#34;</span><span class="o">:</span> <span class="p">{}</span>		<span class="c1">// 由于使用了match_all，所有文档的得分都会是1.0
-</span><span class="c1"></span>      <span class="p">}</span><span class="err">，</span>
-      <span class="s2">&#34;filter&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;term&#34;</span><span class="o">:</span> <span class="p">{</span>
-          <span class="s2">&#34;tags&#34;</span><span class="o">:</span> <span class="s2">&#34;elasticsearch&#34;</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;filtered&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;match_all&#34;</span><span class="o">:</span> <span class="p">{}</span>		<span class="c1">// 由于使用了match_all，所有文档的得分都会是1.0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="p">}</span><span class="err">，</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;filter&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;term&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;tags&#34;</span><span class="o">:</span> <span class="s2">&#34;elasticsearch&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="terms查询">terms查询</h3>
 <p>和term查询类似，terms查询可以搜索某个文档字段中的多个词条。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -257,19 +257,19 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;term&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;tags&#34;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&#34;elasticsearch&#34;</span><span class="p">,</span> <span class="s2">&#34;elastic&#34;</span><span class="p">]</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;term&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;tags&#34;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&#34;elasticsearch&#34;</span><span class="p">,</span> <span class="s2">&#34;elastic&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果想要指定每篇文档中匹配词条的最小数量，可以使用<code>minimum_should_match</code>参数</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -279,24 +279,24 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;term&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;tags&#34;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&#34;elasticsearch&#34;</span><span class="p">,</span> <span class="s2">&#34;elastic&#34;</span><span class="p">,</span> <span class="s2">&#34;lucene&#34;</span><span class="p">]</span>
-      <span class="s2">&#34;minimum_should_match&#34;</span><span class="o">:</span> <span class="mi">2</span> <span class="c1">// 上面的三个标签最少得匹配两个
-</span><span class="c1"></span>    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;term&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;tags&#34;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&#34;elasticsearch&#34;</span><span class="p">,</span> <span class="s2">&#34;elastic&#34;</span><span class="p">,</span> <span class="s2">&#34;lucene&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;minimum_should_match&#34;</span><span class="o">:</span> <span class="mi">2</span> <span class="c1">// 上面的三个标签最少得匹配两个
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="match查询和term过滤器">match查询和term过滤器</h2>
 <p>match查询是一个散列映射，包含了希望搜索的字段和字符串。字段既可以是单独一个，也可以是特殊的搜索所有字段的_all。match查询有多重行为方式，最常见的是布尔（boolean）和词组（phrase）。</p>
 <h3 id="布尔查询行为">布尔查询行为</h3>
-<p>match默认情况下使用布尔行为和OR操作符。例如搜索文本&quot;Elasticsearch Denver&rdquo;，Elasticsearch会搜索&quot;Elasticsearch OR Denver&rdquo;，只要搜索的内容中包含其中的一个单词，就会返回。</p>
+<p>match默认情况下使用布尔行为和OR操作符。例如搜索文本&quot;Elasticsearch Denver&quot;，Elasticsearch会搜索&quot;Elasticsearch OR Denver&quot;，只要搜索的内容中包含其中的一个单词，就会返回。</p>
 <p>如果要搜索同时包含&quot;Elasticsearch&quot;和&quot;Denver&quot;关键词的结果，将match字段的<code>name</code>修改为一个映射，并将<code>operator</code>字段设置为and。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -307,22 +307,22 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span>
-  	<span class="s2">&#34;match&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;name&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="s2">&#34;Elasticsearch Denver&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;operator&#34;</span><span class="o">:</span> <span class="s2">&#34;and&#34;</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  	<span class="s2">&#34;match&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;name&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="s2">&#34;Elasticsearch Denver&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;operator&#34;</span><span class="o">:</span> <span class="s2">&#34;and&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="词组查询行为">词组查询行为</h3>
-<p><code>phrase</code>用于在文档中搜索指定的词组，每个单词之间可以留有余地，这种余地称为<code>slop</code>，用于表示词组中多个分词之间的距离。比如搜索&quot;aaa bbb&rdquo;，可以将<code>slop</code>设置为1或2，aaa和bbb没必要连贯（可以搜索到aaa ccc bbb），就可以查找包含该词组的结果。</p>
+<p><code>phrase</code>用于在文档中搜索指定的词组，每个单词之间可以留有余地，这种余地称为<code>slop</code>，用于表示词组中多个分词之间的距离。比如搜索&quot;aaa bbb&quot;，可以将<code>slop</code>设置为1或2，aaa和bbb没必要连贯（可以搜索到aaa ccc bbb），就可以查找包含该词组的结果。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -335,25 +335,25 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;match&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;name&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;type&#34;</span><span class="o">:</span> <span class="s2">&#34;phrase&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="s2">&#34;aaa bbb&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;slop&#34;</span><span class="o">:</span> <span class="mi">1</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;match&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;name&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;type&#34;</span><span class="o">:</span> <span class="s2">&#34;phrase&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="s2">&#34;aaa bbb&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;slop&#34;</span><span class="o">:</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="phrase_prefix查询">phrase_prefix查询</h2>
 <p>phrase_prefix会和词组中最后一个词条进行前缀匹配，对于提供搜索框里的自动完成功能而言，这个行为非常有用，当使用这种行为搜索时，最好通过max_expansions来设置最大的前缀扩展数量。</p>
-<p>例如搜索&quot;aaa bbb&rdquo;，elasticsearch会使用bbb的文本进行前缀匹配，查找所有要求的字段。</p>
+<p>例如搜索&quot;aaa bbb&quot;，elasticsearch会使用bbb的文本进行前缀匹配，查找所有要求的字段。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -366,24 +366,24 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;match&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;name&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;type&#34;</span><span class="o">:</span> <span class="s2">&#34;phrase_prefix&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="s2">&#34;aaa bbb&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;max_expansiions&#34;</span><span class="o">:</span> <span class="mi">1</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;match&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;name&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;type&#34;</span><span class="o">:</span> <span class="s2">&#34;phrase_prefix&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="s2">&#34;aaa bbb&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;max_expansiions&#34;</span><span class="o">:</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="使用multi_match来匹配多个字段">使用multi_match来匹配多个字段</h3>
 <p>multi_match会匹配允许你搜索多个字段中的值，multi_match基本上可以当做match使用，也支持phrase或者phrase_prefix等查询方法。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -393,15 +393,15 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span><span class="p">{</span>
-    <span class="s2">&#34;multi_match&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="s2">&#34;aaa bbb&#34;</span><span class="p">,</span>
-      <span class="s2">&#34;fields&#34;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&#34;name&#34;</span><span class="p">,</span> <span class="s2">&#34;description&#34;</span><span class="p">]</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;multi_match&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="s2">&#34;aaa bbb&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;fields&#34;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&#34;name&#34;</span><span class="p">,</span> <span class="s2">&#34;description&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="组合查询或复合查询">组合查询或复合查询</h2>
 <h3 id="bool查询">bool查询</h3>
@@ -413,7 +413,7 @@ curl -X DELETE localhost:9200/user/user/1
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -441,39 +441,39 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">26
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;bool&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;must&#34;</span><span class="o">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-          <span class="s2">&#34;term&#34;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&#34;id&#34;</span><span class="o">:</span> <span class="mi">2</span>
-          <span class="p">}</span>
-        <span class="p">}</span>
-      <span class="p">],</span>
-      <span class="s2">&#34;should&#34;</span><span class="o">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-          <span class="s2">&#34;multi_match&#34;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="s2">&#34;kura&#34;</span><span class="p">,</span>
-            <span class="s2">&#34;type&#34;</span><span class="o">:</span> <span class="s2">&#34;most_fields&#34;</span><span class="p">,</span>
-            <span class="s2">&#34;fields&#34;</span><span class="o">:</span> <span class="p">[</span>
-              <span class="s2">&#34;nickName&#34;</span><span class="p">,</span>
-              <span class="s2">&#34;nickName.stand&#34;</span><span class="p">,</span>
-              <span class="s2">&#34;userId&#34;</span>
-            <span class="p">]</span>
-          <span class="p">}</span>
-        <span class="p">}</span>
-      <span class="p">]</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;bool&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;must&#34;</span><span class="o">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;term&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;id&#34;</span><span class="o">:</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">          <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;should&#34;</span><span class="o">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;multi_match&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="s2">&#34;kura&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;type&#34;</span><span class="o">:</span> <span class="s2">&#34;most_fields&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;fields&#34;</span><span class="o">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">              <span class="s2">&#34;nickName&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="s2">&#34;nickName.stand&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="s2">&#34;userId&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">]</span>
+</span></span><span class="line"><span class="cl">          <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="bool过滤器">bool过滤器</h3>
 <p>bool过滤器和bool查询基本上一致。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -491,23 +491,23 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;filtered&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;match_all&#34;</span><span class="o">:</span> 	<span class="p">{}</span>
-      <span class="p">}</span>
-      <span class="s2">&#34;filter&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;bool&#34;</span><span class="o">:</span> <span class="p">{</span>
-          <span class="s2">&#34;must&#34;</span><span class="o">:</span> <span class="p">[],</span>
-          <span class="s2">&#34;should&#34;</span><span class="o">:</span> <span class="p">[],</span>
-          <span class="s2">&#34;must_not&#34;</span><span class="o">:</span> <span class="p">[]</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;filtered&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;match_all&#34;</span><span class="o">:</span> 	<span class="p">{}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;filter&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;bool&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;must&#34;</span><span class="o">:</span> <span class="p">[],</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;should&#34;</span><span class="o">:</span> <span class="p">[],</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;must_not&#34;</span><span class="o">:</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="超越match和过滤器查询">超越match和过滤器查询</h2>
 <p>上面讨论的查询，更适用于搜索框，下面的是一些缩减搜索范围的。</p>
@@ -515,7 +515,7 @@ curl -X DELETE localhost:9200/user/user/1
 <p>range适用于数字、日期甚至于字符串。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -545,42 +545,42 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;range&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;cteated_at&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;gt&#34;</span><span class="o">:</span> <span class="s2">&#34;2021-05-30&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;lt&#34;</span><span class="o">:</span> <span class="s2">&#34;2021-07-10&#34;</span><span class="p">,</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-<span class="c1">// 或者使用下面的过滤器
-</span><span class="c1"></span><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;filtered&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;match_all&#34;</span><span class="o">:</span> <span class="p">{}</span>
-      <span class="p">},</span>
-      <span class="s2">&#34;filter&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;range&#34;</span><span class="o">:</span> <span class="p">{</span>
-          <span class="s2">&#34;created_at&#34;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&#34;gt&#34;</span><span class="o">:</span> <span class="s2">&#34;2021-05-30&#34;</span><span class="p">,</span>
-            <span class="s2">&#34;lt&#34;</span><span class="o">:</span> <span class="s2">&#34;2021-07-10&#34;</span>
-          <span class="p">}</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;range&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;cteated_at&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;gt&#34;</span><span class="o">:</span> <span class="s2">&#34;2021-05-30&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;lt&#34;</span><span class="o">:</span> <span class="s2">&#34;2021-07-10&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 或者使用下面的过滤器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;filtered&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;match_all&#34;</span><span class="o">:</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">},</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;filter&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;range&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;created_at&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;gt&#34;</span><span class="o">:</span> <span class="s2">&#34;2021-05-30&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;lt&#34;</span><span class="o">:</span> <span class="s2">&#34;2021-07-10&#34;</span>
+</span></span><span class="line"><span class="cl">          <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>使用range查询时，要考虑过滤器是否是更好的选择，为了获取更好的性能，range更适合出现在过滤器中。</p>
 <h3 id="prefix查询和过滤器">prefix查询和过滤器</h3>
 <p>prefix查询和过滤器允许根据指定的前缀来搜索词条，这里的前缀在搜索之前是没有经过分析的（类似于MySQL中的模糊搜索）。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -604,35 +604,35 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;prefix&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;name&#34;</span><span class="o">:</span> <span class="s2">&#34;aaa&#34;</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-<span class="c1">// 以下是使用过滤器
-</span><span class="c1"></span><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;filtered&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;match_all&#34;</span><span class="o">:</span> <span class="p">{},</span>
-      <span class="p">},</span>
-      <span class="s2">&#34;filter&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;prefix&#34;</span><span class="o">:</span> <span class="p">{</span>
-          <span class="s2">&#34;name&#34;</span><span class="o">:</span> <span class="s2">&#34;aaa&#34;</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;prefix&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;name&#34;</span><span class="o">:</span> <span class="s2">&#34;aaa&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 以下是使用过滤器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;filtered&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;match_all&#34;</span><span class="o">:</span> <span class="p">{},</span>
+</span></span><span class="line"><span class="cl">      <span class="p">},</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;filter&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;prefix&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;name&#34;</span><span class="o">:</span> <span class="s2">&#34;aaa&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="wildcard查询">wildcard查询</h3>
 <p>wildcard有些类似于正则或者说shell的通配符搜索。使用字符串可以让Elasticsearch使用<code>*</code>通配符替代任何数量的字符或是使用<code>？</code>替代单个字符。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -643,16 +643,16 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;wildcard&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;title&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;wildcard&#34;</span><span class="o">:</span> <span class="s2">&#34;*aaa?ba&#34;</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;wildcard&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;title&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;wildcard&#34;</span><span class="o">:</span> <span class="s2">&#34;*aaa?ba&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>wildcard查询不像match等其他查询那么轻量，查询词条中越早出现通配符（*或者?），就需要做更多的工作来匹配。</p>
 <h2 id="使用过滤器查询字段的存在性">使用过滤器查询字段的存在性</h2>
@@ -661,7 +661,7 @@ curl -X DELETE localhost:9200/user/user/1
 <p>exists只查找特定字段有值的文档，无论其值时多少。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -677,27 +677,27 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;filtered&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;match_all&#34;</span><span class="o">:</span> <span class="p">{}</span>
-      <span class="p">},</span>
-      <span class="s2">&#34;filter&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;exists&#34;</span><span class="o">:</span> <span class="p">{</span>
-          <span class="s2">&#34;field&#34;</span><span class="o">:</span> <span class="s2">&#34;name&#34;</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;filtered&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;match_all&#34;</span><span class="o">:</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">},</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;filter&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;exists&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;field&#34;</span><span class="o">:</span> <span class="s2">&#34;name&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="missing过滤器">missing过滤器</h3>
 <p>missing过滤器可以搜索字段里没有值或是映射时指定的默认值的文档（null值）。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -715,23 +715,23 @@ curl -X DELETE localhost:9200/user/user/1
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
-  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s2">&#34;filtered&#34;</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;match_all&#34;</span><span class="o">:</span> <span class="p">{}</span>
-      <span class="p">},</span>
-      <span class="s2">&#34;filter&#34;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&#34;missing&#34;</span><span class="o">:</span> <span class="p">{</span>
-          <span class="s2">&#34;field&#34;</span><span class="o">:</span> <span class="s2">&#34;name&#34;</span><span class="p">,</span>
-          <span class="s2">&#34;existence&#34;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="c1">// 匹配name字段存在
-</span><span class="c1"></span>          <span class="s2">&#34;null_value&#34;</span><span class="o">:</span> <span class="kc">true</span> <span class="c1">// 匹配name字段值为null_value的字段
-</span><span class="c1"></span>        <span class="p">}</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;filtered&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;query&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;match_all&#34;</span><span class="o">:</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">},</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;filter&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;missing&#34;</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;field&#34;</span><span class="o">:</span> <span class="s2">&#34;name&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;existence&#34;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="c1">// 匹配name字段存在
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="s2">&#34;null_value&#34;</span><span class="o">:</span> <span class="kc">true</span> <span class="c1">// 匹配name字段值为null_value的字段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div>
                         </div>
@@ -861,6 +861,12 @@ curl -X DELETE localhost:9200/user/user/1
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -912,7 +918,7 @@ curl -X DELETE localhost:9200/user/user/1
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

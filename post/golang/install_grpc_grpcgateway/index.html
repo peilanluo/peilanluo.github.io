@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="golang--安装golang并安装grpc-grpcgateway环境">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/golang/install_grpc_grpcgateway/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -103,33 +103,33 @@
 <img src="https://img2018.cnblogs.com/blog/1128810/201908/1128810-20190815135635586-1945017984.png" alt=""></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">wget</span> <span class="nx">https</span><span class="p">:</span><span class="c1">//dl.google.com/go/go1.12.8.linux-amd64.tar.gz
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="nx">wget</span> <span class="nx">https</span><span class="p">:</span><span class="c1">//dl.google.com/go/go1.12.8.linux-amd64.tar.gz</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>执行安装</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 解压
-</span><span class="c1"></span><span class="nx">tar</span> <span class="nx">xvf</span> <span class="nx">go1</span><span class="mf">.12.8</span><span class="p">.</span><span class="nx">linux</span><span class="o">-</span><span class="nx">amd64</span><span class="p">.</span><span class="nx">tar</span><span class="p">.</span><span class="nx">gz</span>
-
-<span class="c1">// 移动目录到系统目录
-</span><span class="c1"></span><span class="nx">mv</span> <span class="k">go</span> <span class="o">/</span><span class="nx">usr</span><span class="o">/</span><span class="nx">local</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 解压</span>
+</span></span><span class="line"><span class="cl"><span class="nx">tar</span> <span class="nx">xvf</span> <span class="nx">go1</span><span class="mf">.12.8</span><span class="p">.</span><span class="nx">linux</span><span class="o">-</span><span class="nx">amd64</span><span class="p">.</span><span class="nx">tar</span><span class="p">.</span><span class="nx">gz</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 移动目录到系统目录</span>
+</span></span><span class="line"><span class="cl"><span class="nx">mv</span> <span class="k">go</span> <span class="o">/</span><span class="nx">usr</span><span class="o">/</span><span class="nx">local</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>配置环境变量，写入GOROOT、GOPATH等必要信息</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -141,24 +141,24 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">vi</span> <span class="o">/</span><span class="nx">etc</span><span class="o">/</span><span class="nx">profile</span>
-
-<span class="c1">// 写入GOPATH、GOROOT信息
-</span><span class="c1"></span><span class="nx">export</span> <span class="nx">GOROOT</span><span class="p">=</span><span class="o">/</span><span class="nx">usr</span><span class="o">/</span><span class="nx">local</span><span class="o">/</span><span class="k">go</span>
-<span class="nx">export</span> <span class="nx">PATH</span><span class="p">=</span><span class="err">$</span><span class="nx">PATH</span><span class="p">:</span><span class="err">$</span><span class="nx">GOROOT</span><span class="o">/</span><span class="nx">bin</span>
-<span class="nx">export</span> <span class="nx">GOPATH</span><span class="p">=</span><span class="err">$</span><span class="nx">HOME</span><span class="o">/</span><span class="k">go</span><span class="o">/</span>
-<span class="nx">export</span> <span class="nx">PATH</span><span class="p">=</span><span class="err">$</span><span class="nx">PATH</span><span class="p">:</span><span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">bin</span><span class="o">/</span>
-
-<span class="c1">// 添加完成后刷新环境变量
-</span><span class="c1"></span><span class="nx">source</span> <span class="o">/</span><span class="nx">etc</span><span class="o">/</span><span class="nx">profile</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">vi</span> <span class="o">/</span><span class="nx">etc</span><span class="o">/</span><span class="nx">profile</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 写入GOPATH、GOROOT信息</span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">GOROOT</span><span class="p">=</span><span class="o">/</span><span class="nx">usr</span><span class="o">/</span><span class="nx">local</span><span class="o">/</span><span class="k">go</span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">PATH</span><span class="p">=</span><span class="err">$</span><span class="nx">PATH</span><span class="p">:</span><span class="err">$</span><span class="nx">GOROOT</span><span class="o">/</span><span class="nx">bin</span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">GOPATH</span><span class="p">=</span><span class="err">$</span><span class="nx">HOME</span><span class="o">/</span><span class="k">go</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">PATH</span><span class="p">=</span><span class="err">$</span><span class="nx">PATH</span><span class="p">:</span><span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">bin</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 添加完成后刷新环境变量</span>
+</span></span><span class="line"><span class="cl"><span class="nx">source</span> <span class="o">/</span><span class="nx">etc</span><span class="o">/</span><span class="nx">profile</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>输入goenv查看当前golang的环境是否配置正确。</p>
 <h1 id="安装protocol-buffers-v3">安装Protocol Buffers v3</h1>
 <p>先到github下载稳定版安装包<code>wget https://github.com/protocolbuffers/protobuf/releases/download/v3.9.1/protobuf-all-3.9.1.tar.gz</code></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -169,16 +169,16 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 解压
-</span><span class="c1"></span><span class="nx">tar</span> <span class="nx">xvf</span> <span class="nx">protobuf</span><span class="o">-</span><span class="nx">all</span><span class="o">-</span><span class="mf">3.9.1</span><span class="p">.</span><span class="nx">tar</span><span class="p">.</span><span class="nx">gz</span>
-
-<span class="c1">// 安装gcc c++
-</span><span class="c1"></span><span class="nx">参考</span><span class="err">：</span><span class="nx">https</span><span class="p">:</span><span class="c1">//www.cnblogs.com/walkman-sky/p/9426775.html
-</span><span class="c1"></span>
-<span class="c1">// 执行安装
-</span><span class="c1"></span><span class="p">.</span><span class="o">/</span><span class="nx">configure</span>
-<span class="nx">make</span> <span class="o">&amp;&amp;</span> <span class="nx">make</span> <span class="nx">install</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 解压</span>
+</span></span><span class="line"><span class="cl"><span class="nx">tar</span> <span class="nx">xvf</span> <span class="nx">protobuf</span><span class="o">-</span><span class="nx">all</span><span class="o">-</span><span class="mf">3.9.1</span><span class="p">.</span><span class="nx">tar</span><span class="p">.</span><span class="nx">gz</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 安装gcc c++</span>
+</span></span><span class="line"><span class="cl"><span class="nx">参考</span><span class="err">：</span><span class="nx">https</span><span class="p">:</span><span class="c1">//www.cnblogs.com/walkman-sky/p/9426775.html</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 执行安装</span>
+</span></span><span class="line"><span class="cl"><span class="p">.</span><span class="o">/</span><span class="nx">configure</span>
+</span></span><span class="line"><span class="cl"><span class="nx">make</span> <span class="o">&amp;&amp;</span> <span class="nx">make</span> <span class="nx">install</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>检查是否安装成功<code>protoc --version</code></p>
 <h1 id="安装grpc">安装grpc</h1>
@@ -186,17 +186,17 @@
 <p>第二种方法使用github安装</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">cd</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">src</span>
-<span class="nx">mkdir</span> <span class="nx">google</span><span class="p">.</span><span class="nx">golang</span><span class="p">.</span><span class="nx">org</span>
-<span class="nx">cd</span> <span class="nx">google</span><span class="p">.</span><span class="nx">golang</span><span class="p">.</span><span class="nx">org</span><span class="o">/</span>
-<span class="nx">git</span> <span class="nx">clone</span> <span class="nx">https</span><span class="p">:</span><span class="c1">//github.com/grpc/grpc-go grpc
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">cd</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">src</span>
+</span></span><span class="line"><span class="cl"><span class="nx">mkdir</span> <span class="nx">google</span><span class="p">.</span><span class="nx">golang</span><span class="p">.</span><span class="nx">org</span>
+</span></span><span class="line"><span class="cl"><span class="nx">cd</span> <span class="nx">google</span><span class="p">.</span><span class="nx">golang</span><span class="p">.</span><span class="nx">org</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl"><span class="nx">git</span> <span class="nx">clone</span> <span class="nx">https</span><span class="p">:</span><span class="c1">//github.com/grpc/grpc-go grpc</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h1 id="安装protoc-plugin">安装Protoc Plugin</h1>
 <p>安装Protoc Plugin使用<code>go get -u github.com/golang/protobuf/protoc-gen-go</code></p>
@@ -205,72 +205,72 @@
 <p>安装grpc-gateway同样有两种方法，<code>go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway</code>，直接使用go get 安装，此方法有一些依赖需要从google下载，所以需要合理上网。国内推荐使用第二种方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">cd</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span>
-<span class="nx">mkdir</span> <span class="nx">grpc</span><span class="o">-</span><span class="nx">ecosystem</span>
-<span class="nx">cd</span> <span class="nx">grpc</span><span class="o">-</span><span class="nx">ecosystem</span>
-<span class="nx">git</span> <span class="nx">clone</span> <span class="nx">https</span><span class="p">:</span><span class="c1">//github.com/grpc-ecosystem/grpc-gateway.git
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">cd</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span>
+</span></span><span class="line"><span class="cl"><span class="nx">mkdir</span> <span class="nx">grpc</span><span class="o">-</span><span class="nx">ecosystem</span>
+</span></span><span class="line"><span class="cl"><span class="nx">cd</span> <span class="nx">grpc</span><span class="o">-</span><span class="nx">ecosystem</span>
+</span></span><span class="line"><span class="cl"><span class="nx">git</span> <span class="nx">clone</span> <span class="nx">https</span><span class="p">:</span><span class="c1">//github.com/grpc-ecosystem/grpc-gateway.git</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="编译安装yaml">编译安装yaml</h2>
 <p>yaml是编译安装protoc-gen-grpc-gateway的必备文件</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">cd</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span>
-<span class="nx">mkdir</span> <span class="nx">ghodss</span>
-<span class="nx">cd</span> <span class="nx">ghodss</span>
-<span class="nx">git</span> <span class="nx">clone</span> <span class="nx">https</span><span class="p">:</span><span class="c1">//github.com/ghodss/yaml.git
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">cd</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span>
+</span></span><span class="line"><span class="cl"><span class="nx">mkdir</span> <span class="nx">ghodss</span>
+</span></span><span class="line"><span class="cl"><span class="nx">cd</span> <span class="nx">ghodss</span>
+</span></span><span class="line"><span class="cl"><span class="nx">git</span> <span class="nx">clone</span> <span class="nx">https</span><span class="p">:</span><span class="c1">//github.com/ghodss/yaml.git</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="编译安装glog">编译安装glog</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">cd</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">golang</span>
-<span class="nx">git</span> <span class="nx">clone</span> <span class="nx">https</span><span class="p">:</span><span class="c1">//github.com/golang/glog.git
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">cd</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">golang</span>
+</span></span><span class="line"><span class="cl"><span class="nx">git</span> <span class="nx">clone</span> <span class="nx">https</span><span class="p">:</span><span class="c1">//github.com/golang/glog.git</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="安装yamlv2">安装yaml.v2</h2>
 <p>go get gopkg.in/yaml.v2</p>
 <h2 id="编译安装protoc-gen-grpc-gateway">编译安装protoc-gen-grpc-gateway</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">cd</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">grpc</span><span class="o">-</span><span class="nx">ecosystem</span><span class="o">/</span><span class="nx">grpc</span><span class="o">-</span><span class="nx">gateway</span><span class="o">/</span><span class="nx">protoc</span><span class="o">-</span><span class="nx">gen</span><span class="o">-</span><span class="nx">grpc</span><span class="o">-</span><span class="nx">gateway</span>
-<span class="k">go</span> <span class="nx">build</span>
-<span class="nx">mv</span> <span class="nx">protoc</span><span class="o">-</span><span class="nx">gen</span><span class="o">-</span><span class="nx">grpc</span><span class="o">-</span><span class="nx">gateway</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">bin</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">cd</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">grpc</span><span class="o">-</span><span class="nx">ecosystem</span><span class="o">/</span><span class="nx">grpc</span><span class="o">-</span><span class="nx">gateway</span><span class="o">/</span><span class="nx">protoc</span><span class="o">-</span><span class="nx">gen</span><span class="o">-</span><span class="nx">grpc</span><span class="o">-</span><span class="nx">gateway</span>
+</span></span><span class="line"><span class="cl"><span class="k">go</span> <span class="nx">build</span>
+</span></span><span class="line"><span class="cl"><span class="nx">mv</span> <span class="nx">protoc</span><span class="o">-</span><span class="nx">gen</span><span class="o">-</span><span class="nx">grpc</span><span class="o">-</span><span class="nx">gateway</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">bin</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="编译安装protoc-gen-swagger">编译安装protoc-gen-swagger</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">cd</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">grpc</span><span class="o">-</span><span class="nx">ecosystem</span><span class="o">/</span><span class="nx">grpc</span><span class="o">-</span><span class="nx">gateway</span><span class="o">/</span><span class="nx">protoc</span><span class="o">-</span><span class="nx">gen</span><span class="o">-</span><span class="nx">swagger</span>
-<span class="k">go</span> <span class="nx">build</span>
-<span class="nx">mv</span> <span class="nx">protoc</span><span class="o">-</span><span class="nx">gen</span><span class="o">-</span><span class="nx">swagger</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">bin</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">cd</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">grpc</span><span class="o">-</span><span class="nx">ecosystem</span><span class="o">/</span><span class="nx">grpc</span><span class="o">-</span><span class="nx">gateway</span><span class="o">/</span><span class="nx">protoc</span><span class="o">-</span><span class="nx">gen</span><span class="o">-</span><span class="nx">swagger</span>
+</span></span><span class="line"><span class="cl"><span class="k">go</span> <span class="nx">build</span>
+</span></span><span class="line"><span class="cl"><span class="nx">mv</span> <span class="nx">protoc</span><span class="o">-</span><span class="nx">gen</span><span class="o">-</span><span class="nx">swagger</span> <span class="err">$</span><span class="nx">GOPATH</span><span class="o">/</span><span class="nx">bin</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div>
                         </div>
@@ -402,6 +402,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -453,7 +459,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="Redis--数据的持久化方式">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/redis/redis_persistence/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -107,8 +107,7 @@
 </nav>
                         </aside><div class="post-content">
                             <blockquote>
-<p>参考书目：《Redis设计与实现》</p>
-</blockquote>
+<p>参考书目：《Redis设计与实现》</p></blockquote>
 <h2 id="1-rdb持久化">1 RDB持久化</h2>
 <p>RDB持久化既可以手动执行，也可以根据服务器配置选项定期执行。</p>
 <h3 id="11-rdb文件的创建与载入">1.1 RDB文件的创建与载入</h3>
@@ -116,7 +115,7 @@
 <p>RDB文件的载入是在服务器启动时自动执行的，没有专门的命令用于载入。</p>
 <h3 id="12-自动间隔性保存">1.2 自动间隔性保存</h3>
 <p>用户可以通过设置save选项设置多个保存条件，只要满足一个，就会执行BGSAVE命令。</p>
-<pre><code class="language-redis" data-lang="redis">// 900s内，对数据库进行了至少一次修改
+<pre tabindex="0"><code class="language-redis" data-lang="redis">// 900s内，对数据库进行了至少一次修改
 save 900 1
 // 300s内，至少进行了10次修改
 save 300 10
@@ -291,6 +290,12 @@ save 60 10000
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -342,7 +347,7 @@ save 60 10000
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

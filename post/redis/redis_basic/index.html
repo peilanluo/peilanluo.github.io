@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="Redis--Redis的数据结构">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/redis/redis_basic/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -126,8 +126,7 @@
 </nav>
                         </aside><div class="post-content">
                             <blockquote>
-<p>参考书目：《Redis设计与实现》</p>
-</blockquote>
+<p>参考书目：《Redis设计与实现》</p></blockquote>
 <h2 id="1-简单动态字符串">1. 简单动态字符串</h2>
 <p><code>Redis</code>没有直接使用C语言传统的字符串表示，而是构建了一种名为简单动态字符串（SDS）的抽象类型，并将SDS作为Redis的默认字符串表示。</p>
 <h3 id="11-sds的定义">1.1 SDS的定义</h3>
@@ -135,30 +134,30 @@
 <img src="/imgs/WeChat99e2c269b02c3e7ce1a427ea0552c73a.png" alt="SDS数据结构"></p>
 <p>下面总结了一些SDS和C字符串之间的区别：</p>
 <table>
-<thead>
-<tr>
-<th>C字符串</th>
-<th>SDS</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>获取字符串长度的复杂度为O(N)</td>
-<td>获取字符串长度的复杂度为O(1)</td>
-</tr>
-<tr>
-<td>API是不安全的，可能会造成缓冲区溢出</td>
-<td>API是安全的，不会造成缓存溢出</td>
-</tr>
-<tr>
-<td>修改字符串必须重新分配内存</td>
-<td>只需要在超出预留长度时才会重新分配</td>
-</tr>
-<tr>
-<td>只能保存文本</td>
-<td>可以保存文本或二进制</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>C字符串</th>
+          <th>SDS</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>获取字符串长度的复杂度为O(N)</td>
+          <td>获取字符串长度的复杂度为O(1)</td>
+      </tr>
+      <tr>
+          <td>API是不安全的，可能会造成缓冲区溢出</td>
+          <td>API是安全的，不会造成缓存溢出</td>
+      </tr>
+      <tr>
+          <td>修改字符串必须重新分配内存</td>
+          <td>只需要在超出预留长度时才会重新分配</td>
+      </tr>
+      <tr>
+          <td>只能保存文本</td>
+          <td>可以保存文本或二进制</td>
+      </tr>
+  </tbody>
 </table>
 <h2 id="2-链表">2. 链表</h2>
 <p>链表在Redis中的应用非常广泛，比如列表，当一个列表键包含了数量比较多的元素，又或者包含的元素都是比较长的字符串时，就会使用链表作为列表键的底层实现。除此之外，发布与订阅、慢查询、监视器等功能也用到了链表。</p>
@@ -191,7 +190,7 @@
 <p>整数集合的数据结构如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -201,15 +200,15 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">intset</span> <span class="p">{</span>
-    <span class="c1">// 编码方式
-</span><span class="c1"></span>    <span class="n">uint32_t</span> <span class="n">encoding</span><span class="p">;</span>
-    <span class="c1">// 集合包含的元素数量
-</span><span class="c1"></span>    <span class="n">uint32_t</span> <span class="n">length</span><span class="p">;</span>
-    <span class="c1">// 保存元素的数组
-</span><span class="c1"></span>    <span class="n">int8_t</span> <span class="n">contents</span><span class="p">[];</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">intset</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 编码方式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">uint32_t</span> <span class="n">encoding</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 集合包含的元素数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">uint32_t</span> <span class="n">length</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 保存元素的数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int8_t</span> <span class="n">contents</span><span class="p">[];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>contents数组是整数集合的底层实现：整数集合的每个元素都是contents数组的一个数组项，各个项在数组中按值的大小从小到大有序排列，并且不包含重复项。</p>
 <h2 id="6-压缩列表">6 压缩列表</h2>
@@ -229,7 +228,7 @@
 <p>每一个对象都由一个redisObject结构表示，其结构如下</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -240,16 +239,16 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">redisObject</span> <span class="p">{</span>
-    <span class="c1">// 类型
-</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="nl">type</span><span class="p">:</span><span class="mi">4</span><span class="p">;</span>
-    <span class="c1">// 编码
-</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="nl">encoding</span><span class="p">:</span><span class="mi">4</span><span class="p">;</span>
-    <span class="c1">// 指向底层实现数据结构的指针
-</span><span class="c1"></span>    <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
-    <span class="c1">// ...
-</span><span class="c1"></span><span class="p">}</span> <span class="n">robj</span><span class="p">;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">redisObject</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">unsigned</span> <span class="nl">type</span><span class="p">:</span><span class="mi">4</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 编码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">unsigned</span> <span class="nl">encoding</span><span class="p">:</span><span class="mi">4</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 指向底层实现数据结构的指针
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span> <span class="n">robj</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>其中，类型包括：</p>
 <ul>
@@ -261,70 +260,70 @@
 </ul>
 <p>不同类型和编码对象的对应关系为：</p>
 <table>
-<thead>
-<tr>
-<th>类型</th>
-<th>编码</th>
-<th>对象</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>REDIS_STRING</td>
-<td>REDIS_ENCODING_INT</td>
-<td>使用整数值实现的字符串对象</td>
-</tr>
-<tr>
-<td>REDIS_STRING</td>
-<td>REDIS_ENCODING_EMBSTR</td>
-<td>使用embstr编码的简单动态字符串实现的字符串对象</td>
-</tr>
-<tr>
-<td>REDIS_STRING</td>
-<td>REDIS_ENCODING_RAW</td>
-<td>使用简单动态字符串实现的字符串对象</td>
-</tr>
-<tr>
-<td>REDIS_LIST</td>
-<td>REDIS_ENCODING_ZIPLIST</td>
-<td>使用压缩列表实现的列表对象</td>
-</tr>
-<tr>
-<td>REDIS_LIST</td>
-<td>REDIS_ENCODING_LINKEDLIST</td>
-<td>使用双端链表实现的列表对象</td>
-</tr>
-<tr>
-<td>REDIS_HASH</td>
-<td>REDIS_ENCODING_ZIPLIST</td>
-<td>使用压缩列表实现的哈希对象</td>
-</tr>
-<tr>
-<td>REDIS_HASH</td>
-<td>REDIS_ENCODING_HT</td>
-<td>使用字典实现的哈希对象</td>
-</tr>
-<tr>
-<td>REDIS_SET</td>
-<td>REDIS_ENCODING_INTSET</td>
-<td>使用整数集合的集合对象</td>
-</tr>
-<tr>
-<td>REDIS_SET</td>
-<td>REDIS_ENCODING_HT</td>
-<td>使用字典的集合对象</td>
-</tr>
-<tr>
-<td>REDIS_ZSET</td>
-<td>REDIS_ENCODING_ZIPLIST</td>
-<td>使用压缩列表的有序集合对象</td>
-</tr>
-<tr>
-<td>REDIS_ZSET</td>
-<td>REDIS_ENCODING_SKIPLIST</td>
-<td>使用跳跃表和字典实现的有序集合对象</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>类型</th>
+          <th>编码</th>
+          <th>对象</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>REDIS_STRING</td>
+          <td>REDIS_ENCODING_INT</td>
+          <td>使用整数值实现的字符串对象</td>
+      </tr>
+      <tr>
+          <td>REDIS_STRING</td>
+          <td>REDIS_ENCODING_EMBSTR</td>
+          <td>使用embstr编码的简单动态字符串实现的字符串对象</td>
+      </tr>
+      <tr>
+          <td>REDIS_STRING</td>
+          <td>REDIS_ENCODING_RAW</td>
+          <td>使用简单动态字符串实现的字符串对象</td>
+      </tr>
+      <tr>
+          <td>REDIS_LIST</td>
+          <td>REDIS_ENCODING_ZIPLIST</td>
+          <td>使用压缩列表实现的列表对象</td>
+      </tr>
+      <tr>
+          <td>REDIS_LIST</td>
+          <td>REDIS_ENCODING_LINKEDLIST</td>
+          <td>使用双端链表实现的列表对象</td>
+      </tr>
+      <tr>
+          <td>REDIS_HASH</td>
+          <td>REDIS_ENCODING_ZIPLIST</td>
+          <td>使用压缩列表实现的哈希对象</td>
+      </tr>
+      <tr>
+          <td>REDIS_HASH</td>
+          <td>REDIS_ENCODING_HT</td>
+          <td>使用字典实现的哈希对象</td>
+      </tr>
+      <tr>
+          <td>REDIS_SET</td>
+          <td>REDIS_ENCODING_INTSET</td>
+          <td>使用整数集合的集合对象</td>
+      </tr>
+      <tr>
+          <td>REDIS_SET</td>
+          <td>REDIS_ENCODING_HT</td>
+          <td>使用字典的集合对象</td>
+      </tr>
+      <tr>
+          <td>REDIS_ZSET</td>
+          <td>REDIS_ENCODING_ZIPLIST</td>
+          <td>使用压缩列表的有序集合对象</td>
+      </tr>
+      <tr>
+          <td>REDIS_ZSET</td>
+          <td>REDIS_ENCODING_SKIPLIST</td>
+          <td>使用跳跃表和字典实现的有序集合对象</td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="72-字符串对象">7.2 字符串对象</h3>
 <p>字符串对象的编码可以是int、raw或者embstr。不同情况的出现条件如下：</p>
@@ -490,6 +489,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -541,7 +546,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

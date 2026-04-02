@@ -3,18 +3,18 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>mysql - 默默的心路</title>
-    <meta property="og:title" content="mysql - 默默的心路">
+    <title>Mysql - 默默的心路</title>
+    <meta property="og:title" content="Mysql - 默默的心路">
     <meta property="og:type" content="article">
         
         
-    <meta name="description" content="mysql">
+    <meta name="description" content="Mysql">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/tags/mysql/">
 
     <link rel="alternate" type="application/rss&#43;xml" href="https://peilanluo.github.io/tags/mysql/index.xml" title="默默的心路">
@@ -89,7 +89,8 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    1 InnoDB存储引擎 InnoDB是MySQL默认的事务型引擎（从MySQL 5.5开始作为默认的存储引擎），它被设计用来处理大量的短期事务。
+                                    <h2 id="1-innodb存储引擎">1 InnoDB存储引擎</h2>
+<p>InnoDB是MySQL默认的事务型引擎（从MySQL 5.5开始作为默认的存储引擎），它被设计用来处理大量的短期事务。InnoDB的数据存储在表空间内。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/mysql/mysql_engine/">阅读全文</a></p>
@@ -117,7 +118,11 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    参考： https://www.cnblogs.com/yaoyangding/p/15659608.html https://zhuanlan.zhihu.com/p/421769708 MVCC（Multiversion Concurrency Control）即多版本并发控制，是现代数据库引擎中常用的处理读写冲突的手段，目的在于提高数据
+                                    <blockquote>
+<p>参考：
+<a href="https://www.cnblogs.com/yaoyangding/p/15659608.html">https://www.cnblogs.com/yaoyangding/p/15659608.html</a>
+<a href="https://zhuanlan.zhihu.com/p/421769708">https://zhuanlan.zhihu.com/p/421769708</a></p></blockquote>
+<p>MVCC（Multiversion Concurrency Control）即多版本并发控制，是现代数据库引擎中常用的处理读写冲突的手段，目的在于提高数据库高并发场景下的吞吐性能，做到即使有冲突时，也可以不加锁，非阻塞并发读。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/mysql/mysql_mvcc/">阅读全文</a></p>
@@ -145,7 +150,10 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    参考文献：https://blog.csdn.net/zDavid_2018/article/details/89929862 《高性能MyS
+                                    <blockquote>
+<p>参考文献：https://blog.csdn.net/zDavid_2018/article/details/89929862
+《高性能MySQL（第3版）》
+《高性能MySQL（第4版）》</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/mysql/mysql_acid/">阅读全文</a></p>
@@ -173,7 +181,7 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    EXPLAIN命令是查看查询优化器如何决定执行查询的主要方法，但是它是有局限性的，并不总是准确的，但他在一定程度上仍然是衡量MySQL优化的
+                                    <p>EXPLAIN命令是查看查询优化器如何决定执行查询的主要方法，但是它是有局限性的，并不总是准确的，但他在一定程度上仍然是衡量MySQL优化的最好工具。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/mysql/mysql_explain/">阅读全文</a></p>
@@ -201,7 +209,8 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    为什么查询速度会变慢 所谓查询优化最重要的是响应时间，如果把查询看作是一个任务，那么它是由一些列子任务组成，每个子任务消耗一定的时间。如果要优
+                                    <h2 id="为什么查询速度会变慢">为什么查询速度会变慢</h2>
+<p>所谓查询优化最重要的是响应时间，如果把查询看作是一个任务，那么它是由一些列子任务组成，每个子任务消耗一定的时间。如果要优化查询，实际上要优化其子任务，要么消除其中一些子任务，要么减少子任务的执行次数，要么要让子任务运行得更快。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/mysql/mysql_query_optimizing/">阅读全文</a></p>
@@ -229,7 +238,10 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    1 索引基础 MySQL支持多种索引引擎，最常用的例如B-Tree、哈希索引。 1.1 B-Tree索引的限制 现在有这么一个场景，有一个B-Tree类型
+                                    <h2 id="1-索引基础">1 索引基础</h2>
+<p>MySQL支持多种索引引擎，最常用的例如B-Tree、哈希索引。</p>
+<h3 id="11-b-tree索引的限制">1.1 B-Tree索引的限制</h3>
+<p>现在有这么一个场景，有一个B-Tree类型的组合索引，组合索引的字段依次为<code>last_name</code>、<code>first_name</code>、<code>birthday</code></p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/mysql/mysql_index_optimizing/">阅读全文</a></p>
@@ -257,7 +269,10 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    存储引擎 在MySQL5.5版本将InnoDB作为默认的存储引擎。 数据类型优化 通常把可为null的列改为not null带来的性能提升比较小，所
+                                    <h1 id="存储引擎">存储引擎</h1>
+<p>在MySQL5.5版本将InnoDB作为默认的存储引擎。</p>
+<h1 id="数据类型优化">数据类型优化</h1>
+<p>通常把可为null的列改为not null带来的性能提升比较小，所以（调优时）没有必要首先在现有schema中查找并修改掉这种情况，除非确定这回导致问题。但是，如果计划在列上建立索引，就应该尽量避免设计成可为null的列。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/mysql/mysql_field_-optimizing/">阅读全文</a></p>
@@ -375,6 +390,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -426,7 +447,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

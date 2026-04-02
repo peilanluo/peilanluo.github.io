@@ -1,24 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>elasticsearch on 默默的心路</title>
+    <title>Elasticsearch on 默默的心路</title>
     <link>https://peilanluo.github.io/categories/elasticsearch/</link>
-    <description>Recent content in elasticsearch on 默默的心路</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <description>Recent content in Elasticsearch on 默默的心路</description>
+    <generator>Hugo</generator>
     <language>zh-CN</language>
     <lastBuildDate>Sat, 10 Jul 2021 17:05:20 +0800</lastBuildDate>
-    
-	<atom:link href="https://peilanluo.github.io/categories/elasticsearch/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <atom:link href="https://peilanluo.github.io/categories/elasticsearch/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>elasticsearch--搜索</title>
       <link>https://peilanluo.github.io/post/elasticsearch/search/</link>
       <pubDate>Sat, 10 Jul 2021 17:05:20 +0800</pubDate>
-      
       <guid>https://peilanluo.github.io/post/elasticsearch/search/</guid>
-      <description>索引和映射 手动创建索引和映射 这里主要使用curl工具来发送请求。先手动创建一个名为user的索引。 1 curl -X PUT localhost:9200/user 获取映射 1 curl -X GET localhost:9200/user/_mapping/user?pretty 其中第一个us</description>
+      <description>&lt;h1 id=&#34;索引和映射&#34;&gt;索引和映射&lt;/h1&gt;&#xA;&lt;h2 id=&#34;手动创建索引和映射&#34;&gt;手动创建索引和映射&lt;/h2&gt;&#xA;&lt;p&gt;这里主要使用curl工具来发送请求。先手动创建一个名为user的索引。&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;&#xA;&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;&#xA;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1&#xA;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&#xA;&lt;td class=&#34;lntd&#34;&gt;&#xA;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;curl -X PUT localhost:9200/user&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&#xA;&lt;/div&gt;&#xA;&lt;/div&gt;&lt;h2 id=&#34;获取映射&#34;&gt;获取映射&lt;/h2&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;&#xA;&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;&#xA;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1&#xA;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&#xA;&lt;td class=&#34;lntd&#34;&gt;&#xA;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;curl -X GET localhost:9200/user/_mapping/user?pretty&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&#xA;&lt;/div&gt;&#xA;&lt;/div&gt;&lt;p&gt;其中第一个user是索引名称，第二个user是类型名称。&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

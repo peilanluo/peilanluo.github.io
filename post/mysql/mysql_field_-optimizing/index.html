@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="mysql--Schema与数据类型优化">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/mysql/mysql_field_-optimizing/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -127,8 +127,7 @@
 <h3 id="varchar类型">VARCHAR类型</h3>
 <p>VARCHAR类型用于存储可变长字符串，它比定长类型更节省空间，VARCHART需要使用额外的1或2个额外字节记录字符串的长度，如果列的最大长度小于或等于255字节，则只使用1个字节表示，否则使用2个字节。假设使用latin1字符集，一个VARCHAR(10)的列需要11个字节的存储空间。VARCHAR(1000)的列需要1002个字节，因为需要2个字节存储长度信息。</p>
 <blockquote>
-<p>在InnoDB中，它可以把过长的VARCHAR存储为BLOB，我们稍后讨论这个问题。</p>
-</blockquote>
+<p>在InnoDB中，它可以把过长的VARCHAR存储为BLOB，我们稍后讨论这个问题。</p></blockquote>
 <h3 id="char">CHAR</h3>
 <p>CHAR类型是定长的：MySQL总是根据定义的字符串长度分配足够的空间。当存储CHAR值时，MySQL会删除所有的末尾空格。CHAR值会根据需要采用空格进行填充以方便计较。</p>
 <p>CHAR适合存储很短的字符串，或者所有值都接近同一个长度。例如CHAR非常适合存储密码的MD5值。</p>
@@ -149,8 +148,7 @@
 <h3 id="加快alter-table操作的速度">加快ALTER TABLE操作的速度</h3>
 <p>MySQL的ALTER TABLE操作的性能对大表来说是个大问题。MySQL执行大部分修改表结构操作的方法是用新的结构创建一个空表，从旧表中查出所有的数据插入新表，然后删除旧表</p>
 <blockquote>
-<p>参考书目：《高能能MySQL（第3版）》</p>
-</blockquote>
+<p>参考书目：《高能能MySQL（第3版）》</p></blockquote>
 
                         </div>
 
@@ -279,6 +277,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -330,7 +334,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

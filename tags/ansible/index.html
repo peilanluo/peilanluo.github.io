@@ -3,18 +3,18 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>ansible - 默默的心路</title>
-    <meta property="og:title" content="ansible - 默默的心路">
+    <title>Ansible - 默默的心路</title>
+    <meta property="og:title" content="Ansible - 默默的心路">
     <meta property="og:type" content="article">
         
         
-    <meta name="description" content="ansible">
+    <meta name="description" content="Ansible">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/tags/ansible/">
 
     <link rel="alternate" type="application/rss&#43;xml" href="https://peilanluo.github.io/tags/ansible/index.xml" title="默默的心路">
@@ -89,7 +89,22 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    playbook语法 playbook使用YAML语法描述配置文件，总的来说具有以下特性： 需要以“&mdash;”开始，且需顶行手写 此行开始正
+                                    <h1 id="playbook语法">playbook语法</h1>
+<p>playbook使用YAML语法描述配置文件，总的来说具有以下特性：</p>
+<ul>
+<li>需要以“&mdash;”开始，且需顶行手写</li>
+<li>此行开始正常些playbook的内容</li>
+<li>使用 # 号注释代码</li>
+<li>缩进必须是统一的，不能讲空格和Tab混用。</li>
+<li>缩进的级别必须是一致的。</li>
+<li>大小写敏感。</li>
+<li>key/value值可同行写也可以换行写，同行使用<code>:</code>，换行需要以<code>-分隔</code></li>
+<li>一个name只能包括一个task。</li>
+</ul>
+<h1 id="playbook小技巧">playbook小技巧</h1>
+<h2 id="限定执行范围">限定执行范围</h2>
+<h3 id="limit">&ndash;limit</h3>
+<p>可以使用该关键字限定一台或多台主机</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/python/ansible_playbook/">阅读全文</a></p>
@@ -117,7 +132,55 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    Ad-Hoc相当于临时命令，适用于解决一些临时性的问题 用法 基本用法为：ansible &lt;pattern&gt; [options] options的可用选项如下（只列出部分）： -v, &nd
+                                    <p>Ad-Hoc相当于临时命令，适用于解决一些临时性的问题</p>
+<h2 id="用法">用法</h2>
+<p>基本用法为：<code>ansible &lt;pattern&gt; [options]</code>
+options的可用选项如下（只列出部分）：</p>
+<ul>
+<li>-v, &ndash;verbose：输出更为详细的执行过程信息，-vvv可得到执行过程的所有信息</li>
+<li>-i PATH，&ndash;inventory=PATH：指定inventory信息</li>
+<li>-f NUM，&ndash;forks=NUM：并发线程数，默认5个线程</li>
+<li>&ndash;private-key=PRIVATE_KEY_FILE：指定密钥文件</li>
+<li>-m NAME，&ndash;module-name=NAME：指定执行使用的模块</li>
+<li>-M DIRECTORY，&ndash;modult-path=DIRECTORY：指定模块存放路径，默认/usr/share/ansible，也可以通过ANSIBLE_LIBRARY是定默认路径</li>
+<li>-a &lsquo;ARGUMENTS&rsquo;，&ndash;args=&lsquo;ARGUMENTS&rsquo;：模块参数</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">ansible</span> <span class="nb">all</span> <span class="o">-</span><span class="n">f</span> <span class="mi">5</span> <span class="o">-</span><span class="n">m</span> <span class="n">ping</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="一些常用命令">一些常用命令</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># ping</span>
+</span></span><span class="line"><span class="cl"><span class="n">ansible</span> <span class="n">local</span> <span class="o">-</span><span class="n">m</span> <span class="n">ping</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 返回该组的所有主机的hostname</span>
+</span></span><span class="line"><span class="cl"><span class="n">ansible</span> <span class="n">local</span> <span class="o">-</span><span class="n">m</span> <span class="n">command</span> <span class="o">-</span><span class="n">a</span> <span class="s1">&#39;hostname&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 列出分组下所有主机</span>
+</span></span><span class="line"><span class="cl"><span class="n">ansible</span> <span class="n">local</span> <span class="o">--</span><span class="nb">list</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 批量查看分组下所有主机的磁盘容量</span>
+</span></span><span class="line"><span class="cl"><span class="n">ansible</span> <span class="n">local</span> <span class="o">-</span><span class="n">a</span> <span class="s2">&#34;df -lh&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 批量查看分组下所有主机的内存使用情况（shell模块）</span>
+</span></span><span class="line"><span class="cl"><span class="n">ansible</span> <span class="n">local</span> <span class="o">-</span><span class="n">m</span> <span class="n">shell</span> <span class="o">-</span><span class="n">a</span> <span class="s2">&#34;free -m&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/python/ansible_adhoc/">阅读全文</a></p>
@@ -145,7 +208,8 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    配置文件 ansible的配置文件只有一个，即ansible.cfg，它可以存在于多个地方，ansible读取配置文件的顺序依次是当前命令执行
+                                    <h1 id="配置文件">配置文件</h1>
+<p>ansible的配置文件只有一个，即ansible.cfg，它可以存在于多个地方，ansible读取配置文件的顺序依次是<code>当前命令执行目录</code>-&gt;<code>用户家目录下的.ansible.cfg</code>-&gt;<code>/etc/ansible.cfg</code>，先找到哪个就使用哪个。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/python/ansible_basic/">阅读全文</a></p>
@@ -263,6 +327,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -314,7 +384,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

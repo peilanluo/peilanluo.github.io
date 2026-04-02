@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="Redis--Redis的主从和集群">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/redis/redis_copy/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -104,7 +104,7 @@
                             <h2 id="1-redis的复制">1 Redis的复制</h2>
 <p>在Redis中，用户可以通过执行<code>SLAVEOF</code>命令或设置slaveof选项，让一个服务器去复制另一个服务器，<code>被复制的服务器</code>为主服务器，复制出的服务器成为从服务器。</p>
 <p>例如现在有两台服务器Redis服务器，地址分别为<code>127.0.0.1:6379</code>和<code>127.0.0.1:12345</code>，向<code>127.0.0.1:12345</code>发送以下命令：</p>
-<pre><code class="language-Redis" data-lang="Redis">127.0.0.1:12345&gt; SLAVEOF 127.0.0.1 6379
+<pre tabindex="0"><code class="language-Redis" data-lang="Redis">127.0.0.1:12345&gt; SLAVEOF 127.0.0.1 6379
 </code></pre><p>那么<code>127.0.0.1:12345</code>将成为<code>127.0.0.1:6379</code>的从服务器。</p>
 <h3 id="11-旧版复制功能的实现">1.1 旧版复制功能的实现</h3>
 <p>Redis 2.8版本之前使用的是旧版的复制功能，其实现过程是</p>
@@ -146,7 +146,7 @@
 <h3 id="22-槽指派">2.2 槽指派</h3>
 <p>Redis集群通过分片的方式来保存数据库中的键值对：集群的整个数据库被分为16384个槽（slot），数据库中的每个键都属于这16384个槽中的一个，集群中的每个结点可以处理0个或最多16384个槽。当这16384个槽都有节点在处理时，集群处于上线状态，否则，处于下线状态。</p>
 <p>通过向节点发送<code>CLUSTER ADDSLOTS</code>命令，可以将一个或多个槽指派给节点负责：</p>
-<pre><code class="language-Redis" data-lang="Redis">CLUSTER ADDSLOTS 0 1 2 3 4 ... 5000
+<pre tabindex="0"><code class="language-Redis" data-lang="Redis">CLUSTER ADDSLOTS 0 1 2 3 4 ... 5000
 </code></pre><h3 id="23-复制与故障转移">2.3 复制与故障转移</h3>
 <p>Redis集群中的节点分为主节点（master）和从节点（slave），其中主节点用于处理槽，从节点用于复制某个主节点，并在被复制的主节点下线时，代替下线主节点继续处理命令请求。</p>
 <p>设置从节点的命令为<code>CLUSTER REPLICATE &lt;node_id&gt;</code></p>
@@ -278,6 +278,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -329,7 +335,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

@@ -3,18 +3,18 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>elasticsearch - 默默的心路</title>
-    <meta property="og:title" content="elasticsearch - 默默的心路">
+    <title>Elasticsearch - 默默的心路</title>
+    <meta property="og:title" content="Elasticsearch - 默默的心路">
     <meta property="og:type" content="article">
         
         
-    <meta name="description" content="elasticsearch">
+    <meta name="description" content="Elasticsearch">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/tags/elasticsearch/">
 
     <link rel="alternate" type="application/rss&#43;xml" href="https://peilanluo.github.io/tags/elasticsearch/index.xml" title="默默的心路">
@@ -89,7 +89,27 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    索引和映射 手动创建索引和映射 这里主要使用curl工具来发送请求。先手动创建一个名为user的索引。 1 curl -X PUT localhost:9200/user 获取映射 1 curl -X GET localhost:9200/user/_mapping/user?pretty 其中第一个us
+                                    <h1 id="索引和映射">索引和映射</h1>
+<h2 id="手动创建索引和映射">手动创建索引和映射</h2>
+<p>这里主要使用curl工具来发送请求。先手动创建一个名为user的索引。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X PUT localhost:9200/user
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="获取映射">获取映射</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X GET localhost:9200/user/_mapping/user?pretty
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>其中第一个user是索引名称，第二个user是类型名称。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/elasticsearch/search/">阅读全文</a></p>
@@ -207,6 +227,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -258,7 +284,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

@@ -4,21 +4,16 @@
     <title>二叉搜索树 on 默默的心路</title>
     <link>https://peilanluo.github.io/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/</link>
     <description>Recent content in 二叉搜索树 on 默默的心路</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zh-CN</language>
     <lastBuildDate>Tue, 01 Sep 2020 15:02:21 +0800</lastBuildDate>
-    
-	<atom:link href="https://peilanluo.github.io/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <atom:link href="https://peilanluo.github.io/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>数据结构--二叉搜索树</title>
       <link>https://peilanluo.github.io/post/data/binary_search_tree/</link>
       <pubDate>Tue, 01 Sep 2020 15:02:21 +0800</pubDate>
-      
       <guid>https://peilanluo.github.io/post/data/binary_search_tree/</guid>
-      <description>二叉搜索树 概念 二叉搜索树是一种特殊的二叉树，对于二叉搜索树的任意根结点x，其左子树上所有结点的值最大不超过x，其右子树上所有结点的值最小不低</description>
+      <description>&lt;h1 id=&#34;二叉搜索树&#34;&gt;二叉搜索树&lt;/h1&gt;&#xA;&lt;h2 id=&#34;概念&#34;&gt;概念&lt;/h2&gt;&#xA;&lt;p&gt;二叉搜索树是一种特殊的二叉树，对于二叉搜索树的任意根结点x，其左子树上所有结点的值最大不超过x，其右子树上所有结点的值最小不低于x。&lt;/p&gt;&#xA;&lt;p&gt;如果设二叉搜索树共有n个元素，无论哪种操作，平均每次操作需要O(logn)的时间，最坏运行时间是O(n)，出现在如果这棵树是一条n个结点组成的线性链。&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="Prometheus--Prometheus的数据类型和PromQL简介">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/prometheus/prometheus_basic/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -111,7 +111,7 @@
 <li>可选的指标标准时间戳</li>
 </ul>
 <p>看一个例子</p>
-<pre><code class="language-Prometheus" data-lang="Prometheus">go_gc_duration_seconds{quantile=&quot;0&quot;} 1.5028e-05
+<pre tabindex="0"><code class="language-Prometheus" data-lang="Prometheus">go_gc_duration_seconds{quantile=&#34;0&#34;} 1.5028e-05
 </code></pre><p>其中，<code>go_gc_duration_seconds</code>为指标名称，类似<code>quantile=&quot;0&quot;</code>的为标签，最后是指标值。</p>
 <h4 id="metric的四种类型">metric的四种类型</h4>
 <p>Prometheus提供了四种核心指标类型，包括Counter、Gauge、Histogram和Summary。</p>
@@ -156,23 +156,23 @@
 <h3 id="时间序列选择器">时间序列选择器</h3>
 <h4 id="instant-vector-selectors">instant vector selectors</h4>
 <p>也可以称为“即时向量选择器”，它返回查询计算时间之前的最新样本的及时向量，即一个包含零个或多个时间序列的列表。</p>
-<pre><code class="language-Prometheus" data-lang="Prometheus">UP{job=&quot;mysqld_node&quot;}
+<pre tabindex="0"><code class="language-Prometheus" data-lang="Prometheus">UP{job=&#34;mysqld_node&#34;}
 </code></pre><p>上面的例子中，UP是metric name，使用花括号（{}）括起来的<code>job=&quot;mysqld_node&quot;</code>是标签，类似于“=”的还有其他表达式：</p>
 <ul>
 <li><code>=</code>：相等匹配模式，用来指定返回的时间序列具有与给定标签值完全相同的标签名称。</li>
 <li><code>!=</code>：反向匹配符，与“=”相反。</li>
-<li><code>=~</code>：正则表达匹配模式，这里的正则表达式是完全锚定的，即假设有一个表达式x，它只会匹配字符串x，而不匹配xy或yx，需要模糊匹配可以使用<code>.*</code>作为前缀或后缀，例如，job=~&quot;node_.*&rdquo;</li>
+<li><code>=~</code>：正则表达匹配模式，这里的正则表达式是完全锚定的，即假设有一个表达式x，它只会匹配字符串x，而不匹配xy或yx，需要模糊匹配可以使用<code>.*</code>作为前缀或后缀，例如，job=~&ldquo;node_.*&rdquo;</li>
 <li><code>!~</code>：反向正则表达匹配模式，与“=~”相反。</li>
 </ul>
 <p>另外，<code>UP{job=&quot;mysqld_node&quot;}</code>等效于<code>{__name__=&quot;UP&quot;,job=&quot;mysqld_node&quot;}</code>，这样就可以对metric name也使用正则了。</p>
 <h4 id="range-vector-selector">Range Vector Selector</h4>
 <p>与每个时间序列返回一个样本的即时向量选择器不同，区间向量选择器可以为每个时间序列返回许多样本。</p>
-<pre><code class="language-Prometheus" data-lang="Prometheus">process_cpu_seconds_total[1m]
+<pre tabindex="0"><code class="language-Prometheus" data-lang="Prometheus">process_cpu_seconds_total[1m]
 </code></pre><p>例子中的<code>process_cpu_seconds_total</code>是metric name，<code>[1m]</code>意为查看过去一分钟之内的数据。</p>
 <h4 id="offset-modifier">Offset Modifier</h4>
 <p>表示在即时向量或区间向量表达式中，都以当前时间为基准。</p>
-<pre><code class="language-Prometheus" data-lang="Prometheus">process_resident_memory_bytes{job=&quot;prometheus&quot;} offset 15m
-process_resident_memory_bytes{job=&quot;prometheus&quot;} [1d]offset 1d
+<pre tabindex="0"><code class="language-Prometheus" data-lang="Prometheus">process_resident_memory_bytes{job=&#34;prometheus&#34;} offset 15m
+process_resident_memory_bytes{job=&#34;prometheus&#34;} [1d]offset 1d
 </code></pre>
                         </div>
 
@@ -303,6 +303,12 @@ process_resident_memory_bytes{job=&quot;prometheus&quot;} [1d]offset 1d
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -354,7 +360,7 @@ process_resident_memory_bytes{job=&quot;prometheus&quot;} [1d]offset 1d
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

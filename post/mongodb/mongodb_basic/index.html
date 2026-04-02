@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="MongoDB--一些基础知识">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/mongodb/mongodb_basic/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -111,39 +111,39 @@
 <p>可以配合$push使用添加多个值</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span><span class="s2">&#34;$push&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;tags&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;$each&#34;</span><span class="o">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]}}}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span><span class="s2">&#34;$push&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;tags&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;$each&#34;</span><span class="o">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]}}}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="addtoset">$addToSet</h2>
 <p>可以插入不重复的值</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span><span class="s2">&#34;$addToSet&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;emails&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;$each&#34;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&#34;aaa&#34;</span><span class="p">,</span> <span class="s2">&#34;bbb&#34;</span><span class="p">]}}}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span><span class="s2">&#34;$addToSet&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;emails&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;$each&#34;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&#34;aaa&#34;</span><span class="p">,</span> <span class="s2">&#34;bbb&#34;</span><span class="p">]}}}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="pop">$pop</h2>
 <p>从数组末尾删除一个元素<code>{&quot;$pop&quot;: {&quot;key&quot;: -1}}</code>则从头删除</p>
 <p>$pull基于特定的条件来删除元素</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">//删除todo列表中名为laundry的元素
-</span><span class="c1"></span><span class="p">{</span><span class="s2">&#34;$pull&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;todo&#34;</span><span class="o">:</span> <span class="s2">&#34;laundry&#34;</span><span class="p">}}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="c1">//删除todo列表中名为laundry的元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span><span class="s2">&#34;$pull&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;todo&#34;</span><span class="o">:</span> <span class="s2">&#34;laundry&#34;</span><span class="p">}}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="-位置或定位操作符">$: 位置或定位操作符</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -156,36 +156,36 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">// 有一个文档
-</span><span class="c1"></span><span class="p">{</span>
-    <span class="s2">&#34;_id&#34;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> 
-    <span class="s2">&#34;comments&#34;</span><span class="o">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="s2">&#34;comment&#34;</span><span class="o">:</span> <span class="s2">&#34;哈哈哈&#34;</span><span class="p">,</span>
-            <span class="s2">&#34;author&#34;</span><span class="o">:</span> <span class="s2">&#34;aaa&#34;</span><span class="p">,</span>
-            <span class="s2">&#34;votes&#34;</span><span class="o">:</span> <span class="mi">1</span>
-        <span class="p">}</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="c1">// 有一个文档
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;_id&#34;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;comments&#34;</span><span class="o">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;comment&#34;</span><span class="o">:</span> <span class="s2">&#34;哈哈哈&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;author&#34;</span><span class="o">:</span> <span class="s2">&#34;aaa&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;votes&#34;</span><span class="o">:</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果想只增加第一个评论的投票数量可以：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">blog</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span><span class="s2">&#34;post&#34;</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&#34;$inc&#34;</span><span class="o">:</span> <span class="p">{</span><span class="nx">comments</span><span class="mf">.0</span><span class="p">.</span><span class="nx">votes</span><span class="o">:</span> <span class="mi">1</span><span class="p">}})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nx">blog</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span><span class="s2">&#34;post&#34;</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&#34;$inc&#34;</span><span class="o">:</span> <span class="p">{</span><span class="nx">comments</span><span class="p">.</span><span class="mf">0.</span><span class="nx">votes</span><span class="o">:</span> <span class="mi">1</span><span class="p">}})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>但是不预先查询文档就不知道要修改的数组下标，如果现在用户aaa把他的名字改成了bbb可以这么操作：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">blog</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span><span class="s2">&#34;comments.author&#34;</span><span class="o">:</span> <span class="s2">&#34;aaa&#34;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&#34;$set&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;comments.$.author&#34;</span><span class="o">:</span> <span class="s2">&#34;bbb&#34;</span><span class="p">}})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nx">blog</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span><span class="s2">&#34;comments.author&#34;</span><span class="o">:</span> <span class="s2">&#34;aaa&#34;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&#34;$set&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;comments.$.author&#34;</span><span class="o">:</span> <span class="s2">&#34;bbb&#34;</span><span class="p">}})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="mod">$mod</h2>
 <p>$mod会将查询的值除以第一个给定的值，若余数等于第二个给定的值则匹配成功</p>
@@ -193,27 +193,27 @@
 <p>如果需要多个元素来匹配数组，可以使用$all</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span><span class="s2">&#34;fruit&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;$all&#34;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&#34;banana&#34;</span><span class="p">,</span> <span class="s2">&#34;apple&#34;</span><span class="p">]}}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span><span class="s2">&#34;fruit&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;$all&#34;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&#34;banana&#34;</span><span class="p">,</span> <span class="s2">&#34;apple&#34;</span><span class="p">]}}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="size">$size</h2>
 <p>查询特定长度的数据</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">{</span><span class="s2">&#34;fruit&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;$size&#34;</span><span class="o">:</span> <span class="mi">3</span><span class="p">}}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span><span class="s2">&#34;fruit&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;$size&#34;</span><span class="o">:</span> <span class="mi">3</span><span class="p">}}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="slice">$slice</h2>
 <p>返回某个键匹配的数组元素的一个子集</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -226,34 +226,34 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">// 返回前10条记录
-</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">post</span><span class="p">.</span><span class="nx">find</span><span class="p">({},</span> <span class="p">{</span><span class="s1">&#39;comments&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$slice&#39;</span><span class="o">:</span> <span class="mi">10</span><span class="p">}})</span>
-
-<span class="c1">// 返回后10条记录
-</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">post</span><span class="p">.</span><span class="nx">find</span><span class="p">({},</span> <span class="p">{</span><span class="s1">&#39;comments&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$slice&#39;</span><span class="o">:</span> <span class="o">-</span><span class="mi">10</span><span class="p">}})</span>
-
-<span class="c1">// 跳过一定元素数量，左不包含右包含
-</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">post</span><span class="p">.</span><span class="nx">find</span><span class="p">({},</span> <span class="p">{</span><span class="s1">&#39;comments&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$slice&#39;</span><span class="o">:</span> <span class="p">[</span><span class="mi">23</span><span class="p">,</span> <span class="mi">10</span><span class="p">]}})</span>
-
-<span class="c1">// 只返回匹配的评论
-</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">post</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="s1">&#39;comments.name&#39;</span><span class="o">:</span> <span class="s1">&#39;bob&#39;</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;comments.$&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="c1">// 返回前10条记录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">post</span><span class="p">.</span><span class="nx">find</span><span class="p">({},</span> <span class="p">{</span><span class="s1">&#39;comments&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$slice&#39;</span><span class="o">:</span> <span class="mi">10</span><span class="p">}})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 返回后10条记录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">post</span><span class="p">.</span><span class="nx">find</span><span class="p">({},</span> <span class="p">{</span><span class="s1">&#39;comments&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$slice&#39;</span><span class="o">:</span> <span class="o">-</span><span class="mi">10</span><span class="p">}})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 跳过一定元素数量，左不包含右包含
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">post</span><span class="p">.</span><span class="nx">find</span><span class="p">({},</span> <span class="p">{</span><span class="s1">&#39;comments&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$slice&#39;</span><span class="o">:</span> <span class="p">[</span><span class="mi">23</span><span class="p">,</span> <span class="mi">10</span><span class="p">]}})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 只返回匹配的评论
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">post</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="s1">&#39;comments.name&#39;</span><span class="o">:</span> <span class="s1">&#39;bob&#39;</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;comments.$&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="elemmatch">$elemMatch</h2>
 <p>与数组中的每一个元素做比较</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">test</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$elemMatch&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$gt&#39;</span><span class="o">:</span> <span class="mi">10</span><span class="p">}}})</span>
-
-<span class="c1">// 针对数组中的多个对象，如果想要只针对一个对象执行查询
-</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">blog</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="s1">&#39;comments&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$elemMatch&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;author&#39;</span><span class="o">:</span> <span class="s1">&#39;joe&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$gte&#39;</span><span class="o">:</span> <span class="mi">5</span><span class="p">}}}})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nx">test</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$elemMatch&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$gt&#39;</span><span class="o">:</span> <span class="mi">10</span><span class="p">}}})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 针对数组中的多个对象，如果想要只针对一个对象执行查询
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">blog</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="s1">&#39;comments&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$elemMatch&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;author&#39;</span><span class="o">:</span> <span class="s1">&#39;joe&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;$gte&#39;</span><span class="o">:</span> <span class="mi">5</span><span class="p">}}}})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="修改器速度">修改器速度</h2>
 <p>有的修改器速度很快例如$inc，因为不需要改变文档的大小，只需要将键的值修改一下。而数组修改器可能会改变文档的大小，就会慢一些。</p>
@@ -263,7 +263,7 @@
 <p>$where最常见的用法是比较文档中两个键的值是否相等。例如下面这个文档</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -277,26 +277,25 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">foo</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span><span class="s1">&#39;apple&#39;</span><span class="o">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;spinach&#39;</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;watermelon&#39;</span><span class="o">:</span> <span class="mi">4</span><span class="p">})</span>
-
-<span class="c1">// 现在需要返回两个键具有相同值得文档，只能使用$where
-</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">foo</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="s2">&#34;$where&#34;</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">cur</span> <span class="k">in</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">other</span> <span class="k">in</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span> <span class="o">!=</span> <span class="nx">other</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">[</span><span class="nx">cur</span><span class="p">]</span> <span class="o">==</span> <span class="k">this</span><span class="p">[</span><span class="nx">other</span><span class="p">])</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="kc">true</span><span class="p">;</span> <span class="c1">// 如果返回为true，文档就作为结果集的一部分返回
-</span><span class="c1"></span>            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span> <span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nx">foo</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span><span class="s1">&#39;apple&#39;</span><span class="o">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;spinach&#39;</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;watermelon&#39;</span><span class="o">:</span> <span class="mi">4</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 现在需要返回两个键具有相同值得文档，只能使用$where
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nx">foo</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="s2">&#34;$where&#34;</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">cur</span> <span class="k">in</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">other</span> <span class="k">in</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span> <span class="o">!=</span> <span class="nx">other</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">[</span><span class="nx">cur</span><span class="p">]</span> <span class="o">==</span> <span class="k">this</span><span class="p">[</span><span class="nx">other</span><span class="p">])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="kc">true</span><span class="p">;</span> <span class="c1">// 如果返回为true，文档就作为结果集的一部分返回
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>要尽量避免使用$where进行查询，因为每个文档都需要从bson转换为javascript对象，然后通过$where来运行，而且$where不能使用索引。使用$where时最好先使用索引进行过滤，然后再使用$where进一步过滤。</p>
 <h1 id="排序和分页">排序和分页</h1>
 <p>mongoDB在分页时应当尽量避免使用skip，因为在skip数值很大时会变得很慢。应当尽量使用上一次查询出来的数据的条件进行分页。</p>
 <blockquote>
-<p>参考书目：《MongoDB权威指南（第2版）》</p>
-</blockquote>
+<p>参考书目：《MongoDB权威指南（第2版）》</p></blockquote>
 
                         </div>
 
@@ -425,6 +424,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -476,7 +481,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

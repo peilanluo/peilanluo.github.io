@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -14,7 +14,7 @@
         
     <meta name="description" content="Redis">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/categories/redis/">
 
     <link rel="alternate" type="application/rss&#43;xml" href="https://peilanluo.github.io/categories/redis/index.xml" title="默默的心路">
@@ -89,7 +89,8 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    1 Redis的复制 在Redis中，用户可以通过执行SLAVEOF命令或设置slaveof选项，让一个服务器去复制另一个服务器，被复制的服务器
+                                    <h2 id="1-redis的复制">1 Redis的复制</h2>
+<p>在Redis中，用户可以通过执行<code>SLAVEOF</code>命令或设置slaveof选项，让一个服务器去复制另一个服务器，<code>被复制的服务器</code>为主服务器，复制出的服务器成为从服务器。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/redis/redis_copy/">阅读全文</a></p>
@@ -117,7 +118,10 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    参考书目：《Redis设计与实现》 1. 简单动态字符串 Redis没有直接使用C语言传统的字符串表示，而是构建了一种名为简单动态字符串（SDS）的
+                                    <blockquote>
+<p>参考书目：《Redis设计与实现》</p></blockquote>
+<h2 id="1-简单动态字符串">1. 简单动态字符串</h2>
+<p><code>Redis</code>没有直接使用C语言传统的字符串表示，而是构建了一种名为简单动态字符串（SDS）的抽象类型，并将SDS作为Redis的默认字符串表示。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/redis/redis_basic/">阅读全文</a></p>
@@ -145,7 +149,12 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    参考书目：《Redis设计与实现》 1 RDB持久化 RDB持久化既可以手动执行，也可以根据服务器配置选项定期执行。 1.1 RDB文件的创建与载入 有两个
+                                    <blockquote>
+<p>参考书目：《Redis设计与实现》</p></blockquote>
+<h2 id="1-rdb持久化">1 RDB持久化</h2>
+<p>RDB持久化既可以手动执行，也可以根据服务器配置选项定期执行。</p>
+<h3 id="11-rdb文件的创建与载入">1.1 RDB文件的创建与载入</h3>
+<p>有两个命令可以用于生成RDB文件，一个是SAVE，另一个是BGSAVE。<code>SAVE</code>会阻塞Redis服务器进程，直到RDB文件创建完毕。<code>BGSAVE</code>会派生出一个子进程，然后由子进程创建RDB文件。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/redis/redis_persistence/">阅读全文</a></p>
@@ -173,7 +182,7 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    redis使用WATCH命令来代替对数据进行加锁，因为WATCH只会在数据被其他客户端抢先修改了的情况下通知执行了这个命令的客户端，而不会阻
+                                    <p>redis使用<code>WATCH</code>命令来代替对数据进行加锁，因为<code>WATCH</code>只会在数据被其他客户端抢先修改了的情况下通知执行了这个命令的客户端，而不会阻止其他客户端对数据进行修改，所以这个命令称为乐观锁。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/redis/redis_lock/">阅读全文</a></p>
@@ -291,6 +300,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -342,7 +357,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="kubernetes--Pod的应用">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/kubernetes/pod/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -130,49 +130,49 @@
 早期的版本中，Kubernetes只有一个副本控制器RC，后来推出了Deployment来代替RC，所以RC不再做讨论。Deployment的实质是ReplicaSet的使用，相比RC，ReplicaSet拥有集合式的标签选择器，可以选择多个Pod标签。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">selector</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span><span class="k">matchLabels</span><span class="p">:</span><span class="w">
-</span><span class="w">        </span><span class="k">tier</span><span class="p">:</span><span class="w"> </span>frontend<span class="w">
-</span><span class="w">    </span><span class="k">matchExpressions</span><span class="p">:</span><span class="w">
-</span><span class="w">        </span>- {<span class="k">key: tier, operator: In, values</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>frontend<span class="p">]</span>}<span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">tier</span><span class="p">:</span><span class="w"> </span><span class="l">frontend</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">matchExpressions</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- {<span class="nt">key: tier, operator: In, values</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">frontend]}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="使用nodeselector实现定向调度">使用NodeSelector实现定向调度</h2>
 <p>Kubernetes Master上的Scheduler服务负责实现Pod的调度，这一过程是自动的。如果想要指定调度到一些Node上，可以通过Node的标签（Label）和Pod的nodeSelector属性相匹配，达到要求。具体实现步骤如下：</p>
 <p>首先通过kubectl label命令给目标Node打上一些标签：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">kubectl label nodes &lt;node-name&gt; &lt;label-key&gt;<span class="o">=</span>&lt;label-value&gt;
-<span class="c1"># 例如</span>
-kubectl label nodes <span class="nb">test</span> <span class="nv">environment</span><span class="o">=</span>staging
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl label nodes &lt;node-name&gt; &lt;label-key&gt;<span class="o">=</span>&lt;label-value&gt;
+</span></span><span class="line"><span class="cl"><span class="c1"># 例如</span>
+</span></span><span class="line"><span class="cl">kubectl label nodes <span class="nb">test</span> <span class="nv">environment</span><span class="o">=</span>staging
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后，在Pod的定义中加上nodeSelector的设置</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
-</span><span class="w"></span><span class="k">nodeSelector</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span><span class="k">environment</span><span class="p">:</span><span class="w"> </span>staging<span class="w">
-</span><span class="w"></span>...<span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nn">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">nodeSelector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="l">staging</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nn">...</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h1 id="pod的升级和回滚">Pod的升级和回滚</h1>
 <p>如果Pod是通过<code>Deployment</code>创建的，则用户可以在运行时修改Deployment的Pod定义（spec.template）或镜像名称，并应用到<code>Deployment</code>对象上，系统即可完成Deployment的自动更新操作。</p>
@@ -180,7 +180,7 @@ kubectl label nodes <span class="nb">test</span> <span class="nv">environment</s
 <p>以下面的例子（nginx-deployment.yaml）说明：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -198,54 +198,54 @@ kubectl label nodes <span class="nb">test</span> <span class="nv">environment</s
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">apiVersion</span><span class="p">:</span><span class="w"> </span>v1<span class="w">
-</span><span class="w"></span><span class="k">kind</span><span class="p">:</span><span class="w"> </span>Deployment<span class="w">
-</span><span class="w"></span><span class="k">metadata</span><span class="p">:</span><span class="w"> 
-</span><span class="w">    </span><span class="k">name</span><span class="p">:</span><span class="w"> </span>nginx-deployment<span class="w">              </span><span class="c"># Pod的名称</span><span class="w">
-</span><span class="w"></span><span class="k">spec</span><span class="p">:</span><span class="w">                                   </span><span class="c"># Pod中容器的详细定义</span><span class="w">
-</span><span class="w">    </span><span class="k">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">                         </span><span class="c"># 副本数量</span><span class="w">
-</span><span class="w">    </span><span class="k">template</span><span class="p">:</span><span class="w">                           </span><span class="c"># Pod的模板定义</span><span class="w">
-</span><span class="w">        </span><span class="k">metadata</span><span class="p">:</span><span class="w">
-</span><span class="w">            </span><span class="k">labels</span><span class="p">:</span><span class="w">                     </span><span class="c"># 定义Pod的标签，需要和上一次的一样</span><span class="w">
-</span><span class="w">                </span><span class="k">environment</span><span class="p">:</span><span class="w"> </span>test<span class="w">
-</span><span class="w">        </span><span class="k">spec</span><span class="p">:</span><span class="w">
-</span><span class="w">            </span><span class="k">containers</span><span class="p">:</span><span class="w">
-</span><span class="w">            </span>- <span class="k">name</span><span class="p">:</span><span class="w"> </span>nginx<span class="w">
-</span><span class="w">                </span><span class="k">image</span><span class="p">:</span><span class="w"> </span>nginx<span class="p">:</span><span class="m">1.14</span><span class="w">
-</span><span class="w">                </span><span class="k">ports</span><span class="p">:</span><span class="w">
-</span><span class="w">                </span>- <span class="k">containerPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Deployment</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx-deployment             </span><span class="w"> </span><span class="c"># Pod的名称</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">                                   </span><span class="c"># Pod中容器的详细定义</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">                         </span><span class="c"># 副本数量</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">template</span><span class="p">:</span><span class="w">                           </span><span class="c"># Pod的模板定义</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">labels</span><span class="p">:</span><span class="w">                     </span><span class="c"># 定义Pod的标签，需要和上一次的一样</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="l">test</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx:1.14</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span>- <span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>现在我想要吧Pod中的Nginx镜像更新，可以使用<code>kubectl set image</code>命令为Deployment设置新的镜像名称：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">kubectl <span class="nb">set</span> image deployment/nginx-deployment <span class="nv">nginx</span><span class="o">=</span>nginx:latest
-<span class="c1"># deployment &#34;nginx-deployment&#34; image updated</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl <span class="nb">set</span> image deployment/nginx-deployment <span class="nv">nginx</span><span class="o">=</span>nginx:latest
+</span></span><span class="line"><span class="cl"><span class="c1"># deployment &#34;nginx-deployment&#34; image updated</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>另一种方法是使用<code>kubectl edit</code>命令修改Deployment的配置。</p>
 <h2 id="deployment的回滚">Deployment的回滚</h2>
 <p>首先，使用<code>kubectl rollout history</code>命令检查部署的历史：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">kubectl rollout <span class="nb">history</span> deployment/nginx-deployment
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl rollout <span class="nb">history</span> deployment/nginx-deployment
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后执行回滚命令：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">kubectl rollout undo deployment/nginx-deployment <span class="o">[</span>--to-version<span class="o">=</span>2<span class="o">]</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl rollout undo deployment/nginx-deployment <span class="o">[</span>--to-version<span class="o">=</span>2<span class="o">]</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h1 id="pod的扩缩容">Pod的扩缩容</h1>
 <p>Pod的扩缩容有手动和自动两种模式。</p>
@@ -253,11 +253,11 @@ kubectl label nodes <span class="nb">test</span> <span class="nv">environment</s
 <p>手动模式可以使用<code>kubectl scale</code>命令。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">kubectl scale deployment nginx-deployment --replicas <span class="m">2</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl scale deployment nginx-deployment --replicas <span class="m">2</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="自动模式">自动模式</h2>
 <p>自动模式是使用一系列指标来衡量是否需要扩缩容，由Kubernetes自动完成扩缩容过程。</p>
@@ -395,6 +395,12 @@ kubectl label nodes <span class="nb">test</span> <span class="nv">environment</s
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -446,7 +452,7 @@ kubectl label nodes <span class="nb">test</span> <span class="nv">environment</s
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

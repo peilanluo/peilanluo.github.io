@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="Redis--分布式锁">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/redis/redis_lock/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -89,7 +89,7 @@
 <p>简单地加锁操作，例如如下代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -98,14 +98,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">pipe</span> <span class="o">:=</span> <span class="nx">redis</span><span class="p">.</span><span class="nf">Pipeline</span><span class="p">()</span>
-
-<span class="nx">pipe</span><span class="p">.</span><span class="nf">watch</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">redis</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-    <span class="nx">tx</span><span class="p">.</span><span class="nf">zadd</span><span class="p">(</span><span class="s">&#34;market&#34;</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">price</span><span class="p">)</span> <span class="c1">// 将商品添加到市场里面
-</span><span class="c1"></span>    <span class="nx">tx</span><span class="p">.</span><span class="nf">srem</span><span class="p">(</span><span class="s">&#34;inventory&#34;</span><span class="p">,</span> <span class="nx">itemid</span><span class="p">)</span> <span class="c1">// 在卖家库存中去掉商品
-</span><span class="c1"></span>    <span class="nx">retur</span> <span class="kc">nil</span>
-<span class="p">},</span> <span class="s">&#34;inventory&#34;</span><span class="p">)</span> <span class="c1">// 监视卖家的库存是否发生变动，此处的inventory事储存库存信息的redis键
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">pipe</span> <span class="o">:=</span> <span class="nx">redis</span><span class="p">.</span><span class="nf">Pipeline</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">pipe</span><span class="p">.</span><span class="nf">watch</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">redis</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">zadd</span><span class="p">(</span><span class="s">&#34;market&#34;</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">price</span><span class="p">)</span> <span class="c1">// 将商品添加到市场里面</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx</span><span class="p">.</span><span class="nf">srem</span><span class="p">(</span><span class="s">&#34;inventory&#34;</span><span class="p">,</span> <span class="nx">itemid</span><span class="p">)</span> <span class="c1">// 在卖家库存中去掉商品</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">retur</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">},</span> <span class="s">&#34;inventory&#34;</span><span class="p">)</span> <span class="c1">// 监视卖家的库存是否发生变动，此处的inventory事储存库存信息的redis键</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>但是上面的例子在高负载的情况下，效率就无法保证，所以使用WATCH命令的做法并不完美。</p>
 <h1 id="分布式锁">分布式锁</h1>
@@ -113,7 +113,7 @@
 <p>如果程序在尝试获取锁的时候失败，那么它将不断地进行重试，直到成功地取得锁或者超过给定的时限为止：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -147,39 +147,39 @@
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 取得锁
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">AcquireLock</span><span class="p">(</span><span class="nx">redis</span> <span class="o">*</span><span class="nx">redis</span><span class="p">,</span> <span class="nx">lockname</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">acquireTimeout</span><span class="p">,</span> <span class="nx">lockTimeout</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">identifier</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">uuid</span><span class="p">.</span><span class="nf">NewUUID</span><span class="p">()</span>
-
-	<span class="nx">end</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Unix</span><span class="p">()</span> <span class="o">+</span> <span class="nx">timeout</span>
-	<span class="k">for</span> <span class="p">{</span>
-		<span class="k">if</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Unix</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="nx">end</span> <span class="p">{</span>
-			<span class="k">break</span>
-		<span class="p">}</span>
-
-		<span class="nx">ok</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">Redis</span><span class="p">.</span><span class="nf">SetNX</span><span class="p">(</span><span class="s">&#34;lock:&#34;</span> <span class="o">+</span> <span class="nx">lockname</span><span class="p">,</span> <span class="nx">identifier</span><span class="p">,</span> <span class="nx">lockTimeout</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
-		<span class="k">if</span> <span class="nx">ok</span> <span class="p">{</span>
-			<span class="k">return</span> <span class="nx">identifier</span>
-		<span class="p">}</span>
-	<span class="p">}</span>
-
-	<span class="k">return</span>
-<span class="p">}</span>
-
-<span class="c1">// 释放锁
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">ReleaseLock</span><span class="p">(</span><span class="nx">redis</span> <span class="o">*</span><span class="nx">redis</span><span class="p">,</span> <span class="nx">lockname</span><span class="p">,</span> <span class="nx">identifier</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">lockname</span> <span class="p">=</span> <span class="s">&#34;lock:&#34;</span> <span class="o">+</span> <span class="nx">lockname</span>
-    
-    <span class="nx">redis</span><span class="p">.</span><span class="nf">Watch</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">redis</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-        <span class="nx">lock</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="nx">lockname</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nx">lock</span> <span class="o">==</span> <span class="nx">identifier</span> <span class="p">{</span>
-            <span class="nx">tx</span><span class="p">.</span><span class="nf">Del</span><span class="p">(</span><span class="nx">lock</span><span class="p">)</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="kc">nil</span>
-    <span class="p">},</span> <span class="nx">lockname</span><span class="p">)</span>
-<span class="p">}</span>
-<span class="c1">// 注：以上代码都是伪代码，实际生产环境使用请根据返回值进行更改
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 取得锁</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">AcquireLock</span><span class="p">(</span><span class="nx">redis</span> <span class="o">*</span><span class="nx">redis</span><span class="p">,</span> <span class="nx">lockname</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">acquireTimeout</span><span class="p">,</span> <span class="nx">lockTimeout</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">identifier</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">uuid</span><span class="p">.</span><span class="nf">NewUUID</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">end</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Unix</span><span class="p">()</span> <span class="o">+</span> <span class="nx">timeout</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Unix</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="nx">end</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="nx">ok</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">Redis</span><span class="p">.</span><span class="nf">SetNX</span><span class="p">(</span><span class="s">&#34;lock:&#34;</span> <span class="o">+</span> <span class="nx">lockname</span><span class="p">,</span> <span class="nx">identifier</span><span class="p">,</span> <span class="nx">lockTimeout</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="nx">identifier</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 释放锁</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">ReleaseLock</span><span class="p">(</span><span class="nx">redis</span> <span class="o">*</span><span class="nx">redis</span><span class="p">,</span> <span class="nx">lockname</span><span class="p">,</span> <span class="nx">identifier</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">lockname</span> <span class="p">=</span> <span class="s">&#34;lock:&#34;</span> <span class="o">+</span> <span class="nx">lockname</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nx">redis</span><span class="p">.</span><span class="nf">Watch</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">redis</span><span class="p">.</span><span class="nx">Tx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">lock</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="nx">lockname</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nx">lock</span> <span class="o">==</span> <span class="nx">identifier</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">tx</span><span class="p">.</span><span class="nf">Del</span><span class="p">(</span><span class="nx">lock</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span> <span class="nx">lockname</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 注：以上代码都是伪代码，实际生产环境使用请根据返回值进行更改</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div>
                         </div>
@@ -309,6 +309,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -360,7 +366,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

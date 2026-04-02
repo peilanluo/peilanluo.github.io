@@ -3,18 +3,18 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>kubernetes - 默默的心路</title>
-    <meta property="og:title" content="kubernetes - 默默的心路">
+    <title>Kubernetes - 默默的心路</title>
+    <meta property="og:title" content="Kubernetes - 默默的心路">
     <meta property="og:type" content="article">
         
         
-    <meta name="description" content="kubernetes">
+    <meta name="description" content="Kubernetes">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/tags/kubernetes/">
 
     <link rel="alternate" type="application/rss&#43;xml" href="https://peilanluo.github.io/tags/kubernetes/index.xml" title="默默的心路">
@@ -89,7 +89,10 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    参考文献：云原生社区《深入理解Istio 云原生服务网格进阶实战》 1. 流量控制 Istio的流量控制是通过一系列的CRD（Kubernetes的自
+                                    <blockquote>
+<p>参考文献：云原生社区《深入理解Istio 云原生服务网格进阶实战》</p></blockquote>
+<h2 id="1-流量控制">1. 流量控制</h2>
+<p>Istio的流量控制是通过一系列的CRD（Kubernetes的自定义资源）实现的，包括VirtualService、DestinationRule、ServiceEntry、Gateway和Sidebar五个资源。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/kubernetes/istio_crd/">阅读全文</a></p>
@@ -117,7 +120,9 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    通过创建Service可以为一组具有相同功能的容器应用提供一个统一的入口地址，并将请求负载分发到后端的各个应用容器上。 Service的基本用
+                                    <p>通过创建Service可以为一组具有相同功能的容器应用提供一个统一的入口地址，并将请求负载分发到后端的各个应用容器上。</p>
+<h1 id="service的基本用法">Service的基本用法</h1>
+<p>对于一个Pod来说，使用Pod的IP地址和端口号是可以访问到容器应用内的服务的，但是Pod的IP地址是不可靠的，因为当Pod所在的Node发生故障时，Pod会被调度到另一个Node，Pod的IP地址将发生变化。通过Service可以有效的解决这个问题并能为服务提供负载均衡。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/kubernetes/service/">阅读全文</a></p>
@@ -145,7 +150,7 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    Pod是Kubernetes中能够创建和部署的最小单元，是Kubernetes集群中的一个应用实例，总是部署在同一个节点node上。Pod中
+                                    <p>Pod是Kubernetes中能够创建和部署的最小单元，是Kubernetes集群中的一个应用实例，总是部署在同一个节点node上。Pod中包含了一个或多个容器。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/kubernetes/pod/">阅读全文</a></p>
@@ -173,7 +178,8 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    Kubernetes是什么 Kubernetes是一个全新的基于容器技术的分布式架构领先方案，他的前身是谷歌内部使用逾十余年的Borg技术，K
+                                    <h1 id="kubernetes是什么">Kubernetes是什么</h1>
+<p>Kubernetes是一个全新的基于容器技术的分布式架构领先方案，他的前身是谷歌内部使用逾十余年的Borg技术，Kubernetes是其开源版本，Kubernetes提供了强大的自动化机制，使系统后期的运维难度和运维成本大幅度降低。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/kubernetes/important_concept/">阅读全文</a></p>
@@ -291,6 +297,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -342,7 +354,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

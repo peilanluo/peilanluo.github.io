@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="MongoDB--索引">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/mongodb/mongodb_index/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -119,13 +119,13 @@
 <h4 id="低效率的操作符">低效率的操作符</h4>
 <p>有一些查询完全无法使用索引，比如<code>$where</code>查询和检索一个键是否存在的查询<code>$exists</code>。</p>
 <p>通常来说，取反的效率是比较低的。<code>$ne</code>查询可以使用索引，但并不是很有效。因为必须要查看所有的索引条目，而不是<code>$ne</code>指定的条目，不得不扫描索引。</p>
-<p><code>$not</code>有时能够使用索引，但是通常它不知道要如何使用索引。它能够对基本的范围（比如将{&lsquo;key&rsquo;: {&lsquo;$lt&rsquo;: 7}}变成{&lsquo;key&rsquo;: {&lsquo;$gte&rsquo;: 7}}）和正则表达式进行反转。然而，大多数使用<code>$not</code>的查询都会退化为进行全表扫描。</p>
+<p><code>$not</code>有时能够使用索引，但是通常它不知道要如何使用索引。它能够对基本的范围（比如将{&lsquo;key&rsquo;: {&rsquo;$lt&rsquo;: 7}}变成{&lsquo;key&rsquo;: {&rsquo;$gte&rsquo;: 7}}）和正则表达式进行反转。然而，大多数使用<code>$not</code>的查询都会退化为进行全表扫描。</p>
 <p><code>$nin</code>就总是进行全表扫描。</p>
 <h4 id="范围">范围</h4>
 <p>设计复合索引时，应当将会用于精确匹配的字段放在索引前面，将用于范围匹配的的字段放在索引后面。反之，扫描的索引条目数量可能是前一个查询的数倍以上。</p>
 <h4 id="or查询">OR查询</h4>
-<p>MongoDB在一次查询中只能使用一个索引（存疑，新版本尚未可知）。如果在{&lsquo;x&rsquo;: 1}上有一个索引，在{&lsquo;y&rsquo;: 1}上也有一个索引，在{&lsquo;x&rsquo;: 123, &lsquo;y&rsquo;: 456}上进行查询时，MongoDB会使用其中一个索引，而不是两个一起使用。&lsquo;$or&rsquo;是一个例外，&lsquo;$or&rsquo;可以对每个子句都使用索引，因为'$or&rsquo;实际上是执行两次查询然后将结果集合并。通常来说，执行两次查询再将结果集合并的效率不如单次查询高，因此，应尽可能使用'$in&rsquo;而不是'$or&rsquo;</p>
-<p>要注意的是，使用'$or&rsquo;后MongoDB需要检查每次查询的结果集并从中移除重复的文档，在使用'$in&rsquo;查询时无法控制返回文档的顺序。</p>
+<p>MongoDB在一次查询中只能使用一个索引（存疑，新版本尚未可知）。如果在{&lsquo;x&rsquo;: 1}上有一个索引，在{&lsquo;y&rsquo;: 1}上也有一个索引，在{&lsquo;x&rsquo;: 123, &lsquo;y&rsquo;: 456}上进行查询时，MongoDB会使用其中一个索引，而不是两个一起使用。&rsquo;$or&rsquo;是一个例外，&rsquo;$or&rsquo;可以对每个子句都使用索引，因为&rsquo;$or&rsquo;实际上是执行两次查询然后将结果集合并。通常来说，执行两次查询再将结果集合并的效率不如单次查询高，因此，应尽可能使用&rsquo;$in&rsquo;而不是&rsquo;$or&rsquo;</p>
+<p>要注意的是，使用&rsquo;$or&rsquo;后MongoDB需要检查每次查询的结果集并从中移除重复的文档，在使用&rsquo;$in&rsquo;查询时无法控制返回文档的顺序。</p>
 <h4 id="索引对象和数组">索引对象和数组</h4>
 <p>MongoDB允许深入文档内部，对嵌套字段和数组建立索引。嵌套对象和数组字段可以与复合索引中的顶级字段一起使用。</p>
 <h5 id="索引嵌套文档">索引嵌套文档</h5>
@@ -160,11 +160,11 @@
 <p>在已有的集合上创建唯一索引可能会失败，因为集合中可能已经存在重复值了，通常需要先对已有的数据进行处理，找出重复的数据，想办法处理，极少数情况下，可能希望直接删除重复的值，可以在创建索引时这样处理</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">people</span><span class="p">.</span><span class="nx">ensureIndex</span><span class="p">({</span><span class="s1">&#39;usernanme&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;unique&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="s1">&#39;dropDups&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nx">people</span><span class="p">.</span><span class="nx">ensureIndex</span><span class="p">({</span><span class="s1">&#39;usernanme&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;unique&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="s1">&#39;dropDups&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这样如果遇到重复的值，第一个会被保留，之后的重复文档都会被删除。</p>
 <h2 id="稀疏索引">稀疏索引</h2>
@@ -172,26 +172,25 @@
 <p>使用sparse选项就可以创建稀疏索引，示例如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">createIndex</span><span class="p">({</span><span class="s2">&#34;email&#34;</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&#34;unique&#34;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="s2">&#34;sparse&#34;</span><span class="o">:</span> <span class="kc">true</span><span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nx">createIndex</span><span class="p">({</span><span class="s2">&#34;email&#34;</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&#34;unique&#34;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="s2">&#34;sparse&#34;</span><span class="o">:</span> <span class="kc">true</span><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="ttl索引">TTL索引</h2>
 <p>在createIndex中指定expireAfterSecs选项就可以创建一个TTL索引，例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">foo</span><span class="p">.</span><span class="nx">createIndex</span><span class="p">({</span><span class="s1">&#39;created_at&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;expireAfterSecs&#39;</span><span class="o">:</span> <span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">24</span><span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nx">foo</span><span class="p">.</span><span class="nx">createIndex</span><span class="p">({</span><span class="s1">&#39;created_at&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;expireAfterSecs&#39;</span><span class="o">:</span> <span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">24</span><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这样就在created_at字段上建立了一个TTL索引，如果这个created_at字段存在且它的值是日期类型，当服务器时间比文档的updated_at字段的时间晚expireAfterSecs秒时，文档就会被删除。</p>
 <blockquote>
-<p>参考书目：《MongoDB权威指南（第2版）》</p>
-</blockquote>
+<p>参考书目：《MongoDB权威指南（第2版）》</p></blockquote>
 
                         </div>
 
@@ -320,6 +319,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -371,7 +376,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

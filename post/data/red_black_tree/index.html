@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="数据结构--红黑树">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/data/red_black_tree/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -130,7 +130,7 @@
 <p>以下代码均将使用golang实现，基本数据结构为</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -150,25 +150,25 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">const</span> <span class="p">(</span>
-    <span class="c1">// TreeNodeColorRed 红色
-</span><span class="c1"></span>    <span class="nx">TreeNodeColorRed</span>   <span class="p">=</span> <span class="s">&#34;red&#34;</span>
-    <span class="c1">// TreeNodeColorBlack 黑色
-</span><span class="c1"></span>    <span class="nx">TreeNodeColorBlack</span> <span class="p">=</span> <span class="s">&#34;black&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">type</span> <span class="nx">TreeNode</span> <span class="kd">struct</span> <span class="p">{</span>
-    <span class="nx">Val</span>    <span class="kt">int</span>
-    <span class="nx">Color</span>  <span class="kt">string</span>
-    <span class="nx">Parent</span> <span class="o">*</span><span class="nx">TreeNode</span>
-    <span class="nx">Left</span>   <span class="o">*</span><span class="nx">TreeNode</span>
-    <span class="nx">Right</span>  <span class="o">*</span><span class="nx">TreeNode</span>
-<span class="p">}</span>
-
-<span class="kd">var</span> <span class="nx">NilNode</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">TreeNode</span><span class="p">{</span>
-    <span class="nx">Color</span><span class="p">:</span> <span class="nx">TreeNodeColorBlack</span><span class="p">,</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">const</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// TreeNodeColorRed 红色</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">TreeNodeColorRed</span>   <span class="p">=</span> <span class="s">&#34;red&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// TreeNodeColorBlack 黑色</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">TreeNodeColorBlack</span> <span class="p">=</span> <span class="s">&#34;black&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">TreeNode</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Val</span>    <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Color</span>  <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Parent</span> <span class="o">*</span><span class="nx">TreeNode</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Left</span>   <span class="o">*</span><span class="nx">TreeNode</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Right</span>  <span class="o">*</span><span class="nx">TreeNode</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">NilNode</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">TreeNode</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Color</span><span class="p">:</span> <span class="nx">TreeNodeColorBlack</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h1 id="旋转">旋转</h1>
 <p>当对红黑树进行插入、删除操作时会改变红黑树的性质，所以需要改变树中某些结点的颜色和指针结构。而修改指针结构是通过<code>旋转</code>完成的。</p>
@@ -176,7 +176,7 @@
 <p>以下是旋转的代码实现：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -220,49 +220,49 @@
 </span><span class="lnt">42
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// LeftRotate 左旋
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">LeftRotate</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">x</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">y</span> <span class="o">:=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Right</span>
-    <span class="nx">x</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span>
-    <span class="k">if</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span> <span class="o">!=</span> <span class="nx">NilNode</span> <span class="p">{</span>
-        <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">x</span>
-    <span class="p">}</span>
-    <span class="nx">y</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span>
-    <span class="k">if</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span> <span class="o">==</span> <span class="nx">NilNode</span> <span class="p">{</span>
-        <span class="c1">//如果x是根节点
-</span><span class="c1"></span>        <span class="nx">t</span> <span class="p">=</span> <span class="nx">y</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">x</span> <span class="o">==</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">{</span>
-        <span class="c1">// 如果x是左孩子
-</span><span class="c1"></span>        <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">y</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="c1">// 如果x是右孩子
-</span><span class="c1"></span>        <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">y</span>
-    <span class="p">}</span>
-    <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">x</span>
-    <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">y</span>
-<span class="p">}</span>
-
-<span class="c1">// RightRotate 右旋
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">RightRotate</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">x</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">y</span> <span class="o">:=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Left</span>
-    <span class="nx">x</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span>
-    <span class="k">if</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span> <span class="o">!=</span> <span class="nx">NilNode</span> <span class="p">{</span>
-        <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">x</span>
-    <span class="p">}</span>
-    <span class="nx">y</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span>
-    <span class="k">if</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span> <span class="o">==</span> <span class="nx">NilNode</span> <span class="p">{</span>
-        <span class="c1">// 如果x是根节点
-</span><span class="c1"></span>        <span class="nx">t</span> <span class="p">=</span> <span class="nx">y</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">x</span> <span class="o">==</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span> <span class="p">{</span>
-        <span class="c1">// 如果x是右孩子
-</span><span class="c1"></span>        <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">y</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">y</span>
-    <span class="p">}</span>
-    <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">x</span>
-    <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">y</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// LeftRotate 左旋</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">LeftRotate</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">x</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">y</span> <span class="o">:=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Right</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">x</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span> <span class="o">!=</span> <span class="nx">NilNode</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">x</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">y</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span> <span class="o">==</span> <span class="nx">NilNode</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">//如果x是根节点</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">t</span> <span class="p">=</span> <span class="nx">y</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">x</span> <span class="o">==</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果x是左孩子</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">y</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果x是右孩子</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">y</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">x</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">y</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// RightRotate 右旋</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">RightRotate</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">x</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">y</span> <span class="o">:=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Left</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">x</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span> <span class="o">!=</span> <span class="nx">NilNode</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">x</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">y</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span> <span class="o">==</span> <span class="nx">NilNode</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果x是根节点</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">t</span> <span class="p">=</span> <span class="nx">y</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">x</span> <span class="o">==</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果x是右孩子</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">y</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">y</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">x</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">y</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h1 id="红黑树的插入操作">红黑树的插入操作</h1>
 <p>插入的过程为，先将要插入的结点着色为红色，为保证红黑树的基本性质，需要对结点重新着色并旋转。插入操作很好理解，与普通搜索二叉树的插入操作类似，不同之处在于要在插入中对红黑树的性质进行着色和修复，以维护红黑树的性质。以下重点分析执行插入操作后的修复过程：</p>
@@ -302,7 +302,7 @@
 <p>所以有了下面的代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -375,84 +375,84 @@
 </span><span class="lnt">71
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Insert 插入操作
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">Insert</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">z</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">y</span> <span class="o">:=</span> <span class="nx">NilNode</span>
-    <span class="nx">x</span> <span class="o">:=</span> <span class="nx">t</span>
-
-    <span class="c1">// 遍历查找插入位置
-</span><span class="c1"></span>    <span class="k">for</span> <span class="nx">x</span> <span class="o">!=</span> <span class="nx">NilNode</span> <span class="p">{</span>
-        <span class="nx">y</span> <span class="p">=</span> <span class="nx">x</span>
-        <span class="k">if</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Val</span> <span class="p">&lt;</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Val</span> <span class="p">{</span>
-            <span class="nx">x</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Left</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">x</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Right</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">y</span>
-    <span class="k">if</span> <span class="nx">y</span> <span class="o">==</span> <span class="nx">NilNode</span> <span class="p">{</span>
-        <span class="nx">t</span> <span class="p">=</span> <span class="nx">z</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Val</span> <span class="p">&lt;</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Val</span> <span class="p">{</span>
-        <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">z</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">z</span>
-    <span class="p">}</span>
-    <span class="nx">z</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">NilNode</span>
-    <span class="nx">z</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">NilNode</span>
-    <span class="nx">z</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
-    <span class="nf">insertFixup</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="c1">// insertFixup 插入修复
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">insertFixup</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">z</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorRed</span> <span class="p">{</span>
-        <span class="c1">// z在左子树的三种情况
-</span><span class="c1"></span>        <span class="k">if</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span> <span class="o">==</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">{</span>
-            <span class="c1">// 查看其叔结点
-</span><span class="c1"></span>            <span class="nx">y</span> <span class="o">:=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span>
-            <span class="c1">// 判断叔结点的颜色
-</span><span class="c1"></span>            <span class="k">if</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorRed</span> <span class="p">{</span>
-                <span class="c1">// 情况1
-</span><span class="c1"></span>                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-                <span class="nx">y</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
-                <span class="nx">z</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">z</span> <span class="o">==</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span> <span class="p">{</span>
-                <span class="c1">// 情况2
-</span><span class="c1"></span>                <span class="nx">z</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span>
-                <span class="nf">LeftRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">)</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="c1">// 情况3
-</span><span class="c1"></span>                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
-                <span class="nf">RightRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">)</span>
-            <span class="p">}</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">y</span> <span class="o">:=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span>
-            <span class="k">if</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorRed</span> <span class="p">{</span>
-                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-                <span class="nx">y</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
-                <span class="nx">z</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">z</span> <span class="o">==</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">{</span>
-                <span class="nx">z</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span>
-                <span class="nf">RightRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">)</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
-                <span class="nf">LeftRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">)</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="nx">t</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// Insert 插入操作</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">Insert</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">z</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">y</span> <span class="o">:=</span> <span class="nx">NilNode</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">x</span> <span class="o">:=</span> <span class="nx">t</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 遍历查找插入位置</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">x</span> <span class="o">!=</span> <span class="nx">NilNode</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">y</span> <span class="p">=</span> <span class="nx">x</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Val</span> <span class="p">&lt;</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Val</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">x</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Left</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">x</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Right</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">y</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">y</span> <span class="o">==</span> <span class="nx">NilNode</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">t</span> <span class="p">=</span> <span class="nx">z</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Val</span> <span class="p">&lt;</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Val</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">z</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">z</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">z</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">NilNode</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">z</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">NilNode</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">z</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">insertFixup</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// insertFixup 插入修复</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">insertFixup</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">z</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorRed</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// z在左子树的三种情况</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span> <span class="o">==</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 查看其叔结点</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">y</span> <span class="o">:=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 判断叔结点的颜色</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorRed</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 情况1</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">y</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">z</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">z</span> <span class="o">==</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 情况2</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">z</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span>
+</span></span><span class="line"><span class="cl">                <span class="nf">LeftRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 情况3</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
+</span></span><span class="line"><span class="cl">                <span class="nf">RightRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">y</span> <span class="o">:=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorRed</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">y</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">z</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">z</span> <span class="o">==</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">z</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span>
+</span></span><span class="line"><span class="cl">                <span class="nf">RightRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
+</span></span><span class="line"><span class="cl">                <span class="nf">LeftRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Parent</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">t</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h1 id="红黑树的删除操作">红黑树的删除操作</h1>
 <p>红黑树删除结点的时间复杂度同为O(lgn)，与插入操作相比，删除操作要更复杂些，但总体上和普通二叉搜索树的差别不大。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -509,62 +509,62 @@
 </span><span class="lnt">55
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Delete 删除
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">Delete</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">y</span> <span class="o">:=</span> <span class="nx">z</span>
-    <span class="nx">yOriginColor</span> <span class="o">:=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Color</span>
-    <span class="kd">var</span> <span class="nx">x</span> <span class="o">*</span><span class="nx">TreeNode</span>
-    <span class="k">if</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Left</span> <span class="o">==</span> <span class="nx">NilNode</span> <span class="p">{</span>
-        <span class="c1">// 如果z只有右子树，直接用z的右子树替换z
-</span><span class="c1"></span>        <span class="nx">x</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Right</span>
-        <span class="nf">transplant</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">,</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Right</span><span class="p">)</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Right</span> <span class="o">==</span> <span class="nx">NilNode</span> <span class="p">{</span>
-        <span class="c1">// z只有左子树
-</span><span class="c1"></span>        <span class="nx">x</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Left</span>
-        <span class="nf">transplant</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">,</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Left</span><span class="p">)</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">y</span> <span class="p">=</span> <span class="nf">minimum</span><span class="p">(</span><span class="nx">z</span><span class="p">.</span><span class="nx">Right</span><span class="p">)</span>
-        <span class="nx">yOriginColor</span> <span class="p">=</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Color</span>
-        <span class="nx">x</span> <span class="p">=</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span>
-        <span class="k">if</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Parent</span> <span class="o">==</span> <span class="nx">z</span> <span class="p">{</span>
-            <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">z</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nf">transplant</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span><span class="p">)</span>
-            <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Right</span>
-            <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">y</span>
-        <span class="p">}</span>
-        <span class="nf">transplant</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span>
-        <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Left</span>
-        <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">y</span>
-        <span class="nx">y</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Color</span>
-    <span class="p">}</span>
-
-    <span class="k">if</span> <span class="nx">yOriginColor</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="p">{</span>
-        <span class="nf">deleteFixup</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="c1">// minimum 最小元素
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">minimum</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="o">*</span><span class="nx">TreeNode</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Left</span> <span class="o">==</span> <span class="nx">NilNode</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">t</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="nf">minimum</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">Left</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="c1">// transplant 结点交换
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">transplant</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">u</span><span class="p">,</span> <span class="nx">v</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span> <span class="o">==</span> <span class="nx">NilNode</span> <span class="p">{</span>
-        <span class="nx">t</span> <span class="p">=</span> <span class="nx">v</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">u</span> <span class="o">==</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">{</span>
-        <span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">v</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">v</span>
-    <span class="p">}</span>
-    <span class="nx">v</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// Delete 删除</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">Delete</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">y</span> <span class="o">:=</span> <span class="nx">z</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">yOriginColor</span> <span class="o">:=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Color</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">x</span> <span class="o">*</span><span class="nx">TreeNode</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Left</span> <span class="o">==</span> <span class="nx">NilNode</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果z只有右子树，直接用z的右子树替换z</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">x</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Right</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">transplant</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">,</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Right</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Right</span> <span class="o">==</span> <span class="nx">NilNode</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// z只有左子树</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">x</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Left</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">transplant</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">,</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Left</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">y</span> <span class="p">=</span> <span class="nf">minimum</span><span class="p">(</span><span class="nx">z</span><span class="p">.</span><span class="nx">Right</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">yOriginColor</span> <span class="p">=</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Color</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">x</span> <span class="p">=</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Parent</span> <span class="o">==</span> <span class="nx">z</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">z</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">transplant</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Right</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">y</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">y</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">transplant</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">z</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Left</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">y</span><span class="p">.</span><span class="nx">Left</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">y</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">y</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">z</span><span class="p">.</span><span class="nx">Color</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">yOriginColor</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">deleteFixup</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// minimum 最小元素</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">minimum</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="o">*</span><span class="nx">TreeNode</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Left</span> <span class="o">==</span> <span class="nx">NilNode</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">t</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nf">minimum</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">Left</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// transplant 结点交换</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">transplant</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">u</span><span class="p">,</span> <span class="nx">v</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span> <span class="o">==</span> <span class="nx">NilNode</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">t</span> <span class="p">=</span> <span class="nx">v</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">u</span> <span class="o">==</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">=</span> <span class="nx">v</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span> <span class="p">=</span> <span class="nx">v</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">v</span><span class="p">.</span><span class="nx">Parent</span> <span class="p">=</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Parent</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="删除中可能会发生的情况">删除中可能会发生的情况</h2>
 <p>删除操作的重点是，删除结点z后的红黑树性质修复过程，在删除的过程中与<code>z执行交换的结点记为y</code>，<code>代替y位置的结点记为x</code>，如果y结点是红色的，那么当y被删除或移动时，红黑性质将会被保持，原因如下：</p>
@@ -595,7 +595,7 @@
 <p>于是又以下代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -656,70 +656,69 @@
 </span><span class="lnt">59
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// deleteFixup 删除修复
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">deleteFixup</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">x</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="nx">x</span> <span class="o">!=</span> <span class="nx">NilNode</span> <span class="o">&amp;&amp;</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nx">x</span> <span class="o">==</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">{</span>
-            <span class="nx">w</span> <span class="o">:=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span>
-            <span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorRed</span> <span class="p">{</span>
-                <span class="c1">// 情况1
-</span><span class="c1"></span>                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-                <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
-                <span class="nf">LeftRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">)</span>
-                <span class="nx">w</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Left</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="o">&amp;&amp;</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="p">{</span>
-        <span class="c1">// 情况2
-</span><span class="c1"></span>                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
-                <span class="nx">x</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="p">{</span>
-        <span class="c1">// 情况3
-</span><span class="c1"></span>                <span class="nx">w</span><span class="p">.</span><span class="nx">Left</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
-                <span class="nf">RightRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">w</span><span class="p">)</span>
-                <span class="nx">w</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="c1">// 情况4
-</span><span class="c1"></span>                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span>
-                <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-                <span class="nx">w</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-                <span class="nf">LeftRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">)</span>
-                <span class="nx">x</span> <span class="p">=</span> <span class="nx">t</span>
-            <span class="p">}</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">w</span> <span class="o">:=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span>
-            <span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorRed</span> <span class="p">{</span>
-                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-                <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
-                <span class="nf">RightRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">)</span>
-                <span class="nx">w</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="o">&amp;&amp;</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Left</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="p">{</span>
-                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
-                <span class="nx">x</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Left</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="p">{</span>
-                <span class="nx">w</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
-                <span class="nf">LeftRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">w</span><span class="p">)</span>
-                <span class="nx">w</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span>
-                <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-                <span class="nx">w</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-                <span class="nf">RightRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">)</span>
-                <span class="nx">x</span> <span class="p">=</span> <span class="nx">t</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="nx">x</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// deleteFixup 删除修复</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">deleteFixup</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">x</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">x</span> <span class="o">!=</span> <span class="nx">NilNode</span> <span class="o">&amp;&amp;</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nx">x</span> <span class="o">==</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">w</span> <span class="o">:=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorRed</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 情况1</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
+</span></span><span class="line"><span class="cl">                <span class="nf">LeftRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Left</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="o">&amp;&amp;</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 情况2</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">x</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 情况3</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span><span class="p">.</span><span class="nx">Left</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
+</span></span><span class="line"><span class="cl">                <span class="nf">RightRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">w</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Right</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 情况4</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl">                <span class="nf">LeftRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">x</span> <span class="p">=</span> <span class="nx">t</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">w</span> <span class="o">:=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorRed</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
+</span></span><span class="line"><span class="cl">                <span class="nf">RightRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="o">&amp;&amp;</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Left</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">x</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Left</span><span class="p">.</span><span class="nx">Color</span> <span class="o">==</span> <span class="nx">TreeNodeColorBlack</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorRed</span>
+</span></span><span class="line"><span class="cl">                <span class="nf">LeftRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">w</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Left</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span><span class="p">.</span><span class="nx">Right</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl">                <span class="nf">RightRotate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">x</span><span class="p">.</span><span class="nx">Parent</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">x</span> <span class="p">=</span> <span class="nx">t</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">x</span><span class="p">.</span><span class="nx">Color</span> <span class="p">=</span> <span class="nx">TreeNodeColorBlack</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><blockquote>
-<p>参考书目：《算法导论》</p>
-</blockquote>
+<p>参考书目：《算法导论》</p></blockquote>
 
                         </div>
 
@@ -852,6 +851,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -903,7 +908,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

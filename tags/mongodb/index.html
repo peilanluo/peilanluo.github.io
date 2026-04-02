@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -14,7 +14,7 @@
         
     <meta name="description" content="MongoDB">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/tags/mongodb/">
 
     <link rel="alternate" type="application/rss&#43;xml" href="https://peilanluo.github.io/tags/mongodb/index.xml" title="默默的心路">
@@ -89,7 +89,8 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    聚合框架 使用聚合框架可以对集合中的文档进行变换和组合。可以用多个构件创建一个管道（pipeline），这些构件包括筛选（filtering）
+                                    <h1 id="聚合框架">聚合框架</h1>
+<p>使用聚合框架可以对集合中的文档进行变换和组合。可以用多个构件创建一个管道（pipeline），这些构件包括筛选（filtering）、投射（projecting）、分组（grouping）、排序（sorting）、限制（limiting）和跳过（skipping）。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/mongodb/mongodb_aggregate/">阅读全文</a></p>
@@ -117,7 +118,10 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    MongoDB中的索引 MongoDB中的索引一部分用法和MySQL中是很相似的，但有些部分也存在差异。 使用复合索引 复合索引相对于单键索引要复
+                                    <h1 id="mongodb中的索引">MongoDB中的索引</h1>
+<p>MongoDB中的索引一部分用法和MySQL中是很相似的，但有些部分也存在差异。</p>
+<h2 id="使用复合索引">使用复合索引</h2>
+<p>复合索引相对于单键索引要复杂一些，但是也更加强大。MongoDB中的键也遵循最左前缀原则。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/mongodb/mongodb_index/">阅读全文</a></p>
@@ -145,7 +149,33 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    mongoDB的基本操作符 $inc 增加或减少数字 $push 向已有的数组末尾加入一个元素 $each 可以配合$push使用添加多个值 1 {&#34;$push&#34;: {&#34;tags&#34;: {&#34;$each&#34;: [1, 2, 3]}}} $addToSet 可以插入不重复的值
+                                    <h1 id="mongodb的基本操作符">mongoDB的基本操作符</h1>
+<h2 id="inc">$inc</h2>
+<p>增加或减少数字</p>
+<h2 id="push">$push</h2>
+<p>向已有的数组末尾加入一个元素</p>
+<h2 id="each">$each</h2>
+<p>可以配合$push使用添加多个值</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span><span class="s2">&#34;$push&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;tags&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;$each&#34;</span><span class="o">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]}}}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="addtoset">$addToSet</h2>
+<p>可以插入不重复的值</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span><span class="s2">&#34;$addToSet&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;emails&#34;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&#34;$each&#34;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&#34;aaa&#34;</span><span class="p">,</span> <span class="s2">&#34;bbb&#34;</span><span class="p">]}}}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="pop">$pop</h2>
+<p>从数组末尾删除一个元素<code>{&quot;$pop&quot;: {&quot;key&quot;: -1}}</code>则从头删除</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/mongodb/mongodb_basic/">阅读全文</a></p>
@@ -263,6 +293,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -314,7 +350,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="mysql—四大特性（ACID）、事务的隔离级别和死锁">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/mysql/mysql_acid/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -91,6 +91,7 @@
             <li><a href="#41-处理死锁的方式">4.1 处理死锁的方式</a></li>
             <li><a href="#42-间隙锁">4.2 间隙锁</a></li>
             <li><a href="#43-避免死锁的方式">4.3 避免死锁的方式</a></li>
+            <li><a href="#44-隐式锁定和显式锁定">4.4 隐式锁定和显式锁定</a></li>
           </ul>
         </li>
       </ul>
@@ -100,13 +101,13 @@
                         </aside><div class="post-content">
                             <blockquote>
 <p>参考文献：https://blog.csdn.net/zDavid_2018/article/details/89929862
-《高性能MySQL（第3版）》</p>
-</blockquote>
+《高性能MySQL（第3版）》
+《高性能MySQL（第4版）》</p></blockquote>
 <p>事务就是一组原子性的SQL查询，或者说一个独立的工作单元。如果能成功的应用该组的全部语句，那么就执行，如果有任何一条语句因崩溃或其他原因无法执行，那么所有语句都不会执行。</p>
 <h2 id="1-事务的特性acid">1 事务的特性（ACID）</h2>
-<p>事务具有四个特征：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）和持续性（Durability）。这四个特性简称为ACID特性，具体的含义如下：</p>
+<p>事务具有四个特征：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）和持久性（Durability）。这四个特性简称为ACID特性，具体的含义如下：</p>
 <ul>
-<li>原子性：一个事务时一个不可分割的工作单位，事务中包括的操作，要么都做，要么都不做。</li>
+<li>原子性：一个事务是一个不可分割的工作单位，事务中包括的操作，要么都做，要么都不做。</li>
 <li>一致性：事务必须是使数据库从一个一致性状态变到另一个一致性状态，一致性与原子性是密切相关的。</li>
 <li>隔离性：一个事务执行不能被其他事务干扰。即一个事务内部的操作及使用的数据对并发的其他数据是隔离的，并发执行的各个事务之间不能互相干扰。</li>
 <li>持久性：一个事务一旦提交，它对数据库的改变就是永久性的，接下来的其他操作或故障不应当对其执行结果有任何影响。</li>
@@ -118,7 +119,7 @@
 <h2 id="3-事务的隔离界别">3 事务的隔离界别</h2>
 <p>数据库共定义了四种隔离级别，包括：</p>
 <ul>
-<li>read uncommitted（读取未提交内容）：三种并发问题均无法保证。</li>
+<li>read uncommitted（读取未提交内容）：在这个级别，在事务中可以查看到其他事务中还没有提交的修改，三种并发问题均无法保证，另外，从性能上讲，这个级别并不会比其他级别好太多，却缺乏其他级别的许多好处，除非必要不会再实际应用中使用，读未提交，即为<code>脏读</code>。</li>
 <li>read committed（读取已提交内容）：可避免脏读情况发生。大部分数据库的隔离级别是读已提交（MySQL不是）</li>
 <li>repeatable read（可重复读）：可避免脏读、不可重复读情况的发生。可重复度是MySQL的默认事务隔离级别。</li>
 <li>serializable（可串行化）：可避免脏读、不可重复读、虚读情况的发生。</li>
@@ -126,32 +127,32 @@
 <p>如何查看MySQL中的事务隔离级别：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">select</span> <span class="o">@@</span><span class="k">global</span><span class="p">.</span><span class="n">tx_isolation</span> <span class="o">#</span> <span class="err">查看系统隔离级别</span>
-<span class="k">select</span> <span class="o">@@</span><span class="n">tx_isolation</span> <span class="o">#</span> <span class="err">查看会话隔离级别（</span><span class="mi">5</span><span class="p">.</span><span class="mi">0</span><span class="err">以上版本）</span>
-<span class="k">select</span> <span class="o">@@</span><span class="n">transaction_isolation</span> <span class="o">#</span> <span class="err">查看会话隔离级别（</span><span class="mi">8</span><span class="p">.</span><span class="mi">0</span><span class="err">以上版本）</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">@@</span><span class="k">global</span><span class="p">.</span><span class="n">tx_isolation</span><span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="err">查看系统隔离级别</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">@@</span><span class="n">tx_isolation</span><span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="err">查看会话隔离级别（</span><span class="mi">5</span><span class="p">.</span><span class="mi">0</span><span class="err">以上版本）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">@@</span><span class="n">transaction_isolation</span><span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="err">查看会话隔离级别（</span><span class="mi">8</span><span class="p">.</span><span class="mi">0</span><span class="err">以上版本）</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>如何修改MySQL中的事务隔离级别</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">set</span> <span class="k">session</span> <span class="k">transaction</span> <span class="k">isolation</span> <span class="k">level</span> <span class="k">read</span> <span class="k">committed</span><span class="p">;</span>
-<span class="k">set</span> <span class="k">session</span> <span class="k">transaction</span> <span class="k">isolation</span> <span class="k">level</span> <span class="k">repeatable</span> <span class="k">read</span><span class="p">;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">set</span><span class="w"> </span><span class="k">session</span><span class="w"> </span><span class="k">transaction</span><span class="w"> </span><span class="k">isolation</span><span class="w"> </span><span class="k">level</span><span class="w"> </span><span class="k">read</span><span class="w"> </span><span class="k">committed</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">set</span><span class="w"> </span><span class="k">session</span><span class="w"> </span><span class="k">transaction</span><span class="w"> </span><span class="k">isolation</span><span class="w"> </span><span class="k">level</span><span class="w"> </span><span class="k">repeatable</span><span class="w"> </span><span class="k">read</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="4-死锁">4 死锁</h2>
 <p>死锁是指两个或者多个事务在同一资源上相互占用，并请求锁定对方占用的资源，从而导致恶性循环的现象。当多个事务试图以不同的顺序锁定资源时，就可能会产生死锁。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -162,16 +163,16 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">START</span> <span class="k">TRANSACTION</span><span class="p">;</span>
-<span class="k">UPDATE</span> <span class="n">StockPrice</span> <span class="k">SET</span> <span class="k">close</span><span class="o">=</span><span class="mi">45</span><span class="p">.</span><span class="mi">50</span> <span class="k">WHERE</span> <span class="n">stock_id</span><span class="o">=</span><span class="mi">4</span> <span class="k">and</span> <span class="nb">date</span><span class="o">=</span><span class="s1">&#39;2002-05-01&#39;</span>
-<span class="k">UPDATE</span> <span class="n">StockPrice</span> <span class="k">SET</span> <span class="k">close</span><span class="o">=</span><span class="mi">19</span><span class="p">.</span><span class="mi">80</span> <span class="k">WHERE</span> <span class="n">stoci_id</span><span class="o">=</span><span class="mi">3</span> <span class="k">and</span> <span class="nb">date</span><span class="o">=</span><span class="s1">&#39;2002-05-02&#39;</span>
-<span class="k">COMMIT</span>
-
-<span class="k">START</span> <span class="k">TRANSACTION</span><span class="p">;</span>
-<span class="k">UPDATE</span> <span class="n">StockPrice</span> <span class="k">SET</span> <span class="n">high</span><span class="o">=</span><span class="mi">20</span><span class="p">.</span><span class="mi">12</span> <span class="k">WHERE</span> <span class="n">stock_id</span><span class="o">=</span><span class="mi">3</span> <span class="k">and</span> <span class="nb">date</span><span class="o">=</span><span class="s1">&#39;2002-05-02&#39;</span>
-<span class="k">UPDATE</span> <span class="n">StockPrice</span> <span class="k">SET</span> <span class="n">high</span><span class="o">=</span><span class="mi">47</span><span class="p">.</span><span class="mi">20</span> <span class="k">WHERE</span> <span class="n">stoci_id</span><span class="o">=</span><span class="mi">4</span> <span class="k">and</span> <span class="nb">date</span><span class="o">=</span><span class="s1">&#39;2002-05-01&#39;</span>
-<span class="k">COMMIT</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">START</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">UPDATE</span><span class="w"> </span><span class="n">StockPrice</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="k">close</span><span class="o">=</span><span class="mi">45</span><span class="p">.</span><span class="mi">50</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">stock_id</span><span class="o">=</span><span class="mi">4</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="nb">date</span><span class="o">=</span><span class="s1">&#39;2002-05-01&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">UPDATE</span><span class="w"> </span><span class="n">StockPrice</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="k">close</span><span class="o">=</span><span class="mi">19</span><span class="p">.</span><span class="mi">80</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">stoci_id</span><span class="o">=</span><span class="mi">3</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="nb">date</span><span class="o">=</span><span class="s1">&#39;2002-05-02&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">COMMIT</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">START</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">UPDATE</span><span class="w"> </span><span class="n">StockPrice</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">high</span><span class="o">=</span><span class="mi">20</span><span class="p">.</span><span class="mi">12</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">stock_id</span><span class="o">=</span><span class="mi">3</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="nb">date</span><span class="o">=</span><span class="s1">&#39;2002-05-02&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">UPDATE</span><span class="w"> </span><span class="n">StockPrice</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">high</span><span class="o">=</span><span class="mi">47</span><span class="p">.</span><span class="mi">20</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">stoci_id</span><span class="o">=</span><span class="mi">4</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="nb">date</span><span class="o">=</span><span class="s1">&#39;2002-05-01&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">COMMIT</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果凑巧上面的两个事务都执行了第一个UPDATE语句，更新了一行数据，同时也锁定了该行数据，接着每个事务都尝试去执行第二条UPDATE语句，却发现该行已经被对方锁定，然后两个事务都在等待对方释放锁，同时又持有对方需要的锁，则陷入死循环。</p>
 <p>为了解决这种问题，数据库系统实现了各种死锁检测和死锁超时机制。比如InnoDB处理死锁的方式是，将持有最少行级排它锁的事务进行回滚。</p>
@@ -180,8 +181,24 @@
 <h3 id="41-处理死锁的方式">4.1 处理死锁的方式</h3>
 <p>MySQL有两种处理死锁的方式，一种是等待超时一种是死锁检测：</p>
 <ul>
-<li>等待超时：由<code>innodb_lock_wait_timeout=50s</code>控制</li>
-<li>死锁检测：主动回滚一条事务（将持有最少行级排它锁的事务进行回滚），让其他事务继续执行，通过<code>innodb_deadlock_detect=on</code>开启。</li>
+<li>等待超时：兜底方案，由<code>innodb_lock_wait_timeout=50s</code>控制</li>
+<li>死锁检测：主动回滚一条事务（将持有最少行级排它锁的事务进行回滚，也可以说是undo日志最少，执行代价最小的），回滚后释放所有锁，让其他事务继续执行，通过<code>innodb_deadlock_detect=on</code>开启。</li>
+</ul>
+<p>手动排查死锁，首先查看最新的死锁日志</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SHOW</span><span class="w"> </span><span class="n">ENGINE</span><span class="w"> </span><span class="n">INNODB</span><span class="w"> </span><span class="n">STATUS</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后找到<code>LATEST DETECTED DEADLOCK</code>模块，里面会记录：</p>
+<ul>
+<li>死锁的发生时间</li>
+<li>两个事务执行的SQL语句</li>
+<li>事务持有的锁、等待的锁</li>
+<li>最终被回滚的事务</li>
 </ul>
 <h3 id="42-间隙锁">4.2 间隙锁</h3>
 <p>间隙锁（Gap Lock）是指锁加在不存在的空闲空间，可以是两个索引记录之间，也可能是第一个索引记录之前或最后一个索引之后的空间。</p>
@@ -189,7 +206,7 @@
 <p>首先创建一个table：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -199,20 +216,20 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">student</span><span class="o">`</span> <span class="p">(</span>
-    <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
-    <span class="o">`</span><span class="n">age</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
-    <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">),</span>
-    <span class="k">KEY</span> <span class="o">`</span><span class="n">age</span><span class="o">`</span> <span class="p">(</span><span class="o">`</span><span class="n">age</span><span class="o">`</span><span class="p">)</span>
-<span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="k">DEFAULT</span> <span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span>
-
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">student</span> <span class="k">values</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">);</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">student</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">age</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">KEY</span><span class="w"> </span><span class="o">`</span><span class="n">age</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">age</span><span class="o">`</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">student</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>然后执行下面两个事务：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -221,14 +238,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="n">M1</span><span class="err">：</span><span class="k">BEGIN</span><span class="p">;</span>
-<span class="n">M1</span><span class="err">：</span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">student</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">AND</span> <span class="n">id</span> <span class="o">&lt;</span><span class="mi">5</span> <span class="k">FOR</span> <span class="k">UPDATE</span><span class="p">;</span>
-<span class="n">M2</span><span class="err">：</span><span class="k">BEGIN</span><span class="p">;</span>
-<span class="n">M2</span><span class="err">：</span><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">student</span> <span class="k">values</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
-<span class="n">M2</span><span class="err">：</span><span class="k">COMMIT</span><span class="p">;</span>
-<span class="n">M1</span><span class="err">：</span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">student</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">AND</span> <span class="n">id</span> <span class="o">&lt;</span><span class="mi">5</span> <span class="k">FOR</span> <span class="k">UPDATE</span><span class="p">;</span>
-<span class="n">M1</span><span class="err">：</span><span class="k">COMMIT</span><span class="p">;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">M1</span><span class="err">：</span><span class="k">BEGIN</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">M1</span><span class="err">：</span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">student</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&lt;</span><span class="mi">5</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="k">UPDATE</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">M2</span><span class="err">：</span><span class="k">BEGIN</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">M2</span><span class="err">：</span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">student</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">M2</span><span class="err">：</span><span class="k">COMMIT</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">M1</span><span class="err">：</span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">student</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&lt;</span><span class="mi">5</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="k">UPDATE</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">M1</span><span class="err">：</span><span class="k">COMMIT</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>在M1第一次执行SELECT语句时，只会锁住id=4这一行。在M1第二次执行SELECT语句时，由于M2插入了一条(2,2)的数据，这时多了一条数据，就产生了<code>幻读</code>，对此MySQL的解决方法是，使用间隙锁，将id在(1,4]，(4,7]的数据全部加锁，这样在M2插入(2,2)或(6,6)会被锁阻塞以防止M1出现幻读。</p>
 <h3 id="43-避免死锁的方式">4.3 避免死锁的方式</h3>
@@ -242,6 +259,8 @@
 <li>减少基于范围的数据检索过滤条件，避免因为隔离锁带来的负面影响而锁定了不该锁定的数据。</li>
 <li>尽量使用主键或唯一索引更新数据，因为唯一索引不会产生间隙锁。</li>
 </ul>
+<h3 id="44-隐式锁定和显式锁定">4.4 隐式锁定和显式锁定</h3>
+<p>InnoDB使用两阶段锁定协议。在事务执行期间，随时都可以获取锁，但锁只有在提交或回滚后才会释放，并且所有的锁会同时释放。</p>
 
                         </div>
 
@@ -370,6 +389,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -421,7 +446,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

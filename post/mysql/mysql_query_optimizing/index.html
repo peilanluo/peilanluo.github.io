@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="mysql--查询性能优化">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/mysql/mysql_query_optimizing/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -174,15 +174,15 @@
 <p>检查语法树合法后，便会由优化器将其转化为执行计划。MySQL使用<code>基于成本</code>的优化器，它将尝试预测一个查询使用某种执行计划时的成本，并选择其中成本最小的一个。最初，成本的最小单位是随机读取一个4K数据页的成本，后来（成本计算公式）变得更加复杂，并且引入了一些“因子”来估算某些操作的代价，可以通过查询当前会话的<code>Last_query_cost</code>的值来的值MySQL计算的当前查询的成本。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SHOW</span> <span class="n">STATUS</span> <span class="k">LIKE</span> <span class="s1">&#39;Last_query_cost&#39;</span>
-
-<span class="n">Last_query_cost</span><span class="p">:</span> <span class="mi">1040</span><span class="p">.</span><span class="mi">599000</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SHOW</span><span class="w"> </span><span class="n">STATUS</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;Last_query_cost&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Last_query_cost</span><span class="p">:</span><span class="w"> </span><span class="mi">1040</span><span class="p">.</span><span class="mi">599000</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个结果表示MySQL的优化器认为大概需要做1040个数据页的随机查找才能完成上面的查询。</p>
 <p>有很多原因会导致MySQL优化器选择错误的执行计划：</p>
@@ -243,7 +243,7 @@
 <p>MySQL的子查询实现得非常糟糕。最糟糕的一类查询是WHERE条件中包含IN()的查询语句。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -256,77 +256,77 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="o">#</span> <span class="err">一些优化记录</span>
-<span class="o">#</span> <span class="err">以下语句替换为外连接</span>
-<span class="k">SELECT</span> <span class="n">film_id</span><span class="p">,</span> <span class="n">language_id</span> <span class="k">FROM</span> <span class="n">film</span> <span class="k">WHERE</span> <span class="k">NOT</span> <span class="k">EXISTS</span><span class="p">(</span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">film_actor</span> <span class="k">WHERE</span> <span class="n">film_actor</span><span class="p">.</span><span class="n">film_id</span> <span class="o">=</span> <span class="n">film</span><span class="p">.</span><span class="n">file_id</span><span class="p">);</span>
-
-<span class="k">SELECT</span> <span class="n">film</span><span class="p">.</span><span class="n">film_id</span><span class="p">,</span> <span class="n">film</span><span class="p">.</span><span class="n">language_id</span> <span class="k">FROM</span> <span class="n">film</span> <span class="k">LEFT</span> <span class="k">JOIN</span> <span class="n">film_actor</span> <span class="k">ON</span> <span class="n">film_actor</span><span class="p">.</span><span class="n">film_id</span> <span class="o">=</span> <span class="n">film</span><span class="p">.</span><span class="n">film_id</span> <span class="k">WHERE</span> <span class="n">film_actor</span><span class="p">.</span><span class="n">film_id</span> <span class="k">IS</span> <span class="k">NULL</span><span class="p">;</span>
-
-<span class="o">#</span> <span class="err">以下语句应替换为子查询</span>
-<span class="o">#</span> <span class="err">下面的情况电影有可能是会重复的所以需要排重</span>
-<span class="k">SELECT</span> <span class="k">DISTINCT</span> <span class="n">a</span><span class="p">.</span><span class="n">film_id</span> <span class="k">FROM</span> <span class="n">film</span> <span class="k">AS</span> <span class="n">a</span> <span class="k">JOIN</span> <span class="n">film_actor</span> <span class="k">AS</span> <span class="n">b</span> <span class="k">ON</span> <span class="n">b</span><span class="p">.</span><span class="n">film_id</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">film_id</span><span class="p">;</span>
-<span class="o">#</span> <span class="err">使用</span><span class="n">DISTINCT和GROUP</span> <span class="n">BY后</span><span class="err">，通常需要产生临时中间表，所以针对这种情况，子查询更优</span>
-<span class="k">SELECT</span> <span class="n">film_id</span> <span class="k">FROM</span> <span class="n">film</span> <span class="k">WHERE</span> <span class="k">EXISTS</span><span class="p">(</span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">film_actor</span> <span class="k">WHERE</span> <span class="n">film</span><span class="p">.</span><span class="n">film_id</span> <span class="o">=</span> <span class="n">film_actor</span><span class="p">.</span><span class="n">film_id</span><span class="p">);</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="o">#</span><span class="w"> </span><span class="err">一些优化记录</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">以下语句替换为外连接</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="n">film_id</span><span class="p">,</span><span class="w"> </span><span class="n">language_id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">film</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">film_actor</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">film_actor</span><span class="p">.</span><span class="n">film_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">film</span><span class="p">.</span><span class="n">file_id</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="n">film</span><span class="p">.</span><span class="n">film_id</span><span class="p">,</span><span class="w"> </span><span class="n">film</span><span class="p">.</span><span class="n">language_id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">film</span><span class="w"> </span><span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">film_actor</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">film_actor</span><span class="p">.</span><span class="n">film_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">film</span><span class="p">.</span><span class="n">film_id</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">film_actor</span><span class="p">.</span><span class="n">film_id</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">以下语句应替换为子查询</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">下面的情况电影有可能是会重复的所以需要排重</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">film_id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">film</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">film_actor</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">film_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">film_id</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">使用</span><span class="n">DISTINCT和GROUP</span><span class="w"> </span><span class="n">BY后</span><span class="err">，通常需要产生临时中间表，所以针对这种情况，子查询更优</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="n">film_id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">film</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">EXISTS</span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">film_actor</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">film</span><span class="p">.</span><span class="n">film_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">film_actor</span><span class="p">.</span><span class="n">film_id</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="union的限制">UNION的限制</h3>
 <p>有时，MySQL无法将限制条件从外层“下推”到内层，这使得原本能够限制部分返回结果的条件无法应用到内层的查询优化上。</p>
 <p>如果希望UNION的各个子句能够根据LIMIT只取部分结果集，或者希望能够先排好序再合并结果集的话，就需要在UNION的各个子句中分别使用这些子句。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="p">(</span><span class="k">SELECT</span> <span class="n">first_name</span><span class="p">,</span> <span class="n">last_name</span> <span class="k">FROM</span> <span class="n">sakila</span><span class="p">.</span><span class="n">actor</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">last_name</span><span class="p">)</span> <span class="k">UNION</span> <span class="k">ALL</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">first_name</span><span class="p">,</span> <span class="n">last_name</span> <span class="k">FROM</span> <span class="n">sakila</span><span class="p">.</span><span class="n">customer</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">last_name</span><span class="p">)</span> <span class="k">LIMIT</span> <span class="mi">20</span><span class="p">;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">first_name</span><span class="p">,</span><span class="w"> </span><span class="n">last_name</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">sakila</span><span class="p">.</span><span class="n">actor</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">last_name</span><span class="p">)</span><span class="w"> </span><span class="k">UNION</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">first_name</span><span class="p">,</span><span class="w"> </span><span class="n">last_name</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">sakila</span><span class="p">.</span><span class="n">customer</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">last_name</span><span class="p">)</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这条查询会把两个表都存放到同一个临时表内，然后再取出前20行记录。优化方法是：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="p">(</span><span class="k">SELECT</span> <span class="n">first_name</span><span class="p">,</span> <span class="n">last_name</span> <span class="k">FROM</span> <span class="n">sakila</span><span class="p">.</span><span class="n">actor</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">last_name</span> <span class="k">LIMIT</span> <span class="mi">20</span><span class="p">)</span> <span class="k">UNION</span> <span class="k">ALL</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">first_name</span><span class="p">,</span> <span class="n">last_name</span> <span class="k">FROM</span> <span class="n">sakila</span><span class="p">.</span><span class="n">customer</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">last_name</span> <span class="k">LIMIT</span> <span class="mi">20</span><span class="p">)</span> <span class="k">LIMIT</span> <span class="mi">20</span><span class="p">;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">first_name</span><span class="p">,</span><span class="w"> </span><span class="n">last_name</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">sakila</span><span class="p">.</span><span class="n">actor</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">last_name</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="k">UNION</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">first_name</span><span class="p">,</span><span class="w"> </span><span class="n">last_name</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">sakila</span><span class="p">.</span><span class="n">customer</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">last_name</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这样，临时表内就只会包含40条记录了。</p>
 <h3 id="最大值和最小值优化">最大值和最小值优化</h3>
 <p>对于MIN()和MAX()查询，MySQL的优化做的并不好。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="k">MIN</span><span class="p">(</span><span class="n">actor_id</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">actor</span> <span class="k">WHERE</span> <span class="n">first_name</span> <span class="o">=</span> <span class="s2">&#34;aaa&#34;</span><span class="p">;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">MIN</span><span class="p">(</span><span class="n">actor_id</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">actor</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">first_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&#34;aaa&#34;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>因为在first_name上没有索引，所以MySQL会进行全表扫描。如果MySQL能够进行主键扫描，那么理论上，当MySQL读到第一个满足条件的记录的时候，就是我们要的最小值，所以可以这样改写：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">actor_id</span> <span class="k">FROM</span> <span class="n">actor</span> <span class="n">USE</span> <span class="k">INDEX</span><span class="p">(</span><span class="k">PRIMARY</span><span class="p">)</span> <span class="k">WHERE</span> <span class="n">first_name</span> <span class="o">=</span> <span class="s1">&#39;aaa&#39;</span> <span class="k">LIMIT</span> <span class="mi">1</span><span class="p">;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">actor_id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">actor</span><span class="w"> </span><span class="n">USE</span><span class="w"> </span><span class="k">INDEX</span><span class="p">(</span><span class="k">PRIMARY</span><span class="p">)</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">first_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;aaa&#39;</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="在同一个表上查询和更新">在同一个表上查询和更新</h3>
 <p>MySQL不允许对同一张表同时进行查询和更新。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">UPDATE</span> <span class="n">tb1</span> <span class="k">AS</span> <span class="n">a</span> <span class="k">SET</span> <span class="n">cnt</span> <span class="o">=</span> <span class="p">(</span><span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">tb1</span> <span class="k">AS</span> <span class="n">b</span> <span class="k">WHERE</span> <span class="n">b</span><span class="p">.</span><span class="k">type</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="k">type</span><span class="p">);</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">UPDATE</span><span class="w"> </span><span class="n">tb1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">cnt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">tb1</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="k">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="k">type</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面的语句会报错，可以通过生成临时表的形式绕过上面的限制。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">UPDATE</span> <span class="n">tb1</span> <span class="k">JOIN</span><span class="p">(</span><span class="k">SELECT</span> <span class="k">type</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">cnt</span> <span class="k">FROM</span> <span class="n">tb1</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="k">type</span><span class="p">)</span> <span class="k">AS</span> <span class="n">der</span> <span class="k">USING</span><span class="p">(</span><span class="k">type</span><span class="p">)</span> <span class="k">SET</span> <span class="n">tb1</span><span class="p">.</span><span class="n">cnt</span> <span class="o">=</span> <span class="n">der</span><span class="p">.</span><span class="n">cnt</span><span class="p">;</span>  
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">UPDATE</span><span class="w"> </span><span class="n">tb1</span><span class="w"> </span><span class="k">JOIN</span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">type</span><span class="p">,</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">cnt</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">tb1</span><span class="w"> </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">type</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">der</span><span class="w"> </span><span class="k">USING</span><span class="p">(</span><span class="k">type</span><span class="p">)</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">tb1</span><span class="p">.</span><span class="n">cnt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">der</span><span class="p">.</span><span class="n">cnt</span><span class="p">;</span><span class="w">  
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="优化特定查询的类型">优化特定查询的类型</h2>
 <p>下面是一些特定查询的优化方法。</p>
@@ -348,28 +348,27 @@
 <p>MySQL的LIMIT策略是，取出偏移量+需要条数的数据，然后抛弃偏移量内的数据，在偏移量很大的情况下，这样的开销会很大，优化此类分页查询的一个最简单的方法就是使用索引覆盖扫描，然后根据需要做一次关联操作再返回所需的列。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">film_id</span><span class="p">,</span> <span class="n">description</span> <span class="k">FROM</span> <span class="n">film</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">title</span> <span class="k">LIMIT</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">5</span><span class="p">;</span>
-<span class="o">#</span> <span class="err">应该改写成下面的样子</span>
-<span class="k">SELECT</span> <span class="n">a</span><span class="p">.</span><span class="n">film_id</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">description</span> <span class="k">FROM</span> <span class="n">film</span> <span class="k">AS</span> <span class="n">a</span> <span class="k">JOIN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">film_id</span> <span class="k">FROM</span> <span class="n">film</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">title</span> <span class="k">LIMIT</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="k">AS</span> <span class="n">b</span> <span class="k">USING</span><span class="p">(</span><span class="n">film_id</span><span class="p">);</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">film_id</span><span class="p">,</span><span class="w"> </span><span class="n">description</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">film</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">title</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">应该改写成下面的样子</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">film_id</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">description</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">film</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">film_id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">film</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">title</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">USING</span><span class="p">(</span><span class="n">film_id</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>有时候也可以把LIMIT查询转换为已知位置的查询，让MySQL通过范围扫描或得到对应的结果。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">film_id</span><span class="p">,</span> <span class="n">description</span> <span class="k">FROM</span> <span class="n">film</span> <span class="k">WHERE</span> <span class="k">position</span> <span class="k">BETWEEN</span> <span class="mi">50</span> <span class="k">AND</span> <span class="mi">54</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">position</span><span class="p">;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">film_id</span><span class="p">,</span><span class="w"> </span><span class="n">description</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">film</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">position</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">54</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">position</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><blockquote>
-<p>参考书目：《高性能MySQL(第3版)》</p>
-</blockquote>
+<p>参考书目：《高性能MySQL(第3版)》</p></blockquote>
 
                         </div>
 
@@ -498,6 +497,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -549,7 +554,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

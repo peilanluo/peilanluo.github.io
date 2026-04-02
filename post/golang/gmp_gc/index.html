@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="golang--GMP模型和垃圾回收机制">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/golang/gmp_gc/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -199,8 +199,7 @@
 <p>为了解决上面的问题，引入了<code>读写屏障技术</code>。</p>
 <h4 id="读写屏障技术">读写屏障技术</h4>
 <blockquote>
-<p>屏障技术是指给代码操作内存的顺序添加一些限制，即在内存屏障前执行的动作必须先于在内存屏障后执行的动作。</p>
-</blockquote>
+<p>屏障技术是指给代码操作内存的顺序添加一些限制，即在内存屏障前执行的动作必须先于在内存屏障后执行的动作。</p></blockquote>
 <p>使用屏障技术可以使用户程序和三色标记法并发执行，只需要达到下面两个条件之一：</p>
 <ul>
 <li>强三色不变性：黑色对象不能引用白色对象。</li>
@@ -245,8 +244,7 @@
 <p><a href="https://zhuanlan.zhihu.com/p/261590663">https://zhuanlan.zhihu.com/p/261590663</a></p>
 <p><a href="https://blog.csdn.net/qq_44205272/article/details/111565957">https://blog.csdn.net/qq_44205272/article/details/111565957</a></p>
 <p><a href="https://zhuanlan.zhihu.com/p/390926887">https://zhuanlan.zhihu.com/p/390926887</a></p>
-<p><a href="https://zhuanlan.zhihu.com/p/297177002">https://zhuanlan.zhihu.com/p/297177002</a></p>
-</blockquote>
+<p><a href="https://zhuanlan.zhihu.com/p/297177002">https://zhuanlan.zhihu.com/p/297177002</a></p></blockquote>
 
                         </div>
 
@@ -375,6 +373,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -426,7 +430,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="数据结构--hash表">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/data/hash/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -133,7 +133,7 @@
 <p>在go中，哈希表是通过<code>map</code>实现的。主要的数据结构如下</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -162,34 +162,34 @@
 </span><span class="lnt">27
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">hmap</span> <span class="kd">struct</span> <span class="p">{</span>
-    <span class="nx">count</span> <span class="kt">int</span> <span class="c1">// 元素的个数
-</span><span class="c1"></span>    <span class="nx">B</span> <span class="kt">uint8</span> <span class="c1">// buckets数组的长度就是2^B个
-</span><span class="c1"></span>    <span class="nx">overflow</span> <span class="kt">uint16</span> <span class="c1">// 溢出桶的数量
-</span><span class="c1"></span>    
-    <span class="nx">buckets</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// 2^B个桶对应的数组指针
-</span><span class="c1"></span>    <span class="nx">oldbuckets</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// 发生扩容时，记录扩容前的buckets数组指针
-</span><span class="c1"></span>    
-    <span class="nx">extra</span> <span class="o">*</span><span class="nx">mapextra</span> <span class="c1">// 用于保存溢出桶的地址
-</span><span class="c1"></span><span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">mapextra</span> <span class="kd">struct</span> <span class="p">{</span>
-    <span class="nx">overflow</span> <span class="o">*</span><span class="p">[]</span><span class="o">*</span><span class="nx">bmap</span>
-    <span class="nx">oldoverflow</span> <span class="o">*</span><span class="p">[]</span><span class="o">*</span><span class="nx">bmap</span>
-    
-    <span class="nx">nextOverflow</span> <span class="o">*</span><span class="nx">bmap</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">bmap</span> <span class="kd">struct</span> <span class="p">{</span>
-    <span class="nx">tophash</span> <span class="p">[</span><span class="nx">bucketCnt</span><span class="p">]</span><span class="kt">uint8</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">bmap</span> <span class="kd">struct</span> <span class="p">{</span>
-    <span class="nx">tophash</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="kt">uint8</span> <span class="c1">// 存储哈希值的高8位
-</span><span class="c1"></span>    <span class="nx">data</span> <span class="kt">byte</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1">// key value数据
-</span><span class="c1"></span>    <span class="nx">overflow</span> <span class="o">*</span><span class="nx">bmap</span> <span class="c1">// 溢出bucket的地址
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">hmap</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">count</span> <span class="kt">int</span> <span class="c1">// 元素的个数</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">B</span> <span class="kt">uint8</span> <span class="c1">// buckets数组的长度就是2^B个</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">overflow</span> <span class="kt">uint16</span> <span class="c1">// 溢出桶的数量</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nx">buckets</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// 2^B个桶对应的数组指针</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">oldbuckets</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// 发生扩容时，记录扩容前的buckets数组指针</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nx">extra</span> <span class="o">*</span><span class="nx">mapextra</span> <span class="c1">// 用于保存溢出桶的地址</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">mapextra</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">overflow</span> <span class="o">*</span><span class="p">[]</span><span class="o">*</span><span class="nx">bmap</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">oldoverflow</span> <span class="o">*</span><span class="p">[]</span><span class="o">*</span><span class="nx">bmap</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nx">nextOverflow</span> <span class="o">*</span><span class="nx">bmap</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">bmap</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tophash</span> <span class="p">[</span><span class="nx">bucketCnt</span><span class="p">]</span><span class="kt">uint8</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">bmap</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tophash</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="kt">uint8</span> <span class="c1">// 存储哈希值的高8位</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">data</span> <span class="kt">byte</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1">// key value数据</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">overflow</span> <span class="o">*</span><span class="nx">bmap</span> <span class="c1">// 溢出bucket的地址</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><img src="/imgs/v2-a8fbef952441e788d882d0656c2cf091_1440w.webp" alt="go map">
 go map的底层结构是hmap，hmap中维护着若干个bucket数组。</p>
@@ -368,6 +368,12 @@ go map的底层结构是hmap，hmap中维护着若干个bucket数组。</p>
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -419,7 +425,7 @@ go map的底层结构是hmap，hmap中维护着若干个bucket数组。</p>
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

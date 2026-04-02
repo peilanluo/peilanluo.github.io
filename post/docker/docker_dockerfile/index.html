@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="Docker--Dockerfile的使用">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/docker/docker_dockerfile/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -110,93 +110,93 @@
 <p>Dockerfile中的指令一般格式为INSTRUCTION arguments，包括“配置指令”和“操作指令”。</p>
 <p>以下是配置指令：</p>
 <table>
-<thead>
-<tr>
-<th align="center">指令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">ARG</td>
-<td>定义创建镜像过程中使用的变量</td>
-</tr>
-<tr>
-<td align="center">FROM</td>
-<td>指定所创建镜像的基础镜像</td>
-</tr>
-<tr>
-<td align="center">LABEL</td>
-<td>为生成的镜像添加元数据标签信息</td>
-</tr>
-<tr>
-<td align="center">EXPOSE</td>
-<td>声明镜像内服务监听的端口</td>
-</tr>
-<tr>
-<td align="center">ENV</td>
-<td>指定环境变量</td>
-</tr>
-<tr>
-<td align="center">ENTRYPOINT</td>
-<td>指定镜像的默认入口命令</td>
-</tr>
-<tr>
-<td align="center">VOLUME</td>
-<td>创建一个数据卷挂载点</td>
-</tr>
-<tr>
-<td align="center">USER</td>
-<td>指定运行容器时的用户名或UID</td>
-</tr>
-<tr>
-<td align="center">WORKDIR</td>
-<td>配置工作目录</td>
-</tr>
-<tr>
-<td align="center">ONBUILD</td>
-<td>创建子镜像时指定自动执行的操作指令</td>
-</tr>
-<tr>
-<td align="center">STOPSIGNAL</td>
-<td>指定退出的信号值</td>
-</tr>
-<tr>
-<td align="center">HEALTHCHECK</td>
-<td>配置所启动容器如何进行健康检查</td>
-</tr>
-<tr>
-<td align="center">SHELL</td>
-<td>指定默认shell类型</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: center">指令</th>
+          <th>说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">ARG</td>
+          <td>定义创建镜像过程中使用的变量</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">FROM</td>
+          <td>指定所创建镜像的基础镜像</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">LABEL</td>
+          <td>为生成的镜像添加元数据标签信息</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">EXPOSE</td>
+          <td>声明镜像内服务监听的端口</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">ENV</td>
+          <td>指定环境变量</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">ENTRYPOINT</td>
+          <td>指定镜像的默认入口命令</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">VOLUME</td>
+          <td>创建一个数据卷挂载点</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">USER</td>
+          <td>指定运行容器时的用户名或UID</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">WORKDIR</td>
+          <td>配置工作目录</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">ONBUILD</td>
+          <td>创建子镜像时指定自动执行的操作指令</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">STOPSIGNAL</td>
+          <td>指定退出的信号值</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">HEALTHCHECK</td>
+          <td>配置所启动容器如何进行健康检查</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">SHELL</td>
+          <td>指定默认shell类型</td>
+      </tr>
+  </tbody>
 </table>
 <p>以下是操作指令：</p>
 <table>
-<thead>
-<tr>
-<th align="center">指令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">RUN</td>
-<td>运行指定命令</td>
-</tr>
-<tr>
-<td align="center">CMD</td>
-<td>启动容器时指定默认执行的命令</td>
-</tr>
-<tr>
-<td align="center">ADD</td>
-<td>添加内容到镜像</td>
-</tr>
-<tr>
-<td align="center">COPY</td>
-<td>复制内容到镜像</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: center">指令</th>
+          <th>说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">RUN</td>
+          <td>运行指定命令</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">CMD</td>
+          <td>启动容器时指定默认执行的命令</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">ADD</td>
+          <td>添加内容到镜像</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">COPY</td>
+          <td>复制内容到镜像</td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="具体指令的用法">具体指令的用法</h3>
 <p>以下是所有指令的用法和一些示例：</p>
@@ -212,28 +212,28 @@
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="k">ARG</span> <span class="nv">VERSION</span><span class="o">=</span><span class="m">9</span>.3<span class="err">
-</span><span class="err"></span><span class="k">FROM</span><span class="s"> debian:${VERSION}</span><span class="err">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="line"><span class="cl"><span class="k">ARG</span> <span class="nv">VERSION</span><span class="o">=</span><span class="m">9</span>.3<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">FROM</span><span class="s"> debian:${VERSION}</span><span class="err">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="label">LABEL</h5>
 <p>LABEL指令可以为生成的镜像添加元数据标签信息。这些信息可以用来辅助过滤出特定镜像。</p>
 <p>格式为 LABEL <!-- raw HTML omitted -->=<!-- raw HTML omitted --> <!-- raw HTML omitted -->=<!-- raw HTML omitted -->，例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="k">LABEL</span> <span class="nv">version</span><span class="o">=</span><span class="s2">&#34;1.0.0&#34;</span><span class="err">
-</span><span class="err"></span><span class="k">LABEL</span> <span class="nv">author</span><span class="o">=</span><span class="s2">&#34;xxx@github&#34;</span> <span class="nv">date</span><span class="o">=</span><span class="s2">&#34;2021-01-01&#34;</span><span class="err">
-</span><span class="err"></span><span class="k">LABEL</span> <span class="nv">description</span><span class="o">=</span><span class="s2">&#34;我是描述信息&#34;</span><span class="err">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="line"><span class="cl"><span class="k">LABEL</span> <span class="nv">version</span><span class="o">=</span><span class="s2">&#34;1.0.0&#34;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">LABEL</span> <span class="nv">author</span><span class="o">=</span><span class="s2">&#34;xxx@github&#34;</span> <span class="nv">date</span><span class="o">=</span><span class="s2">&#34;2021-01-01&#34;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">LABEL</span> <span class="nv">description</span><span class="o">=</span><span class="s2">&#34;我是描述信息&#34;</span><span class="err">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="expose">EXPOSE</h5>
 <p>声明镜像内服务监听的端口。</p>
@@ -246,30 +246,30 @@
 <p>例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="k">ENV</span> <span class="nv">APP_VERSION</span><span class="o">=</span><span class="m">1</span>.0.0<span class="err">
-</span><span class="err"></span><span class="k">ENV</span> <span class="nv">APP_HOME</span><span class="o">=</span>/usr/local/app<span class="err">
-</span><span class="err"></span><span class="k">ENV</span> PATH <span class="nv">$PATH</span>:/usr/local/bin<span class="err">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="line"><span class="cl"><span class="k">ENV</span> <span class="nv">APP_VERSION</span><span class="o">=</span><span class="m">1</span>.0.0<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">ENV</span> <span class="nv">APP_HOME</span><span class="o">=</span>/usr/local/app<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">ENV</span> PATH <span class="nv">$PATH</span>:/usr/local/bin<span class="err">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>注意：该指令指定的环境变量在运行时可以被覆盖掉，如<code>docker run --env &lt;key&gt;=&lt;value&gt; 容器名</code>，当一条ENV指令中同时为多个环境变量赋值并且值也是从环境变量读取时，会为变量都赋值后再更新。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="k">ENV</span> <span class="nv">key1</span><span class="o">=</span>value2
-<span class="k">ENV</span> <span class="nv">key1</span><span class="o">=</span>value1 <span class="nv">key2</span><span class="o">=</span><span class="si">${</span><span class="nv">key1</span><span class="si">}</span><span class="err">
-</span><span class="err"></span><span class="c"># 结果为</span><span class="err">
-</span><span class="err"></span><span class="nv">key1</span><span class="o">=</span>value1 <span class="nv">key2</span><span class="o">=</span>value2<span class="err">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="line"><span class="cl"><span class="k">ENV</span> <span class="nv">key1</span><span class="o">=</span>value2
+</span></span><span class="line"><span class="cl"><span class="k">ENV</span> <span class="nv">key1</span><span class="o">=</span>value1 <span class="nv">key2</span><span class="o">=</span><span class="si">${</span><span class="nv">key1</span><span class="si">}</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="c"># 结果为</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="nv">key1</span><span class="o">=</span>value1 <span class="nv">key2</span><span class="o">=</span>value2<span class="err">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="entrypoint">ENTRYPOINT</h5>
 <p>指定镜像的默认入口命令，该入口命令会在启动容器时作为根命令执行，所有传入值作为该命令的参数。</p>
@@ -281,7 +281,7 @@
 <p>注意：每个Dockerfile中之后能有一个ENTRYPOINT，当指定多个时，只有最后一个起效。在运行时，可以被&ndash;entrypoint参数覆盖掉</p>
 <h5 id="volume">VOLUME</h5>
 <p>创建一个数据挂载点。</p>
-<p>格式为：VOLUME [&quot;/data&rdquo;]</p>
+<p>格式为：VOLUME [&quot;/data&quot;]</p>
 <p>运行容器时可以从本地主机或其他容器挂载数据卷，一般用来存放数据库和需要保持的数据等。</p>
 <h5 id="user">USER</h5>
 <p>指定运行容器时的用户名或UID，后续的RUN等指令也会使用指定的用户身份。</p>
@@ -289,11 +289,11 @@
 <p>当服务不需要管理员权限时，可以通过该命令指定运行用户，并且可以在Dockerfile中创建所需要的的用户。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="k">RUN</span> groupadd -r nginx <span class="o">&amp;&amp;</span> useradd -r -g nginx nginx<span class="err">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="line"><span class="cl"><span class="k">RUN</span> groupadd -r nginx <span class="o">&amp;&amp;</span> useradd -r -g nginx nginx<span class="err">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="workdir">WORKDIR</h5>
 <p>为后续的RUN、CMD、ENTRYPOINT指令配置工作目录。</p>
@@ -305,32 +305,32 @@
 <p>例如：使用如下Dockerfile创建父镜像ParentImage，指定ONBUILD指令：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="c"># ParentImage</span><span class="err">
-</span><span class="err"></span><span class="o">[</span>...<span class="o">]</span><span class="err">
-</span><span class="err"></span><span class="k">ONBUILD</span> <span class="k">ADD</span> . /app/src<span class="err">
-</span><span class="err"></span><span class="k">ONBUILD</span> <span class="k">RUN</span> /usr/local/bin/python-build --dir /app/src<span class="err">
-</span><span class="err"></span><span class="o">[</span>...<span class="o">]</span><span class="err">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="line"><span class="cl"><span class="c"># ParentImage</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="o">[</span>...<span class="o">]</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">ONBUILD</span> <span class="k">ADD</span> . /app/src<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">ONBUILD</span> <span class="k">RUN</span> /usr/local/bin/python-build --dir /app/src<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="o">[</span>...<span class="o">]</span><span class="err">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>使用docker build命令创建子镜像时，会首先执行父镜像中配置的ONBUILD指令：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="c"># ChildImage</span><span class="err">
-</span><span class="err"></span><span class="k">FROM</span><span class="s"> ParentImage</span><span class="err">
-</span><span class="err"></span><span class="c"># 此处会先执行ParentImage中的ONBUILD语句</span><span class="err">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="line"><span class="cl"><span class="c"># ChildImage</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">FROM</span><span class="s"> ParentImage</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="c"># 此处会先执行ParentImage中的ONBUILD语句</span><span class="err">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="stopsignal">STOPSIGNAL</h5>
 <p>指定所创建镜像启动的容器接收退出的信号值：</p>
@@ -351,7 +351,7 @@
 <h5 id="shell">SHELL</h5>
 <p>指定其他命令使用shell时默认的shell类型：</p>
 <p>格式为：SHELL [&ldquo;executable&rdquo;, &ldquo;parameters&rdquo;]</p>
-<p>默认值为：[&quot;/bin/sh&rdquo;, &ldquo;-c&rdquo;]</p>
+<p>默认值为：[&quot;/bin/sh&quot;, &ldquo;-c&rdquo;]</p>
 <h4 id="操作指令">操作指令</h4>
 <h5 id="run">RUN</h5>
 <p>运行指定命令。</p>
@@ -387,22 +387,22 @@
 <p>编写run.sh文件</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash
-</span><span class="cp"></span>/usr/sbin/sshd -D
-ssh-keygen -t rsa
-cat ~/.ssh/id_rsa.pub &gt; authorized_keys
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>/usr/sbin/sshd -D
+</span></span><span class="line"><span class="cl">ssh-keygen -t rsa
+</span></span><span class="line"><span class="cl">cat ~/.ssh/id_rsa.pub &gt; authorized_keys
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>编写Dockerfile</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -427,34 +427,33 @@ cat ~/.ssh/id_rsa.pub &gt; authorized_keys
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="c"># 设置继承镜像</span><span class="err">
-</span><span class="err"></span><span class="k">FROM</span><span class="s"> ubuntu:18.04</span><span class="err">
-</span><span class="err">
-</span><span class="err"></span><span class="c"># 配置ubuntu源为国内源</span><span class="err">
-</span><span class="err"></span><span class="k">RUN</span> <span class="nb">echo</span> <span class="s2">&#34;deb  http: //mirrors . 163.com/ ubuntu / bionic main restricted universe multiverse&#34;</span> &gt; / etc/ apt / sources.list<span class="err">
-</span><span class="err"></span>...<span class="err">
-</span><span class="err"></span><span class="k">RUN</span> api-get update<span class="err">
-</span><span class="err">
-</span><span class="err"></span><span class="c"># 安装ssh服务</span><span class="err">
-</span><span class="err"></span><span class="k">RUN</span> api-get install -y openssh-server<span class="err">
-</span><span class="err"></span><span class="k">RUN</span> mkdir -p /var/run/sshd<span class="err">
-</span><span class="err"></span><span class="k">RUN</span> mkdir -p /root/.ssh<span class="err">
-</span><span class="err">
-</span><span class="err"></span><span class="c"># 复制配置文件到相应位置，并赋予脚本可执行权限</span><span class="err">
-</span><span class="err"></span><span class="k">ADD</span> authorized_keys /root/.ssh/authorized_keys<span class="err">
-</span><span class="err"></span><span class="k">ADD</span> run.sh /run.sh<span class="err">
-</span><span class="err"></span><span class="k">RUN</span> chmod <span class="m">755</span> /run.sh<span class="err">
-</span><span class="err">
-</span><span class="err"></span><span class="c"># 开放端口</span><span class="err">
-</span><span class="err"></span><span class="k">EXPOSE</span><span class="s"> 22</span><span class="err">
-</span><span class="err">
-</span><span class="err"></span><span class="c"># 设置自启动命令</span><span class="err">
-</span><span class="err"></span><span class="k">CMD</span> <span class="p">[</span><span class="s2">&#34;/run.sh&#34;</span><span class="p">]</span><span class="err">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="line"><span class="cl"><span class="c"># 设置继承镜像</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">FROM</span><span class="s"> ubuntu:18.04</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="c"># 配置ubuntu源为国内源</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> <span class="nb">echo</span> <span class="s2">&#34;deb  http: //mirrors . 163.com/ ubuntu / bionic main restricted universe multiverse&#34;</span> &gt; / etc/ apt / sources.list<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span>...<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> api-get update<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="c"># 安装ssh服务</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> api-get install -y openssh-server<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> mkdir -p /var/run/sshd<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> mkdir -p /root/.ssh<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="c"># 复制配置文件到相应位置，并赋予脚本可执行权限</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">ADD</span> authorized_keys /root/.ssh/authorized_keys<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">ADD</span> run.sh /run.sh<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> chmod <span class="m">755</span> /run.sh<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="c"># 开放端口</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">EXPOSE</span><span class="s"> 22</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="c"># 设置自启动命令</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">CMD</span> <span class="p">[</span><span class="s2">&#34;/run.sh&#34;</span><span class="p">]</span><span class="err">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><blockquote>
-<p>参考书目：《Docker技术入门与实践》杨保华 戴王剑 曹亚仑</p>
-</blockquote>
+<p>参考书目：《Docker技术入门与实践》杨保华 戴王剑 曹亚仑</p></blockquote>
 
                         </div>
 
@@ -587,6 +586,12 @@ cat ~/.ssh/id_rsa.pub &gt; authorized_keys
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -638,7 +643,7 @@ cat ~/.ssh/id_rsa.pub &gt; authorized_keys
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

@@ -4,39 +4,30 @@
     <title>树 on 默默的心路</title>
     <link>https://peilanluo.github.io/tags/%E6%A0%91/</link>
     <description>Recent content in 树 on 默默的心路</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zh-CN</language>
     <lastBuildDate>Mon, 14 Jun 2021 19:02:21 +0800</lastBuildDate>
-    
-	<atom:link href="https://peilanluo.github.io/tags/%E6%A0%91/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <atom:link href="https://peilanluo.github.io/tags/%E6%A0%91/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>数据结构--红黑树</title>
       <link>https://peilanluo.github.io/post/data/red_black_tree/</link>
       <pubDate>Mon, 14 Jun 2021 19:02:21 +0800</pubDate>
-      
       <guid>https://peilanluo.github.io/post/data/red_black_tree/</guid>
-      <description>由于普通二叉搜索树在最坏的情况下会转变成一个线性的链表，其时间复杂度会退化为O(n)，并且如果树的高度很高，他的效率也是无法保证的，所以在普</description>
+      <description>&lt;p&gt;由于普通二叉搜索树在最坏的情况下会转变成一个线性的链表，其时间复杂度会退化为O(n)，并且如果树的高度很高，他的效率也是无法保证的，所以在普通二叉搜索树的基础上，引入了平衡二叉树的概念，红黑树就是平衡二叉树中的一种，红黑树可以保证在最坏的情况下所有操作的时间复杂度为O(logn)。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>数据结构--二叉搜索树</title>
       <link>https://peilanluo.github.io/post/data/binary_search_tree/</link>
       <pubDate>Tue, 01 Sep 2020 15:02:21 +0800</pubDate>
-      
       <guid>https://peilanluo.github.io/post/data/binary_search_tree/</guid>
-      <description>二叉搜索树 概念 二叉搜索树是一种特殊的二叉树，对于二叉搜索树的任意根结点x，其左子树上所有结点的值最大不超过x，其右子树上所有结点的值最小不低</description>
+      <description>&lt;h1 id=&#34;二叉搜索树&#34;&gt;二叉搜索树&lt;/h1&gt;&#xA;&lt;h2 id=&#34;概念&#34;&gt;概念&lt;/h2&gt;&#xA;&lt;p&gt;二叉搜索树是一种特殊的二叉树，对于二叉搜索树的任意根结点x，其左子树上所有结点的值最大不超过x，其右子树上所有结点的值最小不低于x。&lt;/p&gt;&#xA;&lt;p&gt;如果设二叉搜索树共有n个元素，无论哪种操作，平均每次操作需要O(logn)的时间，最坏运行时间是O(n)，出现在如果这棵树是一条n个结点组成的线性链。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>数据结构--树</title>
       <link>https://peilanluo.github.io/post/data/tree/</link>
       <pubDate>Sun, 19 Jan 2020 16:03:21 +0800</pubDate>
-      
       <guid>https://peilanluo.github.io/post/data/tree/</guid>
-      <description>树和二叉树的定义 树的基本术语 结点：树中的每一个独立单元。如图中的A、B、C、D等。 结点的度：结点拥有的子树的个数称为结点的度。 树的度：树内各</description>
+      <description>&lt;h2 id=&#34;树和二叉树的定义&#34;&gt;树和二叉树的定义&lt;/h2&gt;&#xA;&lt;h3 id=&#34;树的基本术语&#34;&gt;树的基本术语&lt;/h3&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://peilanluo.github.io/imgs/1128810-20200119161838970-1693089452.png&#34; alt=&#34;树&#34;&gt;&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;结点：树中的每一个独立单元。如图中的A、B、C、D等。&lt;/li&gt;&#xA;&lt;li&gt;结点的度：结点拥有的子树的个数称为结点的度。&lt;/li&gt;&#xA;&lt;li&gt;树的度：树内各节点度的最大值。&lt;/li&gt;&#xA;&lt;li&gt;叶子：度为0的结点称为叶子节点。如图中的K 、 L 、 F 、 G 、 M 、 I 、 J。&lt;/li&gt;&#xA;&lt;li&gt;非终端节点：度不为0的结点。&lt;/li&gt;&#xA;&lt;li&gt;双亲和孩子：结点的子树的根称为该结点的孩子，该结点称为孩子的双亲。&lt;/li&gt;&#xA;&lt;li&gt;兄弟：双亲相同的两个结点。&lt;/li&gt;&#xA;&lt;li&gt;祖先：从根到该结点所经分支上的所有结点。&lt;/li&gt;&#xA;&lt;li&gt;子孙：以某结点为根的子树中的任一结点都称为该结点的子孙。&lt;/li&gt;&#xA;&lt;li&gt;层次：根结点为第一层，气候没多一层层数加1。&lt;/li&gt;&#xA;&lt;li&gt;堂兄弟：双亲在同 一层的结点互为堂兄弟。&lt;/li&gt;&#xA;&lt;li&gt;树的深度：树中结点的最大层次称为树的深度或高度。&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;二叉树的定义&#34;&gt;二叉树的定义&lt;/h3&gt;&#xA;&lt;p&gt;二叉树是n(n≥0)个结点所构成的集合，当n=0时称为空树，对于非空树T：&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Postgresql on 默默的心路</title>
+    <link>https://peilanluo.github.io/tags/postgresql/</link>
+    <description>Recent content in Postgresql on 默默的心路</description>
+    <generator>Hugo</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 02 Apr 2026 14:01:20 +0800</lastBuildDate>
+    <atom:link href="https://peilanluo.github.io/tags/postgresql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>postgresql—数据类型、索引、事务</title>
+      <link>https://peilanluo.github.io/post/postgresql/postgresql_data_type/</link>
+      <pubDate>Thu, 02 Apr 2026 14:01:20 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/postgresql/postgresql_data_type/</guid>
+      <description>&lt;h2 id=&#34;x20sql语句的分类&#34;&gt; sql语句的分类&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;DQL：数据查询语句，基本上就是SELECT命令&lt;/li&gt;&#xA;&lt;li&gt;DML：Data Manipulation Language的简称，即数据操纵语言，包括INSERT、UPDATE、DELETE三种。&lt;/li&gt;&#xA;&lt;li&gt;DDL：Data Definition Language的缩写，数据定义语言，主要用于创建、删除，以及修改表、索引等数据库对象语言&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;x20数据类型&#34;&gt; 数据类型&lt;/h2&gt;&#xA;&lt;p&gt;PostgreSQL支持的数据类型与其他数据库对比见下表：&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>postgresql—和MySQL的对比</title>
+      <link>https://peilanluo.github.io/post/postgresql/postgresql_diff_with_mysql/</link>
+      <pubDate>Thu, 26 Mar 2026 17:50:20 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/postgresql/postgresql_diff_with_mysql/</guid>
+      <description>&lt;h2 id=&#34;postgresql数据库和mysql数据库的对比&#34;&gt;PostgreSQL数据库和MySQL数据库的对比&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;MySQL不支持单独的SEQUENCE（数据库的全局数字发号器，可以按规则生成不重复、有顺序的数字），而PostgreSQL支持。 在MySQL中，可以使用AUTO_INCREMENT来实现类似SEQUENCE的功能，但是AUTO_INCREMENT是基于表的，不能全局使用。&lt;/li&gt;&#xA;&lt;li&gt;MySQL的复制是异步或半同步的逻辑同步，存在两个核心问题：&#xA;&lt;ul&gt;&#xA;&lt;li&gt;在大事务下会导致比较大的延迟&lt;/li&gt;&#xA;&lt;li&gt;容易导致数据库的不一致（原因是MySQL的主备库的复制是通过逻辑层的binlog来实现的，但在InnoDB中还有物理的Redo Log层，整个过程比较复杂，比较难保证主备库之间完全一致）&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
+    </item>
+  </channel>
+</rss>

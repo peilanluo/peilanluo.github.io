@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -18,7 +18,7 @@
         
     <meta name="description" content="mysql--索引优化">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/post/mysql/mysql_index_optimizing/">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -113,7 +113,7 @@
 <ul>
 <li>如果不是按照索引的最左列开始查找，则无法使用索引。例如如果直接查找first_name则无法使用索引。</li>
 <li>不能跳过索引中的列。例如，搜索<code>last_name</code>字段后，如果不指定<code>first_name</code>，则MySQL只能使用索引的第一列。</li>
-<li>如果查询中有某个列的范围查询，则其右边所有列都无法使用索引优化查找。例如，<code>WHERE last_name = 'a' AND first_name LIKE 'b%' AND birthday = '2000-01-01'</code>,这个查询只能使用索引的前两列。（补充，实际上birthday='2000-01-01&rsquo;在5.6之后是可以使用到索引下推的）</li>
+<li>如果查询中有某个列的范围查询，则其右边所有列都无法使用索引优化查找。例如，<code>WHERE last_name = 'a' AND first_name LIKE 'b%' AND birthday = '2000-01-01'</code>,这个查询只能使用索引的前两列。（补充，实际上birthday=&lsquo;2000-01-01&rsquo;在5.6之后是可以使用到索引下推的）</li>
 </ul>
 <h3 id="111-哈希索引">1.1.1 哈希索引</h3>
 <p>哈希索引基于哈希表实现，只有精确匹配索引所有列的查询才有效。在MySQL中只有Memory引擎显式支持哈希索引，这里只做简单地了解。</p>
@@ -130,11 +130,11 @@
 <p>如果查询的列不是独立的，则MySQL就不会使用索引。例如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">actor_id</span> <span class="k">FROM</span> <span class="n">actor</span> <span class="k">WHERE</span> <span class="n">actor_id</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">actor_id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">actor</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">actor_id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="32-前缀索引和索引选择性">3.2 前缀索引和索引选择性</h3>
 <p>当需要索引很长的字符列时，索引会变得大且慢，对于这样的情况，通常可以只索引开始的部分字符，这可以大大节约索引空间，从而提高索引效率，但这样会降低索引的选择性（索引的选择性是指，不重复的索引值和数据表的记录总数的比值，索引的选择性越高则查询效率越高）</p>
@@ -154,28 +154,28 @@
 <p>下面有这样一条语句：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">payment</span> <span class="k">WHERE</span> <span class="n">staff_id</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">AND</span> <span class="n">customer_id</span> <span class="o">=</span> <span class="mi">584</span><span class="p">;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payment</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">staff_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">customer_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">584</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>如何判断是该将staff_id还是customer_id放到组合索引的前面呢，可以通过</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span> <span class="n">staff_id</span><span class="p">)</span><span class="o">/</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">staff_id_selectivity</span><span class="p">,</span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span> <span class="n">customer_id</span><span class="p">)</span><span class="o">/</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">customer_id_selectivity</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">payment</span><span class="p">;</span>
-
-<span class="n">staff_id_selectivity</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">0001</span>
-<span class="n">customer_id_selectivity</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">0373</span>
-<span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">):</span> <span class="mi">16049</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">staff_id</span><span class="p">)</span><span class="o">/</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">staff_id_selectivity</span><span class="p">,</span><span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">customer_id</span><span class="p">)</span><span class="o">/</span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">customer_id_selectivity</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">payment</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">staff_id_selectivity</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">0001</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">customer_id_selectivity</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">0373</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">):</span><span class="w"> </span><span class="mi">16049</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>很明显，customer_id的选择性更高，所以应该将customer_id放在前面。</p>
 <h3 id="35-聚簇索引">3.5 聚簇索引</h3>
@@ -195,17 +195,17 @@
 <p>索引覆盖还有很多陷阱会导致无法实现优化。MySQL查询优化器会在执行检察前判断一个索引能进行覆盖。假设索引覆盖了WHERE条件中的字段，但不是整个查询涉及的字段。如果条件为假，MySQL5.5和更早的版本也是会回表获取数据行，尽管并不需要这一行且最终会被过滤掉。下面是一个例子：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="o">#</span> <span class="err">下面有这么一条语句</span>
-<span class="k">EXPLAIN</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">actor</span><span class="o">=</span><span class="s1">&#39;SEAN CARRY&#39;</span> <span class="k">AND</span> <span class="n">title</span> <span class="k">LIKE</span> <span class="s1">&#39;%APOLLO%&#39;</span>
-
-<span class="err">最终</span><span class="n">extra列显示Using</span> <span class="k">where</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="o">#</span><span class="w"> </span><span class="err">下面有这么一条语句</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">EXPLAIN</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">actor</span><span class="o">=</span><span class="s1">&#39;SEAN CARRY&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">title</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;%APOLLO%&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">最终</span><span class="n">extra列显示Using</span><span class="w"> </span><span class="k">where</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这里索引无法覆盖到有两个原因：</p>
 <ul>
@@ -215,11 +215,11 @@
 <p>也有办法可以解决上面说的两个问题，需要重写查询并巧妙地设计索引。先将索引扩展至覆盖三个数据列（artist, title, prod_id），然后按如下方式重写查询：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">EXPLAIN</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">JOIN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">prod_id</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">actor</span> <span class="o">=</span> <span class="s1">&#39;SEAN CARRY&#39;</span> <span class="k">AND</span> <span class="n">title</span> <span class="k">LIKE</span> <span class="s1">&#39;%APOLLO%&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">t1</span> <span class="k">ON</span> <span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">prod_id</span> <span class="o">=</span> <span class="n">products</span><span class="p">.</span><span class="n">prod_id</span><span class="p">);</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">EXPLAIN</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">prod_id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">actor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;SEAN CARRY&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">title</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;%APOLLO%&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">prod_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">products</span><span class="p">.</span><span class="n">prod_id</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这种方式叫做延迟关联，因为延迟了对列的访问。在查询的第一个阶段MySQL可以使用覆盖索引，在FROM子句中找到prod_id，然后根据这些prod_id在外层查询匹配获取需要的所有列值。虽然无法使用索引覆盖整个查询，但比完全无法利用索引覆盖的好。</p>
 <h3 id="37-使用索引扫描来做排序">3.7 使用索引扫描来做排序</h3>
@@ -229,30 +229,30 @@
 <img src="/imgs/index_optmizing_sort_example.png" alt="index_optmizing_sort_example"></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">EXPLAIN</span> <span class="k">SELECT</span> <span class="n">rental_id</span><span class="p">,</span> <span class="n">staff_id</span><span class="p">,</span> <span class="k">FROM</span> <span class="n">rental</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">=</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">inventory_id</span><span class="p">,</span> <span class="n">customer_id</span><span class="p">;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">EXPLAIN</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="n">rental_id</span><span class="p">,</span><span class="w"> </span><span class="n">staff_id</span><span class="p">,</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">rental</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">rental_date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;2005-05-25&#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">inventory_id</span><span class="p">,</span><span class="w"> </span><span class="n">customer_id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面的ORDER BY子句并没有满足索引的最左前缀的要求，也可以用于查询排序，这是因为索引的第一列被指定为一个常数。</p>
 <p>另外还有，下面的这些也是有效的</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="p">...</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">=</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">inventory_id</span> <span class="k">DESC</span><span class="p">;</span>
-
-<span class="p">...</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">&gt;</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">rental_date</span><span class="p">,</span> <span class="n">inventory_id</span><span class="p">;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="p">...</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">rental_date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;2005-05-25&#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">inventory_id</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">...</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">rental_date</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="s1">&#39;2005-05-25&#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">rental_date</span><span class="p">,</span><span class="w"> </span><span class="n">inventory_id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>下面是一些不能使用索引做排序的查询：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -268,25 +268,24 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="o">#</span> <span class="err">使用了两种不同的排序方向</span>
-<span class="p">...</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">=</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">inventory_id</span> <span class="k">DESC</span><span class="p">,</span> <span class="n">customer_id</span> <span class="k">ASC</span><span class="p">;</span>
-
-<span class="o">#</span> <span class="err">引用了一个不在索引中的列</span>
-<span class="p">...</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">=</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">inventory_id</span><span class="p">,</span> <span class="n">staff_id</span><span class="p">;</span>
-
-<span class="o">#</span> <span class="err">无法组成最左前缀</span>
-<span class="p">...</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">=</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">customer_id</span><span class="p">;</span>
-
-<span class="o">#</span> <span class="err">第一列是范围查询，不符合最左前缀</span>
-<span class="p">...</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">&gt;</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">inventory_id</span><span class="p">,</span> <span class="n">customer_id</span><span class="p">;</span>
-
-<span class="o">#</span> <span class="n">inventory_id属于范围查找</span>
-<span class="p">...</span> <span class="k">WHERE</span> <span class="n">rental_date</span> <span class="o">=</span> <span class="s1">&#39;2005-05-25&#39;</span> <span class="k">AND</span> <span class="n">inventory_id</span> <span class="k">IN</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">customer_id</span><span class="p">;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="o">#</span><span class="w"> </span><span class="err">使用了两种不同的排序方向</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">...</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">rental_date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;2005-05-25&#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">inventory_id</span><span class="w"> </span><span class="k">DESC</span><span class="p">,</span><span class="w"> </span><span class="n">customer_id</span><span class="w"> </span><span class="k">ASC</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">引用了一个不在索引中的列</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">...</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">rental_date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;2005-05-25&#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">inventory_id</span><span class="p">,</span><span class="w"> </span><span class="n">staff_id</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">无法组成最左前缀</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">...</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">rental_date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;2005-05-25&#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">customer_id</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">第一列是范围查询，不符合最左前缀</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">...</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">rental_date</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="s1">&#39;2005-05-25&#39;</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">inventory_id</span><span class="p">,</span><span class="w"> </span><span class="n">customer_id</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="n">inventory_id属于范围查找</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">...</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">rental_date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;2005-05-25&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">inventory_id</span><span class="w"> </span><span class="k">IN</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">customer_id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><blockquote>
-<p>参考书目：《高性能MySQL(第3版)》</p>
-</blockquote>
+<p>参考书目：《高性能MySQL(第3版)》</p></blockquote>
 
                         </div>
 
@@ -415,6 +414,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -466,7 +471,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>

@@ -4,39 +4,30 @@
     <title>MongoDB on 默默的心路</title>
     <link>https://peilanluo.github.io/tags/mongodb/</link>
     <description>Recent content in MongoDB on 默默的心路</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zh-CN</language>
     <lastBuildDate>Tue, 08 Dec 2020 22:58:20 +0800</lastBuildDate>
-    
-	<atom:link href="https://peilanluo.github.io/tags/mongodb/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <atom:link href="https://peilanluo.github.io/tags/mongodb/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>MongoDB--聚合</title>
       <link>https://peilanluo.github.io/post/mongodb/mongodb_aggregate/</link>
       <pubDate>Tue, 08 Dec 2020 22:58:20 +0800</pubDate>
-      
       <guid>https://peilanluo.github.io/post/mongodb/mongodb_aggregate/</guid>
-      <description>聚合框架 使用聚合框架可以对集合中的文档进行变换和组合。可以用多个构件创建一个管道（pipeline），这些构件包括筛选（filtering）</description>
+      <description>&lt;h1 id=&#34;聚合框架&#34;&gt;聚合框架&lt;/h1&gt;&#xA;&lt;p&gt;使用聚合框架可以对集合中的文档进行变换和组合。可以用多个构件创建一个管道（pipeline），这些构件包括筛选（filtering）、投射（projecting）、分组（grouping）、排序（sorting）、限制（limiting）和跳过（skipping）。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>MongoDB--索引</title>
       <link>https://peilanluo.github.io/post/mongodb/mongodb_index/</link>
       <pubDate>Mon, 07 Dec 2020 20:46:20 +0800</pubDate>
-      
       <guid>https://peilanluo.github.io/post/mongodb/mongodb_index/</guid>
-      <description>MongoDB中的索引 MongoDB中的索引一部分用法和MySQL中是很相似的，但有些部分也存在差异。 使用复合索引 复合索引相对于单键索引要复</description>
+      <description>&lt;h1 id=&#34;mongodb中的索引&#34;&gt;MongoDB中的索引&lt;/h1&gt;&#xA;&lt;p&gt;MongoDB中的索引一部分用法和MySQL中是很相似的，但有些部分也存在差异。&lt;/p&gt;&#xA;&lt;h2 id=&#34;使用复合索引&#34;&gt;使用复合索引&lt;/h2&gt;&#xA;&lt;p&gt;复合索引相对于单键索引要复杂一些，但是也更加强大。MongoDB中的键也遵循最左前缀原则。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>MongoDB--一些基础知识</title>
       <link>https://peilanluo.github.io/post/mongodb/mongodb_basic/</link>
       <pubDate>Mon, 07 Dec 2020 20:41:20 +0800</pubDate>
-      
       <guid>https://peilanluo.github.io/post/mongodb/mongodb_basic/</guid>
-      <description>mongoDB的基本操作符 $inc 增加或减少数字 $push 向已有的数组末尾加入一个元素 $each 可以配合$push使用添加多个值 1 {&amp;#34;$push&amp;#34;: {&amp;#34;tags&amp;#34;: {&amp;#34;$each&amp;#34;: [1, 2, 3]}}} $addToSet 可以插入不重复的值</description>
+      <description>&lt;h1 id=&#34;mongodb的基本操作符&#34;&gt;mongoDB的基本操作符&lt;/h1&gt;&#xA;&lt;h2 id=&#34;inc&#34;&gt;$inc&lt;/h2&gt;&#xA;&lt;p&gt;增加或减少数字&lt;/p&gt;&#xA;&lt;h2 id=&#34;push&#34;&gt;$push&lt;/h2&gt;&#xA;&lt;p&gt;向已有的数组末尾加入一个元素&lt;/p&gt;&#xA;&lt;h2 id=&#34;each&#34;&gt;$each&lt;/h2&gt;&#xA;&lt;p&gt;可以配合$push使用添加多个值&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;&#xA;&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;&#xA;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1&#xA;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&#xA;&lt;td class=&#34;lntd&#34;&gt;&#xA;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;$push&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;tags&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;$each&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]}}}&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&#xA;&lt;/div&gt;&#xA;&lt;/div&gt;&lt;h2 id=&#34;addtoset&#34;&gt;$addToSet&lt;/h2&gt;&#xA;&lt;p&gt;可以插入不重复的值&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;&#xA;&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;&#xA;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1&#xA;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&#xA;&lt;td class=&#34;lntd&#34;&gt;&#xA;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;$addToSet&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;emails&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;$each&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;aaa&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;bbb&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]}}}&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&#xA;&lt;/div&gt;&#xA;&lt;/div&gt;&lt;h2 id=&#34;pop&#34;&gt;$pop&lt;/h2&gt;&#xA;&lt;p&gt;从数组末尾删除一个元素&lt;code&gt;{&amp;quot;$pop&amp;quot;: {&amp;quot;key&amp;quot;: -1}}&lt;/code&gt;则从头删除&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

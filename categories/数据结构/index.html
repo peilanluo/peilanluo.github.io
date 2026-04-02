@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.74.2" />
+    <meta name="generator" content="Hugo 0.147.4">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -14,7 +14,7 @@
         
     <meta name="description" content="数据结构">
         
-    <meta name="author" content="Qiao">
+    <meta name="author" content="">
     <meta property="og:url" content="https://peilanluo.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
 
     <link rel="alternate" type="application/rss&#43;xml" href="https://peilanluo.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.xml" title="默默的心路">
@@ -89,7 +89,9 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    哈希表是数组的一种扩展，由数组演化而来，底层依赖数组支持按下标快速访问元素的特性。 哈希函数 哈希函数首先是一个函数，可以把它定义成hash(k
+                                    <p><code>哈希表</code>是数组的一种扩展，由数组演化而来，底层依赖数组支持按下标快速访问元素的特性。</p>
+<h2 id="哈希函数">哈希函数</h2>
+<p>哈希函数首先是一个函数，可以把它定义成hash(key)，其实key代表元素的键值，hash(key)代表通过哈希函数得到的哈希值，而哈希值便是数组的下标，通过这个下标直接读取记录的值。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/data/hash/">阅读全文</a></p>
@@ -117,7 +119,7 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    由于普通二叉搜索树在最坏的情况下会转变成一个线性的链表，其时间复杂度会退化为O(n)，并且如果树的高度很高，他的效率也是无法保证的，所以在普
+                                    <p>由于普通二叉搜索树在最坏的情况下会转变成一个线性的链表，其时间复杂度会退化为O(n)，并且如果树的高度很高，他的效率也是无法保证的，所以在普通二叉搜索树的基础上，引入了平衡二叉树的概念，红黑树就是平衡二叉树中的一种，红黑树可以保证在最坏的情况下所有操作的时间复杂度为O(logn)。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/data/red_black_tree/">阅读全文</a></p>
@@ -145,7 +147,10 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    二叉搜索树 概念 二叉搜索树是一种特殊的二叉树，对于二叉搜索树的任意根结点x，其左子树上所有结点的值最大不超过x，其右子树上所有结点的值最小不低
+                                    <h1 id="二叉搜索树">二叉搜索树</h1>
+<h2 id="概念">概念</h2>
+<p>二叉搜索树是一种特殊的二叉树，对于二叉搜索树的任意根结点x，其左子树上所有结点的值最大不超过x，其右子树上所有结点的值最小不低于x。</p>
+<p>如果设二叉搜索树共有n个元素，无论哪种操作，平均每次操作需要O(logn)的时间，最坏运行时间是O(n)，出现在如果这棵树是一条n个结点组成的线性链。</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/data/binary_search_tree/">阅读全文</a></p>
@@ -173,7 +178,25 @@
                             <div class="post-content summary auto">
                                 
                                 
-                                    树和二叉树的定义 树的基本术语 结点：树中的每一个独立单元。如图中的A、B、C、D等。 结点的度：结点拥有的子树的个数称为结点的度。 树的度：树内各
+                                    <h2 id="树和二叉树的定义">树和二叉树的定义</h2>
+<h3 id="树的基本术语">树的基本术语</h3>
+<p><img src="/imgs/1128810-20200119161838970-1693089452.png" alt="树"></p>
+<ul>
+<li>结点：树中的每一个独立单元。如图中的A、B、C、D等。</li>
+<li>结点的度：结点拥有的子树的个数称为结点的度。</li>
+<li>树的度：树内各节点度的最大值。</li>
+<li>叶子：度为0的结点称为叶子节点。如图中的K 、 L 、 F 、 G 、 M 、 I 、 J。</li>
+<li>非终端节点：度不为0的结点。</li>
+<li>双亲和孩子：结点的子树的根称为该结点的孩子，该结点称为孩子的双亲。</li>
+<li>兄弟：双亲相同的两个结点。</li>
+<li>祖先：从根到该结点所经分支上的所有结点。</li>
+<li>子孙：以某结点为根的子树中的任一结点都称为该结点的子孙。</li>
+<li>层次：根结点为第一层，气候没多一层层数加1。</li>
+<li>堂兄弟：双亲在同 一层的结点互为堂兄弟。</li>
+<li>树的深度：树中结点的最大层次称为树的深度或高度。</li>
+</ul>
+<h3 id="二叉树的定义">二叉树的定义</h3>
+<p>二叉树是n(n≥0)个结点所构成的集合，当n=0时称为空树，对于非空树T：</p>
                                 
                             </div>
                             <p class="readmore"><a href="https://peilanluo.github.io/post/data/tree/">阅读全文</a></p>
@@ -291,6 +314,12 @@
             </li>
             
             <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
                 <a href="/categories/prometheus">
                     prometheus (2)
                 </a>
@@ -342,7 +371,7 @@
 </div>
 <footer id="footer">
     <div class="container">
-      &copy; 2023 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
     </div>
 </footer>
