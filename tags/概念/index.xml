@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>概念 on 默默的心路</title>
+    <link>https://peilanluo.github.io/tags/%E6%A6%82%E5%BF%B5/</link>
+    <description>Recent content in 概念 on 默默的心路</description>
+    <generator>Hugo</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 18 Apr 2021 16:06:16 +0800</lastBuildDate>
+    <atom:link href="https://peilanluo.github.io/tags/%E6%A6%82%E5%BF%B5/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>kubernetes--详解Service</title>
+      <link>https://peilanluo.github.io/post/kubernetes/service/</link>
+      <pubDate>Sun, 18 Apr 2021 16:06:16 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/kubernetes/service/</guid>
+      <description>&lt;p&gt;通过创建Service可以为一组具有相同功能的容器应用提供一个统一的入口地址，并将请求负载分发到后端的各个应用容器上。&lt;/p&gt;&#xA;&lt;h1 id=&#34;service的基本用法&#34;&gt;Service的基本用法&lt;/h1&gt;&#xA;&lt;p&gt;对于一个Pod来说，使用Pod的IP地址和端口号是可以访问到容器应用内的服务的，但是Pod的IP地址是不可靠的，因为当Pod所在的Node发生故障时，Pod会被调度到另一个Node，Pod的IP地址将发生变化。通过Service可以有效的解决这个问题并能为服务提供负载均衡。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>kubernetes--Pod的应用</title>
+      <link>https://peilanluo.github.io/post/kubernetes/pod/</link>
+      <pubDate>Sun, 18 Apr 2021 15:01:20 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/kubernetes/pod/</guid>
+      <description>&lt;p&gt;Pod是Kubernetes中能够创建和部署的最小单元，是Kubernetes集群中的一个应用实例，总是部署在同一个节点node上。Pod中包含了一个或多个容器。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Docker--一些基础知识</title>
+      <link>https://peilanluo.github.io/post/docker/docker_concept/</link>
+      <pubDate>Sun, 28 Mar 2021 18:49:53 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/docker/docker_concept/</guid>
+      <description>&lt;h1 id=&#34;搭建本地私有仓库&#34;&gt;搭建本地私有仓库&lt;/h1&gt;&#xA;&lt;p&gt;安装Docker后，可以通过官方提供的registry镜像来搭建本地私有仓库：&lt;/p&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;docker run -d -p 5000:5000 registry:2&#xA;&#xA;// 指定镜像文件存放在本地的指定路径&#xA;docker run -d -p 5000:5000 -v /Users/qiao/docker/registry:/var/list/registry registry:2&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;启动容器后可以在docker上把其他镜像推送到仓库中&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>kubernetes--的一些重要概念</title>
+      <link>https://peilanluo.github.io/post/kubernetes/important_concept/</link>
+      <pubDate>Wed, 26 Aug 2020 18:26:53 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/kubernetes/important_concept/</guid>
+      <description>&lt;h1 id=&#34;kubernetes是什么&#34;&gt;Kubernetes是什么&lt;/h1&gt;&#xA;&lt;p&gt;Kubernetes是一个全新的基于容器技术的分布式架构领先方案，他的前身是谷歌内部使用逾十余年的Borg技术，Kubernetes是其开源版本，Kubernetes提供了强大的自动化机制，使系统后期的运维难度和运维成本大幅度降低。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

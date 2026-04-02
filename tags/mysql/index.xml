@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mysql on 默默的心路</title>
+    <link>https://peilanluo.github.io/tags/mysql/</link>
+    <description>Recent content in Mysql on 默默的心路</description>
+    <generator>Hugo</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 18 Sep 2022 17:40:45 +0800</lastBuildDate>
+    <atom:link href="https://peilanluo.github.io/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>mysql—存储引擎</title>
+      <link>https://peilanluo.github.io/post/mysql/mysql_engine/</link>
+      <pubDate>Sun, 18 Sep 2022 17:40:45 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/mysql/mysql_engine/</guid>
+      <description>&lt;h2 id=&#34;1-innodb存储引擎&#34;&gt;1 InnoDB存储引擎&lt;/h2&gt;&#xA;&lt;p&gt;InnoDB是MySQL默认的事务型引擎（从MySQL 5.5开始作为默认的存储引擎），它被设计用来处理大量的短期事务。InnoDB的数据存储在表空间内。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>mysql—MVCC多版本并发控制</title>
+      <link>https://peilanluo.github.io/post/mysql/mysql_mvcc/</link>
+      <pubDate>Sat, 04 Jun 2022 17:56:20 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/mysql/mysql_mvcc/</guid>
+      <description>&lt;blockquote&gt;&#xA;&lt;p&gt;参考：&#xA;&lt;a href=&#34;https://www.cnblogs.com/yaoyangding/p/15659608.html&#34;&gt;https://www.cnblogs.com/yaoyangding/p/15659608.html&lt;/a&gt;&#xA;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/421769708&#34;&gt;https://zhuanlan.zhihu.com/p/421769708&lt;/a&gt;&lt;/p&gt;&lt;/blockquote&gt;&#xA;&lt;p&gt;MVCC（Multiversion Concurrency Control）即多版本并发控制，是现代数据库引擎中常用的处理读写冲突的手段，目的在于提高数据库高并发场景下的吞吐性能，做到即使有冲突时，也可以不加锁，非阻塞并发读。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>mysql—四大特性（ACID）、事务的隔离级别和死锁</title>
+      <link>https://peilanluo.github.io/post/mysql/mysql_acid/</link>
+      <pubDate>Tue, 31 May 2022 15:31:45 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/mysql/mysql_acid/</guid>
+      <description>&lt;blockquote&gt;&#xA;&lt;p&gt;参考文献：https://blog.csdn.net/zDavid_2018/article/details/89929862&#xA;《高性能MySQL（第3版）》&#xA;《高性能MySQL（第4版）》&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>mysql—EXPLAIN的使用</title>
+      <link>https://peilanluo.github.io/post/mysql/mysql_explain/</link>
+      <pubDate>Mon, 29 Mar 2021 20:43:45 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/mysql/mysql_explain/</guid>
+      <description>&lt;p&gt;EXPLAIN命令是查看查询优化器如何决定执行查询的主要方法，但是它是有局限性的，并不总是准确的，但他在一定程度上仍然是衡量MySQL优化的最好工具。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>mysql--查询性能优化</title>
+      <link>https://peilanluo.github.io/post/mysql/mysql_query_optimizing/</link>
+      <pubDate>Sun, 29 Nov 2020 22:04:45 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/mysql/mysql_query_optimizing/</guid>
+      <description>&lt;h2 id=&#34;为什么查询速度会变慢&#34;&gt;为什么查询速度会变慢&lt;/h2&gt;&#xA;&lt;p&gt;所谓查询优化最重要的是响应时间，如果把查询看作是一个任务，那么它是由一些列子任务组成，每个子任务消耗一定的时间。如果要优化查询，实际上要优化其子任务，要么消除其中一些子任务，要么减少子任务的执行次数，要么要让子任务运行得更快。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>mysql--索引优化</title>
+      <link>https://peilanluo.github.io/post/mysql/mysql_index_optimizing/</link>
+      <pubDate>Sun, 29 Nov 2020 16:01:45 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/mysql/mysql_index_optimizing/</guid>
+      <description>&lt;h2 id=&#34;1-索引基础&#34;&gt;1 索引基础&lt;/h2&gt;&#xA;&lt;p&gt;MySQL支持多种索引引擎，最常用的例如B-Tree、哈希索引。&lt;/p&gt;&#xA;&lt;h3 id=&#34;11-b-tree索引的限制&#34;&gt;1.1 B-Tree索引的限制&lt;/h3&gt;&#xA;&lt;p&gt;现在有这么一个场景，有一个B-Tree类型的组合索引，组合索引的字段依次为&lt;code&gt;last_name&lt;/code&gt;、&lt;code&gt;first_name&lt;/code&gt;、&lt;code&gt;birthday&lt;/code&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>mysql--Schema与数据类型优化</title>
+      <link>https://peilanluo.github.io/post/mysql/mysql_field_-optimizing/</link>
+      <pubDate>Sat, 21 Nov 2020 18:08:45 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/mysql/mysql_field_-optimizing/</guid>
+      <description>&lt;h1 id=&#34;存储引擎&#34;&gt;存储引擎&lt;/h1&gt;&#xA;&lt;p&gt;在MySQL5.5版本将InnoDB作为默认的存储引擎。&lt;/p&gt;&#xA;&lt;h1 id=&#34;数据类型优化&#34;&gt;数据类型优化&lt;/h1&gt;&#xA;&lt;p&gt;通常把可为null的列改为not null带来的性能提升比较小，所以（调优时）没有必要首先在现有schema中查找并修改掉这种情况，除非确定这回导致问题。但是，如果计划在列上建立索引，就应该尽量避免设计成可为null的列。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

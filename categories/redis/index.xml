@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Redis on 默默的心路</title>
+    <link>https://peilanluo.github.io/categories/redis/</link>
+    <description>Recent content in Redis on 默默的心路</description>
+    <generator>Hugo</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 12 Sep 2022 16:44:20 +0800</lastBuildDate>
+    <atom:link href="https://peilanluo.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis--Redis的主从和集群</title>
+      <link>https://peilanluo.github.io/post/redis/redis_copy/</link>
+      <pubDate>Mon, 12 Sep 2022 16:44:20 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/redis/redis_copy/</guid>
+      <description>&lt;h2 id=&#34;1-redis的复制&#34;&gt;1 Redis的复制&lt;/h2&gt;&#xA;&lt;p&gt;在Redis中，用户可以通过执行&lt;code&gt;SLAVEOF&lt;/code&gt;命令或设置slaveof选项，让一个服务器去复制另一个服务器，&lt;code&gt;被复制的服务器&lt;/code&gt;为主服务器，复制出的服务器成为从服务器。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Redis--Redis的数据结构</title>
+      <link>https://peilanluo.github.io/post/redis/redis_basic/</link>
+      <pubDate>Sun, 11 Sep 2022 16:07:20 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/redis/redis_basic/</guid>
+      <description>&lt;blockquote&gt;&#xA;&lt;p&gt;参考书目：《Redis设计与实现》&lt;/p&gt;&lt;/blockquote&gt;&#xA;&lt;h2 id=&#34;1-简单动态字符串&#34;&gt;1. 简单动态字符串&lt;/h2&gt;&#xA;&lt;p&gt;&lt;code&gt;Redis&lt;/code&gt;没有直接使用C语言传统的字符串表示，而是构建了一种名为简单动态字符串（SDS）的抽象类型，并将SDS作为Redis的默认字符串表示。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Redis--数据的持久化方式</title>
+      <link>https://peilanluo.github.io/post/redis/redis_persistence/</link>
+      <pubDate>Tue, 31 May 2022 15:20:20 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/redis/redis_persistence/</guid>
+      <description>&lt;blockquote&gt;&#xA;&lt;p&gt;参考书目：《Redis设计与实现》&lt;/p&gt;&lt;/blockquote&gt;&#xA;&lt;h2 id=&#34;1-rdb持久化&#34;&gt;1 RDB持久化&lt;/h2&gt;&#xA;&lt;p&gt;RDB持久化既可以手动执行，也可以根据服务器配置选项定期执行。&lt;/p&gt;&#xA;&lt;h3 id=&#34;11-rdb文件的创建与载入&#34;&gt;1.1 RDB文件的创建与载入&lt;/h3&gt;&#xA;&lt;p&gt;有两个命令可以用于生成RDB文件，一个是SAVE，另一个是BGSAVE。&lt;code&gt;SAVE&lt;/code&gt;会阻塞Redis服务器进程，直到RDB文件创建完毕。&lt;code&gt;BGSAVE&lt;/code&gt;会派生出一个子进程，然后由子进程创建RDB文件。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Redis--分布式锁</title>
+      <link>https://peilanluo.github.io/post/redis/redis_lock/</link>
+      <pubDate>Sun, 13 Dec 2020 21:42:20 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/redis/redis_lock/</guid>
+      <description>&lt;p&gt;redis使用&lt;code&gt;WATCH&lt;/code&gt;命令来代替对数据进行加锁，因为&lt;code&gt;WATCH&lt;/code&gt;只会在数据被其他客户端抢先修改了的情况下通知执行了这个命令的客户端，而不会阻止其他客户端对数据进行修改，所以这个命令称为乐观锁。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

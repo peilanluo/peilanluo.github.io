@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.147.4">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Postgresql - 默默的心路</title>
+    <meta property="og:title" content="Postgresql - 默默的心路">
+    <meta property="og:type" content="article">
+        
+        
+    <meta name="description" content="Postgresql">
+        
+    <meta name="author" content="">
+    <meta property="og:url" content="https://peilanluo.github.io/tags/postgresql/">
+
+    <link rel="alternate" type="application/rss&#43;xml" href="https://peilanluo.github.io/tags/postgresql/index.xml" title="默默的心路">
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://peilanluo.github.io/">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a  href="https://peilanluo.github.io/">博客</a>
+                    
+                    <a  href="https://peilanluo.github.io/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    
+                    <h1>
+                        包含标签
+                        <span class="keyword">postgresql</span>
+                        的文章
+                    </h1>
+                    
+
+                    
+                        <article class="post">
+                            <header>
+                                <h2 class="post-title">
+                                    <a href="https://peilanluo.github.io/post/postgresql/postgresql_data_type/">postgresql—数据类型、索引、事务</a>
+                                </h2>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2026年4月2日
+                                14:01
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                ，归类于
+                                
+                                    <a href="/categories/postgresql">postgresql</a>
+                                
+                            </div>
+                            
+                            
+                            <div class="post-content summary auto">
+                                
+                                
+                                    <h2 id="x20sql语句的分类"> sql语句的分类</h2>
+<ul>
+<li>DQL：数据查询语句，基本上就是SELECT命令</li>
+<li>DML：Data Manipulation Language的简称，即数据操纵语言，包括INSERT、UPDATE、DELETE三种。</li>
+<li>DDL：Data Definition Language的缩写，数据定义语言，主要用于创建、删除，以及修改表、索引等数据库对象语言</li>
+</ul>
+<h2 id="x20数据类型"> 数据类型</h2>
+<p>PostgreSQL支持的数据类型与其他数据库对比见下表：</p>
+                                
+                            </div>
+                            <p class="readmore"><a href="https://peilanluo.github.io/post/postgresql/postgresql_data_type/">阅读全文</a></p>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h2 class="post-title">
+                                    <a href="https://peilanluo.github.io/post/postgresql/postgresql_diff_with_mysql/">postgresql—和MySQL的对比</a>
+                                </h2>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2026年3月26日
+                                17:50
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                ，归类于
+                                
+                                    <a href="/categories/postgresql">postgresql</a>
+                                
+                            </div>
+                            
+                            
+                            <div class="post-content summary auto">
+                                
+                                
+                                    <h2 id="postgresql数据库和mysql数据库的对比">PostgreSQL数据库和MySQL数据库的对比</h2>
+<ul>
+<li>MySQL不支持单独的SEQUENCE（数据库的全局数字发号器，可以按规则生成不重复、有顺序的数字），而PostgreSQL支持。 在MySQL中，可以使用AUTO_INCREMENT来实现类似SEQUENCE的功能，但是AUTO_INCREMENT是基于表的，不能全局使用。</li>
+<li>MySQL的复制是异步或半同步的逻辑同步，存在两个核心问题：
+<ul>
+<li>在大事务下会导致比较大的延迟</li>
+<li>容易导致数据库的不一致（原因是MySQL的主备库的复制是通过逻辑层的binlog来实现的，但在InnoDB中还有物理的Redo Log层，整个过程比较复杂，比较难保证主备库之间完全一致）</li>
+</ul>
+</li>
+</ul>
+                                
+                            </div>
+                            <p class="readmore"><a href="https://peilanluo.github.io/post/postgresql/postgresql_diff_with_mysql/">阅读全文</a></p>
+                        </article>
+                    
+
+                    
+
+
+
+
+                </div>
+            </div>
+
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://peilanluo.github.io/">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (6)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+
+</body>
+</html>

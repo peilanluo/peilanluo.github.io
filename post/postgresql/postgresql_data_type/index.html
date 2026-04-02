@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.147.4">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>postgresql—数据类型、索引、事务 - 默默的心路</title>
+    <meta property="og:title" content="postgresql—数据类型、索引、事务 - 默默的心路">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2026-04-02T14:01:20&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2026-04-02T14:01:20&#43;08:00">
+        
+    <meta name="description" content="postgresql—数据类型、索引、事务">
+        
+    <meta name="author" content="">
+    <meta property="og:url" content="https://peilanluo.github.io/post/postgresql/postgresql_data_type/">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    </head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://peilanluo.github.io/">
+                        默默的心路
+                    </a>
+                
+                <p class="description">每一个恍然的瞬间，都有一段段默默的心路在支撑…</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://peilanluo.github.io/">博客</a>
+                    
+                    <a  href="https://peilanluo.github.io/archives/" title="存档">
+                        存档
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">postgresql—数据类型、索引、事务</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2026年4月2日
+                            14:01
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            ，归类于
+                            
+                                <a href="/categories/postgresql">postgresql</a>
+                            
+                        </div>
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#x20sql语句的分类"> sql语句的分类</a></li>
+        <li><a href="#x20数据类型"> 数据类型</a>
+          <ul>
+            <li><a href="#json">JSON</a></li>
+            <li><a href="#数组">数组</a></li>
+            <li><a href="#类型的输入与转换">类型的输入与转换</a></li>
+          </ul>
+        </li>
+        <li><a href="#数据库逻辑结构">数据库逻辑结构</a>
+          <ul>
+            <li><a href="#模式">模式</a></li>
+            <li><a href="#索引">索引</a></li>
+            <li><a href="#事务相关">事务相关</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </aside><div class="post-content">
+                            <h2 id="x20sql语句的分类"> sql语句的分类</h2>
+<ul>
+<li>DQL：数据查询语句，基本上就是SELECT命令</li>
+<li>DML：Data Manipulation Language的简称，即数据操纵语言，包括INSERT、UPDATE、DELETE三种。</li>
+<li>DDL：Data Definition Language的缩写，数据定义语言，主要用于创建、删除，以及修改表、索引等数据库对象语言</li>
+</ul>
+<h2 id="x20数据类型"> 数据类型</h2>
+<p>PostgreSQL支持的数据类型与其他数据库对比见下表：</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">分类名称</th>
+          <th style="text-align: center">说明</th>
+          <th style="text-align: center">与其他数据库对比</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">布尔类型</td>
+          <td style="text-align: center">支持</td>
+          <td style="text-align: center">与MySQL的BOOLEAN相同</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">数值类型</td>
+          <td style="text-align: center">2字节smallint、4字节int、8字节bigint，十进制精确类型numeric，浮点类型有real和double precision。还有8字节货币（money）类型</td>
+          <td style="text-align: center">无MySQL的unsigned整数类型，业务1字节长的tinyint和3字节长的midiumint</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">字符类型</td>
+          <td style="text-align: center">有varchar(n)、char(n)、text三种类型</td>
+          <td style="text-align: center">PostgreSQL中的varchar(n)最大可以存储到1GB，MySQL最大只能是64KB。PostgreSQL中的text类型相当于MySQL中的LONGTEXT。</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">二进制数据</td>
+          <td style="text-align: center">只有byte</td>
+          <td style="text-align: center">对应MySQL的BLOB和LONGBLOB类型</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">位串类型</td>
+          <td style="text-align: center">位串就是一串1和0的字符串，有bit(n)、bit varying(n)两种</td>
+          <td style="text-align: center">其他无此类型</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">日期和时间类型</td>
+          <td style="text-align: center">有date、time、timestamp，time和timestamp又分是否包括时区的两种类型</td>
+          <td style="text-align: center">PostgreSQL可以精确到秒一下，MySQL最多只能到秒。</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">枚举类型</td>
+          <td style="text-align: center">等于某些编程语言中的enum类型</td>
+          <td style="text-align: center">PostgreSQL使用枚举类型前需要先使用CREATE TYPE创建这个类型。</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">几何类型</td>
+          <td style="text-align: center">包括了点（point）、支线（line）、线段（lseg）、路径（path）、多边形（polygon）、圆灯类型（cycle）</td>
+          <td style="text-align: center">其他无此类型</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">网络地址类型</td>
+          <td style="text-align: center">有cidr、inet、macaddr三种类型</td>
+          <td style="text-align: center">其他无此类型</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">数组类型</td>
+          <td style="text-align: center">可以存储一个数组</td>
+          <td style="text-align: center">其他无此类型</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">复合类型</td>
+          <td style="text-align: center">可以把已有的简单类型组合成用户定义的类型，就像C语言中的结构体一样</td>
+          <td style="text-align: center">对应其他数据库自定义类型</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">xml类型</td>
+          <td style="text-align: center">可以存储XML数据</td>
+          <td style="text-align: center">其他无此类型</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">json类型</td>
+          <td style="text-align: center">可以存储json类型数据</td>
+          <td style="text-align: center">其他无此类型</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">range类型</td>
+          <td style="text-align: center">范围类型，可以存储范围数据</td>
+          <td style="text-align: center">其他无此类型</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">对象标识符</td>
+          <td style="text-align: center">PostgreSQL内部标识对象的类型，如oid类型、regproc类型、regclass类型等</td>
+          <td style="text-align: center">其他无此类型</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">伪类型</td>
+          <td style="text-align: center">伪类型不能作为字段的数据类型，但是可以用于声明一个函数的参数或结果类型。有any、anyarray、anyelement、cstring、internal、language_handler、record、trigger、void、opaque</td>
+          <td style="text-align: center">其他无此类型</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">其他类型</td>
+          <td style="text-align: center">一些不好分类的类型都放这里，如UUID类型、pg_lsn类型</td>
+          <td style="text-align: center">其他无此类型</td>
+      </tr>
+  </tbody>
+</table>
+<p>以下是PostgreSQL一些特殊类型的详细解析。</p>
+<h3 id="json">JSON</h3>
+<h4 id="json和jsonb类型都支持的操作符">JSON和JSONB类型都支持的操作符</h4>
+<ul>
+<li>-&gt; int：取JSON数组的元素</li>
+<li>-&gt; text：通过key取JSON中的子对象</li>
+<li>-&raquo; int：取JSON数组的元素，单返回结果是text类型</li>
+<li>-&raquo; text：通过key取JSON中的子对象，但返回结果是text类型</li>
+<li>#&gt;text[]：通过指定路径取JSON中的对象，例如&rsquo;{&ldquo;a&rdquo;:{&ldquo;b&rdquo;:{&ldquo;c&rdquo;:1}}}&rsquo;::json#&gt;&rsquo;{a,b,c}&rsquo;   结果为1</li>
+<li>#&raquo;text[]：通过指定路径取JSON中的对象，但返回结果是text类型</li>
+</ul>
+<h4 id="仅适用于jsonb的操作符">仅适用于JSONB的操作符</h4>
+<table>
+  <thead>
+      <tr>
+          <th>操作符</th>
+          <th>右操作数类型</th>
+          <th>描述</th>
+          <th>示例</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>=</td>
+          <td>jsonb</td>
+          <td>两个JSON对象的内容是否相等</td>
+          <td>jsonb&rsquo;[1,2]&rsquo; = jsonb&rsquo;[1,2]&rsquo;（t）<!-- raw HTML omitted -->jsonb&rsquo;[2,1]&rsquo; = jsonb&rsquo;[1,2]&rsquo;（f）<!-- raw HTML omitted -->jsonb&rsquo;{&ldquo;a&rdquo;:1, &ldquo;b&rdquo;:2}&rsquo; = jsonb&rsquo;{&ldquo;b&rdquo;:2, &ldquo;a&rdquo;:1}&rsquo;（t）</td>
+      </tr>
+      <tr>
+          <td>@&gt;</td>
+          <td>jsonb</td>
+          <td>左边的json对象是否包含右边的 json 对象</td>
+          <td>jsonb&rsquo;{&ldquo;a&rdquo;:1, &ldquo;b&rdquo;:2}&rsquo; @&gt; jsonb&rsquo;{&ldquo;b&rdquo;:2}&rsquo;（t）<!-- raw HTML omitted -->jsonb&rsquo;[1,2]&rsquo; @&gt; jsonb&rsquo;[1]&rsquo;（t）</td>
+      </tr>
+      <tr>
+          <td>&lt;@</td>
+          <td>jsonb</td>
+          <td>左边的json对象是否包含于右边的json对象中</td>
+          <td>jsonb&rsquo;[1]&rsquo; &lt;@ jsonb&rsquo;[1,2]'</td>
+      </tr>
+  </tbody>
+</table>
+<table>
+  <thead>
+      <tr>
+          <th>操作符</th>
+          <th>右操作数类型</th>
+          <th>描述</th>
+          <th>示例</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>?</td>
+          <td>text</td>
+          <td>指定的字符串是否存在于json对象中的 key 或字符串类型元素中。json 中的元素必须是字符串类型</td>
+          <td>jsonb&rsquo;{&ldquo;a&rdquo;:1, &ldquo;b&rdquo;:2}&rsquo; ? &lsquo;b&rsquo;（t）<!-- raw HTML omitted -->jsonb&rsquo;[&ldquo;1&rdquo;, &ldquo;2&rdquo;, &ldquo;3&rdquo;]&rsquo; ? &lsquo;1&rsquo;（t）<!-- raw HTML omitted -->jsonb&rsquo;[1,2,3]&rsquo; ? &lsquo;1&rsquo;（f）</td>
+      </tr>
+      <tr>
+          <td>?|</td>
+          <td>text[]</td>
+          <td>右值是一个数组，指定此数组中的任意一个元素是否存在于 json 对象的字符串类型的 key 或元素中。</td>
+          <td>jsonb&rsquo;{&ldquo;a&rdquo;:1, &ldquo;b&rdquo;:2}&rsquo; ?| array[&lsquo;b&rsquo;,&lsquo;c&rsquo;]（t）<!-- raw HTML omitted -->jsonb&rsquo;[&ldquo;1&rdquo;, &ldquo;2&rdquo;]&rsquo; ?| array[&lsquo;2&rsquo;, &lsquo;3&rsquo;]（t）</td>
+      </tr>
+      <tr>
+          <td>?&amp;</td>
+          <td>text[]</td>
+          <td>右值是一个数组，指定此数组中的所有元素是否都存在于 json 对象中的 key 或者字符串类型元素中。</td>
+          <td>jsonb&rsquo;{&ldquo;a&rdquo;:1, &ldquo;b&rdquo;:2, &ldquo;c&rdquo;: 3}&rsquo; ?&amp; array[&lsquo;b&rsquo;, &lsquo;c&rsquo;]（t）<!-- raw HTML omitted -->jsonb&rsquo;[&ldquo;1&rdquo;, &ldquo;2&rdquo;, &ldquo;3&rdquo;]&rsquo; ?&amp; array[&lsquo;2&rsquo;, &lsquo;3&rsquo;]（t）</td>
+      </tr>
+  </tbody>
+</table>
+<h4 id="json类型的索引">JSON类型的索引</h4>
+<p>无法在JSON类型的列上创建索引，但可以在JSON类型的列上建函数索引。JSONB类型的列上可以直接建索引，除了可以建BTree索引以外，还支持GIN索引。GIN索引可以高效的从JSONB内部的 key/value 对中搜索数据，一般情况下都会选择 GIN索引。</p>
+<p>创建 GIN索引的语法如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="o">#</span><span class="w"> </span><span class="err">使用默认的操作符创建</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_name</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">table_name</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">gin</span><span class="w"> </span><span class="p">(</span><span class="n">index_col</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">使用</span><span class="n">jsonb_path_ops操作符建</span><span class="w"> </span><span class="n">GIN</span><span class="w"> </span><span class="err">索引：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_name</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">table_name</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">gin</span><span class="w"> </span><span class="p">(</span><span class="n">index_col</span><span class="w"> </span><span class="n">jsonb_path_ops</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>默认方式（jsonb_ops）和 jsonb_path_ops的 GIN 索引区别在于，jsonb_ops的GIN索引中JSONB数据中的每个key和value都是作为一个单独的索引项，而jsonb_path_ops则只为每个value创建一个索引项。例如：有一个JSON数据“{&ldquo;foo&rdquo;: {&ldquo;bar&rdquo;: &ldquo;baz&rdquo;}}”，对于jsonb_path_ops来说，是吧“foo”“bar”“baz”组合成一个Hash值作为索引项，而jsonb_ops则会分别为“foo““bar”“baz”创建三个索引项。因为少了很多索引项，所以通常jsonb_path_ops的索引要比jsonb_ops的小很多，性能相应也会有提升。</p>
+<p>jsonb_ops和jsonb_path_ops的对比：</p>
+<ul>
+<li>jsonb_ops支持所有操作符</li>
+<li>jsonb_path_ops仅支持<code>@&gt;</code>、<code>@?</code>、<code>@@</code>，不支持?、?&amp;、?|</li>
+</ul>
+<h3 id="数组">数组</h3>
+<p>数组类型的声明如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">test</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="n">col1</span><span class="w"> </span><span class="nb">int</span><span class="p">[],</span><span class="w"> </span><span class="n">col2</span><span class="w"> </span><span class="nb">int</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span><span class="w"> </span><span class="n">col3</span><span class="w"> </span><span class="nb">text</span><span class="p">[][]);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>方括号中的数字</code>可以定义也可以不定义，定义之后也不会限制数组的长度，<code>多维数组的定义</code>实际上也是没有意义的，数组的维度会根据实际插入的数据来确定。</p>
+<p>数组值的输入如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 数字的输入
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">test</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="n">col1</span><span class="w"> </span><span class="nb">int</span><span class="p">[]);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;{1,2,3}&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 字符串的输入
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">test</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="n">col1</span><span class="w"> </span><span class="nb">text</span><span class="p">[]);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;{how,howe,howl}&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 数据中有逗号可以使用双引号
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;{&#34;who, what&#34;, &#34;CO.,LTD.&#34;}&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 数据中有单引号可以用两个连接的单引号表示一个单引号
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;{&#34;who&#39;&#39;s bread&#34;, &#34;It&#39;&#39;s ok&#34;}&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 数据中有&#34;{&#34;或&#34;}&#34;，放到双引号里即可
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;{&#34;{os,dba}&#34;, &#34;{dba,os}&#34;}&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 数据中有双引号，再双引号钱加反斜杠转义
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="一些特殊操作符">一些特殊操作符</h4>
+<ul>
+<li>@&gt;：包含，例如<code>ARRAY[1,2,3] @&gt; ARRAY[1,2]</code>，<code>ARRAY[1,2,3] @&gt; ARRAY[2,1]</code>，<code>ARRAY[1,2,3] @&gt; ARRAY[[1,2],[2,3]]</code></li>
+<li>&lt;@：被包含于，例如<code>ARRAY[1,2] &lt;@ ARRAY[1,2,3]</code></li>
+<li>&amp;&amp;：重叠，是否有共同元素，例如<code>ARRAY[1,2,3] &amp;&amp; ARRAY[3,4](true)</code></li>
+<li>||：连接操作符，例如<code>ARRAY[1,2]||ARRAY[3,4](结果{1,2,3,4})</code>，<code>1||ARRAY[2,3]</code></li>
+</ul>
+<h3 id="类型的输入与转换">类型的输入与转换</h3>
+<p>可以使用“类型名”加上单引号括起来的类型值格式进行输入，例如</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="s1">&#39;2&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以使用SQL的类型转换函数CAST进行类型转换</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="s1">&#39;5&#39;</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nb">int</span><span class="p">),</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="s1">&#39;2014-07-17&#39;</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nb">date</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用双冒号</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="s1">&#39;5&#39;</span><span class="p">::</span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2014-07-17&#39;</span><span class="p">::</span><span class="nb">date</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="数据库逻辑结构">数据库逻辑结构</h2>
+<p>在一个PostgreSQL数据库系统中，数据的组织结构可以分为以下三层</p>
+<ul>
+<li>数据库：一个PostgreSQL数据库服务下可以管理多个数据库，当应用连接到一个数据库时，一般只能访问这个数据库中的数据</li>
+<li>表、索引：在PostgreSQL中表的术语为Relation。</li>
+<li>数据行：在PostgreSQL中行的术语一般为Tuple。</li>
+</ul>
+<h3 id="模式">模式</h3>
+<p>模式（schema）是数据库中的一个概念，可以将其理解为一个命名空间或目录。不同的模式下可以有相同名称的表、函数等对象且互相不冲突。</p>
+<p>在PostgreSQL中，一个数据库包含一个或多个模式，模式中又包含了表、函数及操作符等数据库对象。在PostgreSQL中可以认为模式的概念与MySQL中Database的概念是等同的。</p>
+<p>创建模式的语法如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="n">schemaname</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>模式中表的访问一般采用`schema_*name.table_*name`的模式，如果没有创建特定的模式，默认会存放在公共模式中，访问公共模式中的表不需要加schema前缀。</p>
+<h3 id="索引">索引</h3>
+<p>PostgreSQL中支持一下几类索引：</p>
+<ul>
+<li>BTree：最常用的索引，BTree索引适合处理等值查询和范围查询。</li>
+<li>HASH：只能处理简单的等值查询。</li>
+<li>GiST：不是单独一种索引类型，而是一种架构，可以在这种架构上实现很多不同的索引策略。</li>
+<li>SP-GiST：SP-GiST是“Space-Partitioned GiST“的缩写，即空间分区GiST索引。主要是通过一些新的索引算法来提高GiST索引在某种情况下的性能。</li>
+<li>GIN：反转索引，可以处理包含多个键的值，如数组等。比如@&gt;、&lt;@、=、&amp;&amp;都是PostgreSQL提供的GIN操作符。</li>
+</ul>
+<p>一些创建索引的语句</p>
+<pre tabindex="0"><code class="language-pgsql" data-lang="pgsql"># 按降序创建索引
+CREATE INDEX idx_a ON table_name(a DESC);
+# 如果字段a中有空值，则可以在创建索引时指定空值排在非空值前面
+CREATE INDEX idx_a ON table_name(a DESC NULLS FIRST);
+# 空值排非空值后面
+CREATE INDEX idx_a ON table_name(a DESC NULLS LAST);
+</code></pre><h3 id="事务相关">事务相关</h3>
+<p>在PostgreSQL中，默认的隔离级别是读已提交。</p>
+<h4 id="两阶段提交">两阶段提交</h4>
+<p>PostgreSQL支持两阶段提交，可以实现多台数据库之间的原子性，是实现分布式事务的关键。两阶段提交的步骤如下：</p>
+<ol>
+<li>应用程序先调用各台数据库做一些操作，但不提交事务。然后应用程序调用事务协调器中的提交方法。</li>
+<li>事务协调器将联络事务中涉及的每台数据库，并通知它们准备提交事务，这是第一阶段的开始。PostgreSQL中一般是调用PREPARE TRANSACTION命令。</li>
+<li>各台数据库PREPARE TRANSACTION命令后，如果要返回成功，则数据库必须将自己置于以下状态：确保后续能在被要求提交事务的时候提交事务，或后续能在被要要求回滚事务的时候回滚事务。所以PostgreSQL会将已准备好提交的信息写入持久存储区内，如果数据库无法完成此事务，会直接返回失败给事务协调器。</li>
+<li>事务协调器接收所有数据库的响应。</li>
+<li>在第二阶段，如果任何一个数据库在第一阶段返回失败，则事务协调器将会发一个回滚命令“ROLLBACK PREPARED”给各台数据库。如果所有数据库的响应都是成功的，则向各台数据库发送COMMIT PREPARED命令，通知各台数据库事务成功。</li>
+</ol>
+<p>使用两阶段提交首先需要设置参数，再重启数据库：</p>
+<pre tabindex="0"><code class="language-pgsql" data-lang="pgsql">set max_prepared_transactions = 10;
+</code></pre>
+                        </div>
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="/tags/postgresql">postgresql</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+                    <div id="comments"><span class="widget-title">评论</span>
+  <script src="https://utteranc.es/client.js"
+          repo="peilanluo/comments"
+          issue-term="url"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+  </script></div>
+
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        
+    
+<form id="search" method="POST" action="https://duckduckgo.com/">
+    
+    <input type="text" name="q" maxlength="255" placeholder="搜索...">
+    
+    <input type="hidden" name="sites" value="https://peilanluo.github.io/">
+    
+    <input type="hidden" name="kp" value="-2">
+    
+    <input type="hidden" name="kh" value="1">
+    
+    <input type="hidden" name="kl" value="wt-wt">
+    
+    <input type="hidden" name="kg" value="p">
+    
+    <input type="hidden" name="kaf" value="1">
+    
+    
+    <input type="hidden" name="k1" value="-1">
+
+    
+
+    
+    
+    <input type="hidden" name="k7" value="#ffffff">
+    
+    <input type="hidden" name="kj" value="#ffffff">
+    
+    <input type="hidden" name="ky" value="#eaeaea">
+    
+    <input type="hidden" name="kx" value="#6E7173">
+    
+    <input type="hidden" name="k8" value="#444">
+    
+    <input type="hidden" name="k9" value="#6E7173">
+    
+    <input type="hidden" name="kaa" value="#6E7173">
+    
+    <input type="hidden" name="kae" value="#6E7173">
+
+    
+    
+    <input type="hidden" name="ko" value="1">
+    
+    <input type="hidden" name="kt" value="n">
+    
+    <input type="hidden" name="ka" value="g">
+    
+    <input type="hidden" name="ks" value="l">
+    
+    <input type="hidden" name="kv" value="1">
+
+    <button type="submit" class="submit icon-search"></button>
+</form>
+
+
+
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a href="/categories/docker">
+                    docker (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/elasticsearch">
+                    elasticsearch (1)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/golang">
+                    golang (6)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">
+                    kubernetes (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mongodb">
+                    mongodb (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/mysql">
+                    mysql (7)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/postgresql">
+                    postgresql (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/prometheus">
+                    prometheus (2)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/python">
+                    python (3)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/redis">
+                    redis (4)
+                </a>
+            </li>
+            
+            <li>
+                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">
+                    数据结构 (4)
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-title">友情链接</h3>
+        <ul class="widget-list">
+            
+            <li>
+                <a rel="noreferrer noopener nofollow" href="http://www.pyhead.com" title="代码如诗，人生无限。">技术渣</a>
+            </li>
+            
+        </ul>
+    </section>
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+      &copy; 2026 <a rel="nofollow" href="https://peilanluo.github.io/">默默的心路</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io">Hugo</a> &amp; <a rel="nofollow noreferer noopener" href="https://github.com/JokerQyou/maupassant-hugo">maupassant theme</a>.
+    </div>
+</footer>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' defer></script>
+
+
+</body>
+</html>
