@@ -3,24 +3,27 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://peilanluo.github.io/categories/</loc>
-    <lastmod>2026-04-02T14:01:20+08:00</lastmod>
+    <lastmod>2026-06-15T16:36:20+08:00</lastmod>
   </url><url>
     <loc>https://peilanluo.github.io/categories/postgresql/</loc>
-    <lastmod>2026-04-02T14:01:20+08:00</lastmod>
+    <lastmod>2026-06-15T16:36:20+08:00</lastmod>
   </url><url>
     <loc>https://peilanluo.github.io/tags/postgresql/</loc>
-    <lastmod>2026-04-02T14:01:20+08:00</lastmod>
+    <lastmod>2026-06-15T16:36:20+08:00</lastmod>
   </url><url>
-    <loc>https://peilanluo.github.io/post/postgresql/postgresql_data_type/</loc>
-    <lastmod>2026-04-02T14:01:20+08:00</lastmod>
+    <loc>https://peilanluo.github.io/post/postgresql/postgresql_execution_plan/</loc>
+    <lastmod>2026-06-15T16:36:20+08:00</lastmod>
   </url><url>
     <loc>https://peilanluo.github.io/post/</loc>
-    <lastmod>2026-04-02T14:01:20+08:00</lastmod>
+    <lastmod>2026-06-15T16:36:20+08:00</lastmod>
   </url><url>
     <loc>https://peilanluo.github.io/tags/</loc>
-    <lastmod>2026-04-02T14:01:20+08:00</lastmod>
+    <lastmod>2026-06-15T16:36:20+08:00</lastmod>
   </url><url>
     <loc>https://peilanluo.github.io/</loc>
+    <lastmod>2026-06-15T16:36:20+08:00</lastmod>
+  </url><url>
+    <loc>https://peilanluo.github.io/post/postgresql/postgresql_data_type/</loc>
     <lastmod>2026-04-02T14:01:20+08:00</lastmod>
   </url><url>
     <loc>https://peilanluo.github.io/post/postgresql/postgresql_diff_with_mysql/</loc>

@@ -6,8 +6,15 @@
     <description>Recent content in Postgresql on 默默的心路</description>
     <generator>Hugo</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 02 Apr 2026 14:01:20 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 15 Jun 2026 16:36:20 +0800</lastBuildDate>
     <atom:link href="https://peilanluo.github.io/categories/postgresql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>postgresql-执行计划</title>
+      <link>https://peilanluo.github.io/post/postgresql/postgresql_execution_plan/</link>
+      <pubDate>Mon, 15 Jun 2026 16:36:20 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/postgresql/postgresql_execution_plan/</guid>
+      <description>&lt;h2 id=&#34;explain命令&#34;&gt;EXPLAIN命令&lt;/h2&gt;&#xA;&lt;p&gt;基础语法&lt;code&gt;EXPLAIN [选项] 查询语句&lt;/code&gt;，可选的选项如下：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;ANALYZE：执行查询并返回执行计划&lt;/li&gt;&#xA;&lt;li&gt;VERBOSE：返回详细的执行计划&lt;/li&gt;&#xA;&lt;li&gt;COSTS：返回包含成本信息的执行计划&lt;/li&gt;&#xA;&lt;li&gt;BUFFERS：返回包含缓冲区信息的执行计划&lt;/li&gt;&#xA;&lt;li&gt;FORMAT：指定返回的执行计划格式，可选值为JSON或XML&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;explain输出结果解释&#34;&gt;EXPLAIN输出结果解释&lt;/h3&gt;&#xA;&lt;p&gt;下面是一个典型的EXPLAIN输出结果：&lt;/p&gt;</description>
+    </item>
     <item>
       <title>postgresql—数据类型、索引、事务</title>
       <link>https://peilanluo.github.io/post/postgresql/postgresql_data_type/</link>

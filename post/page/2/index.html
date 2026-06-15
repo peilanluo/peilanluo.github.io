@@ -64,6 +64,99 @@
                         <article class="post">
                             <header>
                                 <h2 class="post-title">
+                                    <a href="https://peilanluo.github.io/post/prometheus/promql/">Prometheus--PromQL</a>
+                                </h2>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2022年7月31日
+                                15:36
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                ，归类于
+                                
+                                    <a href="/categories/prometheus">Prometheus</a>
+                                
+                            </div>
+                            
+                            
+                            <div class="post-content summary auto">
+                                
+                                
+                                    <h2 id="1-promql聚合操作">1. PromQL聚合操作</h2>
+<p>PromQL的聚合操作仅适用于单个即时向量，其基本语法为：</p>
+<pre tabindex="0"><code class="language-Prometheus" data-lang="Prometheus">&lt;aggr-op&gt;([parameter,] &lt;vector expression&gt;) [without|by (&lt;label list&gt;)]
+</code></pre><p>其中：</p>
+<ul>
+<li>aggr-op：为聚合操作符，包括如下表</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">名称</th>
+          <th style="text-align: left">描述</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">sum</td>
+          <td style="text-align: left">求和，将组中所有的值相加</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">max</td>
+          <td style="text-align: left">最大值，将组内最大值返回</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">min</td>
+          <td style="text-align: left">最小值</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">avg</td>
+          <td style="text-align: left">平均值，例：计算每个CPU每分钟的空闲时间，然后对主机上的所有CPU求平均值<!-- raw HTML omitted --><code>avg without(cpu,mode)(rate(node_cpu_seconds_total{mode=&quot;idle&quot;} [1m]))</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">stddev</td>
+          <td style="text-align: left">标准差，对一组数字分布情况的统计度量，用于检查异常值。例如，作业中的一个实例具有与平均值相差几个标准差的度量标砖，这一现象表明它可能存在问题</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">stdvar</td>
+          <td style="text-align: left">标准方差，是标准差的平方，用于统计</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">count</td>
+          <td style="text-align: left">计数，计算组中的时间序列数。例子：返回主机磁盘设备数量<!-- raw HTML omitted --> <code>count without(device)(node_disk_read_bytes_total)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">count_values</td>
+          <td style="text-align: left">对相同value进行计数，用于统计时间序列中每一个样本值出现的次数。count_values会为每个唯一的样本值输出一个时间序列，并且每一个时间序列包含一个额外的标签。这个标签的名字由聚合参数指定，同时这个标签值是唯一的样本值。</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">bottomk</td>
+          <td style="text-align: left">用于对样本值进行排序，返回当前样本值后N位的时间序列</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">topk</td>
+          <td style="text-align: left">与bottomk相反，例子：获取HTTP请求数据前五位的时序样本数据<!-- raw HTML omitted --> <code>top(5, http_requests_total)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">quantile</td>
+          <td style="text-align: left">用于计算当前样本数据值的分布情况：quantile(Φ, express)。其中，0≤Φ≤1。例如：当Φ=0.5时，用来表示找到以下样本数据中的中位数：quantile (0.5 http_requests_total)</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>parameter：为可选参数，聚合的参数</li>
+</ul>
+<h2 id="2-promql运算符">2. PromQL运算符</h2>
+<p>Prometheus中的运算符，不仅可以用于对即时向量进行简单的算术运算，还可以将运算符应用于两个基于标签分组的即时向量。运算符包括，算术运算符、关系运算符、向量匹配模式和逻辑运算符。</p>
+                                
+                            </div>
+                            <p class="readmore"><a href="https://peilanluo.github.io/post/prometheus/promql/">阅读全文</a></p>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h2 class="post-title">
                                     <a href="https://peilanluo.github.io/post/prometheus/prometheus_basic/">Prometheus--Prometheus的数据类型和PromQL简介</a>
                                 </h2>
                             </header>
@@ -351,34 +444,6 @@
                             <p class="readmore"><a href="https://peilanluo.github.io/post/kubernetes/pod/">阅读全文</a></p>
                         </article>
                     
-                        <article class="post">
-                            <header>
-                                <h2 class="post-title">
-                                    <a href="https://peilanluo.github.io/post/mysql/mysql_explain/">mysql—EXPLAIN的使用</a>
-                                </h2>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2021年3月29日
-                                20:43
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                ，归类于
-                                
-                                    <a href="/categories/mysql">mysql</a>
-                                
-                            </div>
-                            
-                            
-                            <div class="post-content summary auto">
-                                
-                                
-                                    <p>EXPLAIN命令是查看查询优化器如何决定执行查询的主要方法，但是它是有局限性的，并不总是准确的，但他在一定程度上仍然是衡量MySQL优化的最好工具。</p>
-                                
-                            </div>
-                            <p class="readmore"><a href="https://peilanluo.github.io/post/mysql/mysql_explain/">阅读全文</a></p>
-                        </article>
-                    
 
                     
 
@@ -524,7 +589,7 @@
             
             <li>
                 <a href="/categories/postgresql">
-                    postgresql (2)
+                    postgresql (3)
                 </a>
             </li>
             
