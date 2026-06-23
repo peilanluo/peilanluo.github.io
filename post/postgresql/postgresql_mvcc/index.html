@@ -7,19 +7,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>mysql--Schema与数据类型优化 - 默默的心路</title>
-    <meta property="og:title" content="mysql--Schema与数据类型优化 - 默默的心路">
+    <title>postgresql-MVCC多版本并发控制 - 默默的心路</title>
+    <meta property="og:title" content="postgresql-MVCC多版本并发控制 - 默默的心路">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2020-11-21T18:08:45&#43;08:00">
+    <meta property="article:published_time" content="2026-06-23T16:42:20&#43;08:00">
         
         
-    <meta property="article:modified_time" content="2020-11-21T18:08:45&#43;08:00">
+    <meta property="article:modified_time" content="2026-06-23T16:42:20&#43;08:00">
         
-    <meta name="description" content="mysql--Schema与数据类型优化">
+    <meta name="description" content="postgresql-MVCC多版本并发控制">
         
     <meta name="author" content="">
-    <meta property="og:url" content="https://peilanluo.github.io/post/mysql/mysql_field_-optimizing/">
+    <meta property="og:url" content="https://peilanluo.github.io/post/postgresql/postgresql_mvcc/">
 
     <link rel="stylesheet" href="/css/normalize.css">
     
@@ -64,91 +64,106 @@
                 <div class="res-cons">
                     <article class="post">
                         <header>
-                            <h1 class="post-title">mysql--Schema与数据类型优化</h1>
+                            <h1 class="post-title">postgresql-MVCC多版本并发控制</h1>
                         </header>
                         <date class="post-meta meta-date">
-                            2020年11月21日
-                            18:08
+                            2026年6月23日
+                            16:42
                         </date>
                         
                         <div class="post-meta meta-category">
                             ，归类于
                             
-                                <a href="/categories/mysql">mysql</a>
+                                <a href="/categories/postgresql">postgresql</a>
                             
                         </div>
                         <aside id="toc" class="dismissed">
                             <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
                             <nav id="TableOfContents">
   <ul>
-    <li><a href="#存储引擎">存储引擎</a></li>
-    <li><a href="#数据类型优化">数据类型优化</a>
+    <li>
       <ul>
-        <li><a href="#整数类型">整数类型</a></li>
-        <li><a href="#实数类型">实数类型</a></li>
-        <li><a href="#varchar和char类型">VARCHAR和CHAR类型</a>
+        <li><a href="#postgresql-mvcc的介绍">PostgreSQL MVCC的介绍</a></li>
+        <li><a href="#postgresql-mvcc的具体实现">PostgreSQL MVCC的具体实现</a>
           <ul>
-            <li><a href="#varchar类型">VARCHAR类型</a></li>
-            <li><a href="#char">CHAR</a></li>
+            <li><a href="#实现所需的字段">实现所需的字段</a></li>
+            <li><a href="#dml操作具体如何触发版本变化">DML操作具体如何触发版本变化：</a></li>
+            <li><a href="#如何判断某个版本是否可见">如何判断某个版本是否可见</a></li>
           </ul>
         </li>
-        <li><a href="#blog和text类型">BLOG和TEXT类型</a></li>
-        <li><a href="#使用枚举enum代替字符串类型">使用枚举（ENUM）代替字符串类型</a></li>
-        <li><a href="#日期和时间类型">日期和时间类型</a>
-          <ul>
-            <li><a href="#datetime">DATETIME</a></li>
-            <li><a href="#timestamp">TIMESTAMP</a></li>
-          </ul>
-        </li>
-        <li><a href="#特殊类型数据">特殊类型数据</a></li>
-        <li><a href="#一些琐碎的知识">一些琐碎的知识</a>
-          <ul>
-            <li><a href="#加快alter-table操作的速度">加快ALTER TABLE操作的速度</a></li>
-          </ul>
-        </li>
+        <li><a href="#postgresql-mvcc的优劣">PostgreSQL MVCC的优劣</a></li>
       </ul>
     </li>
   </ul>
 </nav>
                         </aside><div class="post-content">
-                            <h1 id="存储引擎">存储引擎</h1>
-<p>在MySQL5.5版本将InnoDB作为默认的存储引擎。</p>
-<h1 id="数据类型优化">数据类型优化</h1>
-<p>通常把可为null的列改为not null带来的性能提升比较小，所以（调优时）没有必要首先在现有schema中查找并修改掉这种情况，除非确定这回导致问题。但是，如果计划在列上建立索引，就应该尽量避免设计成可为null的列。</p>
-<p>timestamp只使用datetime一般的存储空间，并且会根据时区变化。</p>
-<h2 id="整数类型">整数类型</h2>
+                            <h2 id="postgresql-mvcc的介绍">PostgreSQL MVCC的介绍</h2>
+<p>PostgreSQL中的多版本实现是通过把原数据留在数据文件中，新插入一条数据来实现多版本的功能的。所以每张表上都有4个系统字段“xmin”、“xmax”、“cmin”、“cmax”。当两个事务同事访问记录时，通过参考xmin和xmax的标记判断记录的版本，根据版本号于自己当前的事务标识进行比较，确定自己的数据权限。当删除数据时，记录并没有从数据块中被删除，空间也没有立即释放。</p>
+<p>PostgreSQL通过运行Vacuum进程（默认打开）来回收之前的存储空间，当一个表的更新量达到一定值时，AutoVacuum自动回收空间。</p>
+<p>出于效率考量，当一个事务执行失败，在数据文件中该事务产生的数据并不会在事务回滚时被清理掉。PostgreSQL通过记录事务的状态来实现标记数据是有效还是无效，数据行上记录了xmin和xmax，只需要了解xmin和xmax对应的事务是成功提交还是回滚了，就可以知道这些数据行是否有效。PostgreSQL把实物状态记录在<code>Commit Log</code>中，简称CLOG，CLOG在数据目录的pg_clog子目录下。事务的状态有以下4种：</p>
 <ul>
-<li>tinyint、smallint、mediumint、int、bigint分别使用8、16、24、32、64为存储空间。</li>
-<li>MySQL可以为整数类型指定宽度，例如INT(11)，对大多数应用这是没有意义的：它不会限制值的合法范围，只是规定MySQL的一些交互工具用来显示字符的个数。对于存储和计算来说，INT(1)和INT(20)是相同的。</li>
+<li>TRANSITION_STATUS_IN_PROGRESS=0x00：表示事务正在进行中</li>
+<li>TRANSITION_STATUS_COMMITTED=0x01：表示事务成功提交</li>
+<li>TRANSITION_STATUS_ABORTED=0x02：表示事务回滚</li>
+<li>TRANSITION_STATUS_SUB_COMMITTED=0x03：表示子事务已提交</li>
 </ul>
-<h2 id="实数类型">实数类型</h2>
-<p>实数是带有小数部分的数字。DECIMAL类型用于存储精确的小数，但因为需要额外的空间和计算开销，所以应该尽量只在对小数进行精确计算时才使用DECIMAL（例如存储财务数据）</p>
-<h2 id="varchar和char类型">VARCHAR和CHAR类型</h2>
-<h3 id="varchar类型">VARCHAR类型</h3>
-<p>VARCHAR类型用于存储可变长字符串，它比定长类型更节省空间，VARCHART需要使用额外的1或2个额外字节记录字符串的长度，如果列的最大长度小于或等于255字节，则只使用1个字节表示，否则使用2个字节。假设使用latin1字符集，一个VARCHAR(10)的列需要11个字节的存储空间。VARCHAR(1000)的列需要1002个字节，因为需要2个字节存储长度信息。</p>
-<blockquote>
-<p>在InnoDB中，它可以把过长的VARCHAR存储为BLOB，我们稍后讨论这个问题。</p></blockquote>
-<h3 id="char">CHAR</h3>
-<p>CHAR类型是定长的：MySQL总是根据定义的字符串长度分配足够的空间。当存储CHAR值时，MySQL会删除所有的末尾空格。CHAR值会根据需要采用空格进行填充以方便计较。</p>
-<p>CHAR适合存储很短的字符串，或者所有值都接近同一个长度。例如CHAR非常适合存储密码的MD5值。</p>
-<h2 id="blog和text类型">BLOG和TEXT类型</h2>
-<p>BLOB和TEXT都是为存储很大的数据而设计的字符串数据类型，分别采用二进制和字符方式存储。</p>
-<p>BOLB和TEXT家族之间仅有的不同是BLOB类型存储的是二进制数据，没有排序规则或字符集，而TEXT类型有字符集和排序规则。</p>
-<p>MySQL对BLOG和TEXT列进行排序与其他类型是不同的：它只对没个列的最前max_sort_length字节而不是整个字符串做排序。如果只需要排序前面一小部分字符，则可以减小max_sort_length的配置，或者使用<code>ORDER BY SUSTRING(column, length)</code>。</p>
-<h2 id="使用枚举enum代替字符串类型">使用枚举（ENUM）代替字符串类型</h2>
-<p>有时候可以使用枚举代替常用的字符串类型。枚举列可以把一些不重复的字符串存储成一个预定义的集合。MySQL在存储枚举时非常紧凑，会根据列表值的数量压缩到一个或者两个字节中。MySQL内部会将每个值在列表中的位置保存为整数，并且在表.frm文件中保存“数字-字符串”映射关系的“查找表”。</p>
-<h2 id="日期和时间类型">日期和时间类型</h2>
-<h3 id="datetime">DATETIME</h3>
-<p>这个类型能保存大范围的值，从1001年到9999年，精度为秒。它把日期和时间封装到格式为YYYYMMDDHHMMSS的整数中，与时区无关。使用8个字节的存储空间。</p>
-<h3 id="timestamp">TIMESTAMP</h3>
-<p>这个类型保存了1970年1月1日午夜以来的秒数，TIMESTAMP只使用4个字节的存储空间，只能表示1970年到2038年。MySQL提供了<code>FROM_UNIXTIME()</code>，并提供了<code>UNIX_TIMESTAMP()</code>函数把日期转换为Unix时间戳。</p>
-<h2 id="特殊类型数据">特殊类型数据</h2>
-<p>IPv4地址应该使用无符号整数来存储，MySQL提供<code>INET_ATON()</code>和<code>INET_NTOA()</code>函数在这两种表示方法之间转换。</p>
-<h2 id="一些琐碎的知识">一些琐碎的知识</h2>
-<h3 id="加快alter-table操作的速度">加快ALTER TABLE操作的速度</h3>
-<p>MySQL的ALTER TABLE操作的性能对大表来说是个大问题。MySQL执行大部分修改表结构操作的方法是用新的结构创建一个空表，从旧表中查出所有的数据插入新表，然后删除旧表</p>
-<blockquote>
-<p>参考书目：《高能能MySQL（第3版）》</p></blockquote>
+<p>事务ID，缩写为xid，是一个32bit的数字，有以下3个特殊的事务ID是给系统内部使用的，代表特殊含义</p>
+<ul>
+<li>InvalidTransactionId=0：表示无效事务ID</li>
+<li>BootstrapTransitionId=1：表示系统表初始化时的事务ID</li>
+<li>FrozenTransactionId=2：表示冻结的事务ID</li>
+</ul>
+<p>所以数据库系统第一个正常的事务ID是从3开始，然后连续递增，达到最大值后，再从3开始。当再从3开始后，当数据库的年龄要超过2^31时，就把旧的事务换成<code>FrozenTransactionId</code>，当正常事务ID和冻结事务ID作比较时，会认为正常事务ID比冻结事务ID更新。</p>
+<h2 id="postgresql-mvcc的具体实现">PostgreSQL MVCC的具体实现</h2>
+<h3 id="实现所需的字段">实现所需的字段</h3>
+<p>在PostgreSQL种，每一样数据每一行数据（称为一个 Tuple，元组）的头部都包含几个关键的隐藏系统字段，分别是：</p>
+<ul>
+<li>xmin：创建该版本的事务 ID。当插入（INSERT）或更新（UPDATE 会产生新版本）时设置。</li>
+<li>xmax：删除/更新该版本的事务 ID。如果该版本当前未被删除，则为 0。删除（DELETE）或更新（UPDATE 旧版本）时设置。</li>
+<li>ctid：当前版本的物理位置（块号+偏移量）。如果该版本被更新，这个字段会指向新版本的物理位置，形成一条版本链。</li>
+<li>cid：事务内命令序号，用于区分同一事务内先后执行的命令。</li>
+</ul>
+<h3 id="dml操作具体如何触发版本变化">DML操作具体如何触发版本变化：</h3>
+<ul>
+<li>INSERT（插入）：直接插入新行，设置 xmin = 当前事务 ID，xmax = 0。</li>
+<li>DELETE（删除）：不物理删除行，只将待删除行的 xmax 设置为当前事务 ID，将其标记为“已删除”。</li>
+<li>UPDATE（更新）：这是最关键的。UPDATE 逻辑上等价于 DELETE + INSERT。
+<ol>
+<li>旧行：将旧行的 xmax 设置为当前事务 ID（标记为已删除），并且将它的 ctid 指向新行的位置。</li>
+<li>新行：插入一个全新的行，设置 xmin = 当前事务 ID，xmax = 0，ctid 指向自己。</li>
+</ol>
+</li>
+</ul>
+<h3 id="如何判断某个版本是否可见">如何判断某个版本是否可见</h3>
+<p>PostgreSQL不会去锁住正在被修改的行，每个查询在执行开始时，都会获取一个当前数据库状态的“快照”（Snapshot）。快照的核心内容是：当前这一刻，所有正在运行（未提交）的事务 ID 列表（xip），以及最小活跃事务 ID（xmin）和最大活跃事务 ID（xmax）。</p>
+<ol>
+<li>检查xmin:</li>
+</ol>
+<ul>
+<li>如果xmin的状态是TRANSITION_STATUS_ABORTED，那么该条不可见</li>
+<li>如果xmin的状态是TRANSITION_STATUS_COMMITTED且不再当前活跃事务列表（xip）种，进入下一步检查（说明该行已提交）。</li>
+<li>如果xmin的状态是TRANSITION_STATUS_IN_PROGRESS或是自己的事务，需要配合cid做进一步判断。</li>
+</ul>
+<ol start="2">
+<li>检查xmax：</li>
+</ol>
+<ul>
+<li>如果xmax=0,可见</li>
+<li>如果xmax状态是TRANSITION_STATUS_IN_PROGRESS或TRANSITION_STATUS_ABORTED，可见</li>
+<li>如果xmax的状态是TRANSITION_STATUS_COMMITTED且在当前活跃事务列表之外，不可见</li>
+</ul>
+<h2 id="postgresql-mvcc的优劣">PostgreSQL MVCC的优劣</h2>
+<p>MySQL数据库的InnoDB的数据并不记录在原先的数据块中，而是被记录在回滚段中，如果要读取旧版本的数据，需要根据回滚段的数据重构旧版本数据。</p>
+<p>PostgreSQL的多版本机制，在事务提交前只需要访问原先的数据，使得PostgreSQL实现了赌不阻塞写，写不阻塞读的极致并发能力，提交后，系统更新元祖的存储标识，直到Vacuum进程收回为止。其优点有：</p>
+<ul>
+<li>事务回滚可以立即完成，无论事务进行了多少操作。</li>
+<li>数据可以进行很多更新，不必像MySQL那样需要经常保证回滚段不会被用完。</li>
+</ul>
+<p>劣势在于：</p>
+<ul>
+<li>旧版本数据需要清理。</li>
+<li>旧版本数据UI导致查询更慢一些，因为旧版本的数据存储于数据文件中，查询时需要扫描更多的数据块。</li>
+</ul>
 
                         </div>
 
@@ -156,7 +171,7 @@
                             
                             <ul class="clearfix">
                                 
-                                <li><a href="/tags/mysql">mysql</a></li>
+                                <li><a href="/tags/postgresql">postgresql</a></li>
                                 
                             </ul>
                             

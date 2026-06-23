@@ -64,6 +64,37 @@
                         <article class="post">
                             <header>
                                 <h2 class="post-title">
+                                    <a href="https://peilanluo.github.io/post/mysql/mysql_field_-optimizing/">mysql--Schema与数据类型优化</a>
+                                </h2>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2020年11月21日
+                                18:08
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                ，归类于
+                                
+                                    <a href="/categories/mysql">mysql</a>
+                                
+                            </div>
+                            
+                            
+                            <div class="post-content summary auto">
+                                
+                                
+                                    <h1 id="存储引擎">存储引擎</h1>
+<p>在MySQL5.5版本将InnoDB作为默认的存储引擎。</p>
+<h1 id="数据类型优化">数据类型优化</h1>
+<p>通常把可为null的列改为not null带来的性能提升比较小，所以（调优时）没有必要首先在现有schema中查找并修改掉这种情况，除非确定这回导致问题。但是，如果计划在列上建立索引，就应该尽量避免设计成可为null的列。</p>
+                                
+                            </div>
+                            <p class="readmore"><a href="https://peilanluo.github.io/post/mysql/mysql_field_-optimizing/">阅读全文</a></p>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h2 class="post-title">
                                     <a href="https://peilanluo.github.io/post/golang/sort/">golang--排序算法Golang实现</a>
                                 </h2>
                             </header>
@@ -931,7 +962,7 @@ options的可用选项如下（只列出部分）：</p>
             
             <li>
                 <a href="/categories/postgresql">
-                    postgresql (3)
+                    postgresql (4)
                 </a>
             </li>
             

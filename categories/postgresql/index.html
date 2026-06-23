@@ -70,6 +70,35 @@
                         <article class="post">
                             <header>
                                 <h2 class="post-title">
+                                    <a href="https://peilanluo.github.io/post/postgresql/postgresql_mvcc/">postgresql-MVCC多版本并发控制</a>
+                                </h2>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2026年6月23日
+                                16:42
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                ，归类于
+                                
+                                    <a href="/categories/postgresql">postgresql</a>
+                                
+                            </div>
+                            
+                            
+                            <div class="post-content summary auto">
+                                
+                                
+                                    <h2 id="postgresql-mvcc的介绍">PostgreSQL MVCC的介绍</h2>
+<p>PostgreSQL中的多版本实现是通过把原数据留在数据文件中，新插入一条数据来实现多版本的功能的。所以每张表上都有4个系统字段“xmin”、“xmax”、“cmin”、“cmax”。当两个事务同事访问记录时，通过参考xmin和xmax的标记判断记录的版本，根据版本号于自己当前的事务标识进行比较，确定自己的数据权限。当删除数据时，记录并没有从数据块中被删除，空间也没有立即释放。</p>
+                                
+                            </div>
+                            <p class="readmore"><a href="https://peilanluo.github.io/post/postgresql/postgresql_mvcc/">阅读全文</a></p>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h2 class="post-title">
                                     <a href="https://peilanluo.github.io/post/postgresql/postgresql_execution_plan/">postgresql-执行计划</a>
                                 </h2>
                             </header>
@@ -290,7 +319,7 @@
             
             <li>
                 <a href="/categories/postgresql">
-                    postgresql (3)
+                    postgresql (4)
                 </a>
             </li>
             

@@ -6,8 +6,15 @@
     <description>Recent content on 默默的心路</description>
     <generator>Hugo</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Mon, 15 Jun 2026 16:36:20 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 23 Jun 2026 16:42:20 +0800</lastBuildDate>
     <atom:link href="https://peilanluo.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>postgresql-MVCC多版本并发控制</title>
+      <link>https://peilanluo.github.io/post/postgresql/postgresql_mvcc/</link>
+      <pubDate>Tue, 23 Jun 2026 16:42:20 +0800</pubDate>
+      <guid>https://peilanluo.github.io/post/postgresql/postgresql_mvcc/</guid>
+      <description>&lt;h2 id=&#34;postgresql-mvcc的介绍&#34;&gt;PostgreSQL MVCC的介绍&lt;/h2&gt;&#xA;&lt;p&gt;PostgreSQL中的多版本实现是通过把原数据留在数据文件中，新插入一条数据来实现多版本的功能的。所以每张表上都有4个系统字段“xmin”、“xmax”、“cmin”、“cmax”。当两个事务同事访问记录时，通过参考xmin和xmax的标记判断记录的版本，根据版本号于自己当前的事务标识进行比较，确定自己的数据权限。当删除数据时，记录并没有从数据块中被删除，空间也没有立即释放。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>postgresql-执行计划</title>
       <link>https://peilanluo.github.io/post/postgresql/postgresql_execution_plan/</link>
